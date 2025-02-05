@@ -10,8 +10,8 @@ import java.time.Instant;
 
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.AnalogInput;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Coral_Hopper extends SubsystemBase {
-    private DigitalInput bucketIR;
-    private DigitalInput coralIR;
+    private AnalogInput bucketIR = new AnalogInput(1);
+    private AnalogInput coralIR = new AnalogInput(0);
 
     TalonSRX m_coralInOut = new TalonSRX(13);
     TalonSRX m_bucketInOutCoral = new TalonSRX(12);
@@ -28,15 +28,11 @@ public class Coral_Hopper extends SubsystemBase {
   public Coral_Hopper() {
     m_bucketInOutCoral.configFactoryDefault();
     m_coralInOut.configFactoryDefault();
-    bucketIR = new DigitalInput(2);
-    coralIR = new DigitalInput(1);
   }
 
   @Override
   public void periodic() {
-
-    SmartDashboard.putBoolean("CoralBreak",  coralIR.get());
-    //SmartDashboard.putBoolean("", getBucketBreakReading());
+    SmartDashboard.putNumber("IR Reading", coralIR.getVoltage());
   }
 
   public void setDutyCycle(double dc) {
@@ -44,17 +40,17 @@ public class Coral_Hopper extends SubsystemBase {
     m_coralInOut.set(TalonSRXControlMode.PercentOutput, dc);
 }
 
-public boolean getCoralBreakReading(){
-    return coralIR.get(); 
+public double getCoralIRReading(){
+    return coralIR.getVoltage(); 
  }
 
- public boolean getBucketBreakReading(){
-    return bucketIR.get();
+ public double getBucketIRReading(){
+    return bucketIR.getVoltage();
  }
   
   public Command runVoltageUntilIRReading(double voltage) {
     return runEnd(() -> {
-        if(getBucketBreakReading() == true){
+        if(getBucketIRReading() > 0){
             m_bucketInOutCoral.set(TalonSRXControlMode.PercentOutput, voltage);
         }
         else{
@@ -68,7 +64,7 @@ public boolean getCoralBreakReading(){
 
 public Command runAgitator(double voltage) {
     return runEnd(() -> {
-        if(getCoralBreakReading() == false){
+        if(getCoralIRReading() < 1){
             m_bucketInOutCoral.set(TalonSRXControlMode.PercentOutput, voltage);
         }
         else{
