@@ -93,6 +93,7 @@ public class RobotContainer {
       // Elevator Test Bindings
       test.a().whileTrue(mCoral_Hopper.runAgitator(0.1));
       test.x().whileTrue(m_algae.runAlgaeWheels(0.1));
+      test.b().whileTrue(m_elevator.lockClimber(0));
     }
 
 

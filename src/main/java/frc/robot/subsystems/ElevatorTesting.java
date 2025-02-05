@@ -14,12 +14,14 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
 
 public class ElevatorTesting extends SubsystemBase {
+
     private TalonFX master; // RIGHT SIDE MOTOR
     private TalonFX follower; // LEFT SIDE MOTOR
     private double positionCoefficient = 1.0/12.0;
@@ -27,7 +29,8 @@ public class ElevatorTesting extends SubsystemBase {
     private DigitalInput leftLimit;
     private DigitalInput rightLimit;
     private Distance mostRecentTarget;
-    
+
+    private Servo ratchet; // RIGHT SIDE RATCHET
 
     public boolean elevatorZeroInProgress = false;
     public boolean elevatorZeroed = false;
@@ -38,6 +41,9 @@ public class ElevatorTesting extends SubsystemBase {
     public Distance currentElevatorLeftPos;
 
     public ElevatorTesting() {
+
+        // CLimb Ratchet
+        ratchet = new Servo(9);
 
         // Motors
         follower = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_FOLLOWER, "CAN-2"); // left SIDE MOTOR
@@ -137,7 +143,10 @@ public class ElevatorTesting extends SubsystemBase {
     master.setPosition(setpoint.in(Inches));
     follower.setPosition(setpoint.in(Inches));
   }
-  
+
+  public Command lockClimber(double degrees) {
+        return runOnce(() -> {ratchet.setAngle(degrees);});
+  }
 
   @Override
   public void periodic() {
