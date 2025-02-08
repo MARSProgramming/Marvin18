@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.Subsystems;
+package frc.robot.subsystems;
 
 import java.nio.channels.Channel;
 import java.security.Timestamp;
@@ -18,14 +18,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class Coral_Hopper extends SubsystemBase {
+public class Hopper extends SubsystemBase {
     private AnalogInput bucketIR = new AnalogInput(1);
     private AnalogInput coralIR = new AnalogInput(0);
 
     TalonSRX m_coralInOut = new TalonSRX(13);
     TalonSRX m_bucketInOutCoral = new TalonSRX(12);
   /** Creates a new Coral_Hopper. */
-  public Coral_Hopper() {
+  public Hopper() {
     m_bucketInOutCoral.configFactoryDefault();
     m_coralInOut.configFactoryDefault();
   }
