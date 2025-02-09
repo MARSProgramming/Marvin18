@@ -68,6 +68,7 @@ public class RobotContainer {
             )
         );
 
+        Pilot.povUp().whileTrue(m_coralArm.ArmPosVoltage(3));
         Pilot.leftTrigger().whileTrue(m_elevator.runVoltage(-1));
         Pilot.rightTrigger().whileTrue(m_elevator.runVoltage(1));
         Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
