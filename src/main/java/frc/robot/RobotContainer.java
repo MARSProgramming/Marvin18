@@ -85,10 +85,8 @@ public class RobotContainer {
         Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(1));
         Pilot.rightBumper().whileTrue(m_coralArm.ArmPosVoltage(3));
   
-        Pilot.x().whileTrue(mCoral_Hopper.runIntake(1));
+        Pilot.x().whileTrue(mCoral_Hopper.runIntakeUntilIR(1).alongWith(mCoral_Hopper.runAgitatorWhenReading(-0.5)));
         Pilot.b().whileTrue(mCoral_Hopper.runIntake(-1));
-        Pilot.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.5));
-        Pilot.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.5));
         Pilot.povLeft().whileTrue(m_algae.intake());
 
         Pilot.povRight().whileTrue(m_algae.outtake());

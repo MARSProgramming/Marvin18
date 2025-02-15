@@ -74,13 +74,13 @@ public boolean hasCoral() {
    return integ >=5;
 }
 
-public Command runAgitatorWhenReading(double voltage) {
+public Command 
+runAgitatorWhenReading(double voltage) {
     return runEnd(() -> {
-        if(getStuckIRreading() < DynamicConstants.IRThresholds.bucketIRthreshold){
+        if(getStuckIRreading() > DynamicConstants.IRThresholds.coralIRthreshold){
             agitator.set(TalonSRXControlMode.PercentOutput, voltage);
         }
         else{
-            new WaitCommand(2.0);
             agitator.set(TalonSRXControlMode.PercentOutput, 0);
         }
     },
