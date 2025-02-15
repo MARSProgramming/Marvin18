@@ -65,6 +65,7 @@ public class Elevator extends SubsystemBase {
         TalonFXConfiguration masterConfig = new TalonFXConfiguration();
 
         masterConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        masterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         masterConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.ElevatorSetpointConfigs.ELEVATOR_FORWARD_LIMIT;
         masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.ElevatorSetpointConfigs.ELEVATOR_REVERSE_LIMIT;
         masterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false; // TESTING ONLY
@@ -78,10 +79,10 @@ public class Elevator extends SubsystemBase {
         masterConfig.Voltage.PeakReverseVoltage = -4;
 
         masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-        masterConfig.Slot0 = new Slot0Configs().withKP(0).withKI(0).withKD(0);
+        masterConfig.Slot0 = new Slot0Configs().withKP(.8).withKI(.3).withKD(0);
         master.getConfigurator().apply(masterConfig);
         follower.getConfigurator().apply(masterConfig);
-        master.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+        //master.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
         follower.setControl(new Follower(master.getDeviceID(), true));
       //  leftLimit = new DigitalInput(0);
       //rightLimit = new DigitalInput(0);

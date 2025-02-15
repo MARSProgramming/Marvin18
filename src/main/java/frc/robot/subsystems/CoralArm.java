@@ -50,7 +50,7 @@ public class CoralArm extends SubsystemBase {
         armConfig.Voltage.PeakForwardVoltage = 4;
         armConfig.Voltage.PeakReverseVoltage = -4;
         armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        armConfig.Slot0 = new Slot0Configs().withKP(2.35).withKI(4).withKD(0.01).withKS(0.001).withKG(1.1);
+        armConfig.Slot0 = new Slot0Configs().withKP(10).withKI(3).withKD(1).withKG(1.1);
         arm.getConfigurator().apply(armConfig);
     }
 
@@ -60,7 +60,9 @@ public class CoralArm extends SubsystemBase {
             arm.setControl(positionVoltageRequest.withPosition(position));
         }, () -> {
             arm.set(0);
-        }).until(() -> armlimit.get());
+        });
+  //  }).until(() -> armlimit.get());
+
     }
 
     public double getPosition() {
