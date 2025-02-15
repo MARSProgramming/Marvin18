@@ -10,6 +10,7 @@ import org.opencv.video.TrackerDaSiamRPN_Params;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
@@ -60,6 +61,10 @@ public class RobotContainer {
     public final Elevator m_elevator = new Elevator();
     public final CoralArm m_coralArm = new CoralArm();
     public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
+
+    private final SwerveRequest.FieldCentric m_driveRequest = new SwerveRequest.FieldCentric()
+   .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+   .withSteerRequestType(SteerRequestType.MotionMagicExpo);
 
     public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
     public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d());
