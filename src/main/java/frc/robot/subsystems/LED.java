@@ -47,6 +47,7 @@ GREEN,
 WHITE,
 YELLOW,
 RAINBOW,
+OFF
   }  
 
 public class LED extends SubsystemBase {
@@ -60,7 +61,7 @@ public class LED extends SubsystemBase {
     // Reuse buffer
     // Default to a length of 60, start empty output
     // Length is expensive to set, so only set it once, then just update data
-    m_ledBuffer = new AddressableLEDBuffer(64);
+    m_ledBuffer = new AddressableLEDBuffer(14);
     m_led.setLength(m_ledBuffer.getLength());
 
     // Set the data
@@ -82,6 +83,14 @@ public class LED extends SubsystemBase {
     return run(
       () -> {
         state = LEDState.WHITE;
+      }
+    );
+  }
+
+  public Command setOff(){
+    return run(
+      () -> {
+        state = LEDState.OFF;
       }
     );
   }
@@ -171,6 +180,9 @@ public class LED extends SubsystemBase {
    } 
    else if (state == LEDState.WHITE) {
     white();
+   }
+   else if (state == LEDState.OFF) {
+    off();
    }
    else if (state == LEDState.FLASHING_GREEN) {
     green_flash();
@@ -291,7 +303,15 @@ public class LED extends SubsystemBase {
        
        m_led.setData(m_ledBuffer);
         }
-
+        private void off() {
+          // For every pixel
+          for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+            // Sets the specified LED to the RGB values for red
+            m_ledBuffer.setRGB(i, 0, 0, 0);
+         }
+         
+         m_led.setData(m_ledBuffer);
+          }
     private void white_flash() {
 
       // For every pixel

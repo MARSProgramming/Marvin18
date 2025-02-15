@@ -23,6 +23,7 @@ import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ElevatorTesting;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.LED;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -42,6 +43,11 @@ public class RobotContainer {
 
     private final CommandXboxController Pilot = new CommandXboxController(0);
     private final CommandXboxController test = new CommandXboxController(2);
+    
+    private final LED m_Led = new LED();
+    public LED getLED(){
+      return m_Led;
+    }
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -93,6 +99,8 @@ public class RobotContainer {
       // Elevator Test Bindings
       test.a().whileTrue(mCoral_Hopper.runAgitator(0.1));
       test.x().whileTrue(m_algae.runAlgaeWheels(0.1));
+      test.b().whileTrue(m_Led.setWhite());
+      test.b().whileFalse(m_Led.setOff());
     }
 
 
