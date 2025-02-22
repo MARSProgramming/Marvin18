@@ -25,7 +25,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.units.Units;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearAcceleration;
@@ -96,6 +96,9 @@ public class RobotContainer {
                     .withRotationalRate(deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
+
+
+
         // OLD DRIVE COMMAND
         /*
         Pilot.leftTrigger().whileTrue(m_elevator.runVoltage(-1));
@@ -132,6 +135,14 @@ public class RobotContainer {
         Copilot.rightBumper().whileTrue(m_coralArm.runVoltage(-1));
         Copilot.a().onTrue(m_coralArm.setTest(.28, m_elevator).alongWith(m_elevator.MoveElevatorOnTrue(8, m_elevator)));
         Copilot.povDown().whileTrue(m_elevator.runVoltage(-2));
+        Copilot.x().whileTrue(AutoBuilder.pathfindToPose(
+          new Pose2d(15.0, 6, Rotation2d.fromDegrees(0)), 
+          new PathConstraints(
+            4.0, 4.0, 
+            Units.degreesToRadians(360), Units.degreesToRadians(540)
+          ), 
+          0
+        ));
 
       //  Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
        // Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));
