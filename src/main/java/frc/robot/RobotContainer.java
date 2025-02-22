@@ -114,22 +114,23 @@ public class RobotContainer {
         Pilot.leftBumper().whileTrue(m_algae.intake());
         Pilot.x().whileTrue(new PathfindToPose(drivetrain));
         Pilot.rightBumper().whileTrue(m_algae.outtake());
-        Pilot.povLeft().whileTrue(m_elevator.setMotionMagicPosition(() -> DynamicConstants.ElevatorSetpoints.elevTestPos));
-        Pilot.povRight().whileTrue(m_coralArm.setMotionMagicPosition(() -> DynamicConstants.ArmSetpoints.armTestPos));
-        Pilot.povUp().whileTrue(m_coralArm.setMotionMagicPosition(() -> 0.0));
-        Pilot.povDown().whileTrue(m_elevator.setMotionMagicPosition(() -> 0.0));
+        Pilot.povLeft().whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(-0.02 * MaxSpeed).withVelocityY(0)));
+        Pilot.povRight().whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(0.02 * MaxSpeed).withVelocityY(0)));
+        Pilot.povUp().whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(0.02 * MaxSpeed).withVelocityX(0)));
+        Pilot.povDown().whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(-0.02 * MaxSpeed).withVelocityX(0)));
         Pilot.a().whileTrue(mCoral_Hopper.runIntakeSafe(-0.5, m_coralArm));
-        Pilot.b
-        ().whileTrue(mCoral_Hopper.runIntakeUntilIR(1));
+
+        Pilot.b().whileTrue(mCoral_Hopper.runIntakeUntilIR(1));
         Pilot.y().whileTrue(mCoral_Hopper.runAgitatorWhenReading(-0.5));
         Pilot.x().whileTrue(mCoral_Hopper.runAgitatorWhenReading(0.5));
+
+
+
         Copilot.rightTrigger().whileTrue(m_elevator.runVoltage(2));
         Copilot.leftTrigger().whileTrue(m_elevator.SafeHopperReturn(m_coralArm).alongWith(m_coralArm.setTest(0, m_elevator)));
         Copilot.leftBumper().whileTrue(m_coralArm.runVoltage(1));
-        
         Copilot.rightBumper().whileTrue(m_coralArm.runVoltage(-1));
         Copilot.a().onTrue(m_coralArm.setTest(.28, m_elevator).alongWith(m_elevator.MoveElevatorOnTrue(8, m_elevator)));
-
         Copilot.povDown().whileTrue(m_elevator.runVoltage(-2));
 
       //  Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
