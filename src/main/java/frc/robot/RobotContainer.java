@@ -73,6 +73,11 @@ public class RobotContainer {
 
     private final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    private final PathfindingSubsystem pathfindingSubsytem = new PathfindingSubsystem(new PathConstraints(
+      1.0, 1.0,
+      edu.wpi.first.math.util.Units.degreesToRadians(360), edu.wpi.first.math.util.Units.degreesToRadians(540)
+    ));
+
 
     public final Hopper mCoral_Hopper = new Hopper();
     public final Algae m_algae = new Algae();
@@ -138,6 +143,10 @@ public class RobotContainer {
             0
           )          
         );
+
+        Copilot.rightTrigger().whileTrue(
+          AutoBuilder.pathfindThenFollowPath(pathfindingSubsytem.setPath("PathplannerTest"), pathfindingSubsytem.returnConstraints())
+        );
         /*
         Pilot.b().whileTrue(AutoBuilder.pathfindToPose(
           new Pose2d(13.95, 2.77, Rotation2d.fromDegrees(35)),
@@ -199,7 +208,7 @@ public class RobotContainer {
     //  test.rightTrigger().whileTrue(m_elevator.runVoltage(-1));
     //  test.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
    //   test.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-      test.x().whileTrue(drivetrain.driveToPose());
+  // test.x().whileTrue(drivetrain.driveToPose());
 
     //  test.x().whileTrue(mCoral_Hopper.runIntake(0.1));
       //test.x().whileTrue(m_algae.intake());

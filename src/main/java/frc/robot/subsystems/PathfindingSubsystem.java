@@ -3,36 +3,49 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PathfindingSubsystem extends SubsystemBase {
-    private final Pose2d targetPose;
 
 // Create the constraints to use while pathfinding
  private final PathConstraints constraint; 
- private final CommandSwerveDrivetrain dt;
  SwerveRequest.Idle idle;
  
-    public PathfindingSubsystem(Pose2d desiredPose, PathConstraints constraints, CommandSwerveDrivetrain drive) {
-        targetPose = desiredPose;
-        constraint = constraints;
-        dt = drive;
-        
+    public PathfindingSubsystem(PathConstraints constraints) {
+        constraint = constraints;        
     }
 
     public Command pathfinder() {
         return runEnd(() -> {
-            AutoBuilder.pathfindToPose(targetPose, constraint);
+         //   AutoBuilder.pathfindToPose(targetPose, constraint).andThen(AutoBuilder.followPath(PathPlannerPath.fromPathFile("test")));
         }, () -> {
-            dt.setControl(idle);
         });
     }
+
+    public PathPlannerPath setPath(String name) {
+        PathPlannerPath pathToSet = PathPlannerPath.fromPathFile(name);
+        try{
+          pathToSet = PathPlannerPath.fromPathFile(name);  
+        } catch(Exception e) {
+            DriverStation.reportError("Failed to find path!", null);
+        }
+
+        return pathToSet;
+    }
+
+    public PathConstraints returnConstraints() {
+        return constraint;
+    }
+
+
 
 
 
