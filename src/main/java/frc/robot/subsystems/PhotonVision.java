@@ -56,8 +56,8 @@ public class PhotonVision extends SubsystemBase {
                 
                 if(pose.isPresent() && trackedTarget != null
                 && trackedTarget.getBestCameraToTarget() != null
-                && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 1 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
-                || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 1 && DriverStation.isTeleop())
+                && ((trackedTarget.getBestCameraToTarget().getTranslation().getX() < 1.25 && (DriverStation.isDisabled() || DriverStation.isAutonomous())) 
+                || (trackedTarget.getBestCameraToTarget().getTranslation().getX() < 1.25 && DriverStation.isTeleop())
                 )) {
                     if (!rejectPose()) {
                         double stdev = 0.01 * trackedTarget.getBestCameraToTarget().getTranslation().getX();

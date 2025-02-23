@@ -350,5 +350,8 @@ private final SysIdRoutine m_sysIdRoutine =
     SmartDashboard.putNumber("Elevator/TruePosition", master.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elevator/LimitDIO", getLimit());
 
+    if (getLimit() && (getPositionNormal() != 0)) {
+      master.setPosition(0);  
+    }
   }
 }

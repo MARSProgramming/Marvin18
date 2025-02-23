@@ -117,10 +117,10 @@ public class RobotContainer {
 
         Pilot.leftBumper().whileTrue(m_algae.intake());
         Pilot.rightBumper().whileTrue(m_algae.outtake());
-        Pilot.povUp().whileTrue(new ArmElevatorGroup(m_elevator, m_coralArm, 3.77, 0.3));
+        Pilot.povUp().whileTrue(new ArmElevatorGroup(m_elevator, m_coralArm, 4.47, 0.268));
         Pilot.povDown().whileTrue(new ArmElevatorGroup(m_elevator, m_coralArm, 0.77, 0.3));
       //  Pilot.x().whileTrue(new PathfindToPose(drivetrain));
-        Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntake(-1));
+        Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntakeUntilIR(-1));
         Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(1));
         Pilot.povRight().whileTrue(m_elevator.runVoltage(2));
         Pilot.povLeft().whileTrue(m_elevator.runVoltage(-2));
@@ -128,14 +128,25 @@ public class RobotContainer {
         Pilot.y().whileTrue(m_coralArm.runVoltage(0.5));
         Pilot.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
+        Copilot.leftTrigger().whileTrue(
+          AutoBuilder.pathfindToPose(
+            new Pose2d(14.08, 2.24, Rotation2d.fromDegrees(30)),
+            new PathConstraints(
+              1.0, 1.0,
+              edu.wpi.first.math.util.Units.degreesToRadians(360), edu.wpi.first.math.util.Units.degreesToRadians(540)
+            ),
+            0
+          )          
+        );
+        /*
         Pilot.b().whileTrue(AutoBuilder.pathfindToPose(
-          new Pose2d(13.4, 2.87, Rotation2d.fromDegrees(26.15)),
+          new Pose2d(13.95, 2.77, Rotation2d.fromDegrees(35)),
           new PathConstraints(
-            1.0, 1.0,
-            edu.wpi.first.math.util.Units.degreesToRadians(360), edu.wpi.first.math.util.Units.degreesToRadians(540)
+            0.6, 0.5,
+            edu.wpi.first.math.util.Units.degreesToRadians(30), edu.wpi.first.math.util.Units.degreesToRadians(540)
           ),
           0
-        ));
+        )); */
 
 /*
         Pilot.povLeft().whileTrue(m_elevator.setMotionMagicPosition(()-> 3));

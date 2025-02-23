@@ -18,7 +18,7 @@ public class ArmSetpoint extends Command {
 
     @Override
     public void execute() {
-        m_arm.setMotionMagicPosition(() -> m_setpoint);
+      //  m_arm.setMotionMagicPosition(() -> m_setpoint);
     }
 
     @Override

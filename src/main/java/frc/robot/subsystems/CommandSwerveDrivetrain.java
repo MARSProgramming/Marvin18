@@ -51,7 +51,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     private final Translation2d pigeonOffCenter = new Translation2d(0, 0); // translation2d in units of meters
-
+    private final Command pathFind = AutoBuilder.pathfindToPose(
+        new Pose2d(13.95, 2.77, Rotation2d.fromDegrees(35)),
+        new PathConstraints(
+          0.6, 0.5,
+          edu.wpi.first.math.util.Units.degreesToRadians(30), edu.wpi.first.math.util.Units.degreesToRadians(540)
+        ));
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -332,7 +337,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     // PID constants for translation
                     new PIDConstants(10, 0, 0),
                     // PID constants for rotation
-                    new PIDConstants(7, 0, 0)
+                    new PIDConstants(7, 0, 0.05)
                 ),
                 config,
                 // Assume the path needs to be flipped for Red vs Blue, this is normally the case
@@ -342,6 +347,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         } catch (Exception ex) {
             DriverStation.reportError("Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
         }
+
     }
     private HolonomicDriveController mHolonomicDriveController = new HolonomicDriveController(
             new PIDController(Constants.PathPlannerAuto.holonomicXkP, Constants.PathPlannerAuto.holonomicXkI,
@@ -359,5 +365,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Command driveToPose() {
         return AutoBuilder.pathfindToPose(new Pose2d(15, 2, Rotation2d.fromDegrees(0)), new PathConstraints(LinearVelocity.ofBaseUnits(1.0, MetersPerSecond), LinearAcceleration.ofBaseUnits(0.5, MetersPerSecondPerSecond), AngularVelocity.ofBaseUnits(360, DegreesPerSecond), AngularAcceleration.ofBaseUnits(540, DegreesPerSecondPerSecond)));
+    }
+
+    public Command pathFindTest() {
+        return pathFind;
     }
 }
