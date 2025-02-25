@@ -36,10 +36,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.auto.PathfindToPose;
 import frc.robot.commands.ArmElevatorGroup;
+import frc.robot.commands.HopperReturn;
 import frc.robot.commands.elevator.ElevatorSetpoint;
+import frc.robot.commands.elevator.SafeElevator;
+import frc.robot.commands.arm.SafeArm;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
+import frc.robot.subsystems.Agitator;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.CoralArm;
@@ -78,6 +82,9 @@ public class RobotContainer {
     public final Algae m_algae = new Algae();
     public final Elevator m_elevator = new Elevator();
     public final CoralArm m_coralArm = new CoralArm();
+    public final Agitator m_Agitator = new Agitator();
+
+
 
    public final PhotonVision mReef = new PhotonVision(drivetrain, "reef_cam", PoseStrategy.LOWEST_AMBIGUITY, new Transform3d(Inches.of(9.15), Inches.of(9.5), Inches.of(7.16), new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90))));
    //public final PhotonVision mCoral = new PhotonVision(drivetrain, "feeder_cam", PoseStrategy.AVERAGE_BEST_TARGETS, new Transform3d(Inches.of(1.48), Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(30), Degrees.of(0), Degrees.of(-93))));
@@ -100,95 +107,72 @@ public class RobotContainer {
                     .withRotationalRate(deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-        // OLD DRIVE COMMAND
-        /*
-        Pilot.leftTrigger().whileTrue(m_elevator.runVoltage(-1));
-        Pilot.rightTrigger().whileTrue(m_elevator.runVoltage(1));
-       // Pilot.leftBumper().whileTrue(m_coralArm.runVoltage(0.5));
-       // Pilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-     //  Pilot.leftBumper().onTrue(Commands.runOnce(SignalLogger::start));
-      // Pilot.rightBumper().onTrue(Commands.runOnce(SignalLogger::stop));
-        Pilot.x().whileTrue(mCoral_Hopper.runIntake(0.8));
-        Pilot.y().whileTrue(mCoral_Hopper.runIntake(-0.8));
-        Pilot.a().onTrue(drivetrain.seedCentric());
-        Pilot.leftBumper().whileTrue(m_algae.intake());
+        //Bumper and Trigger Controls
+        Pilot.leftBumper().onTrue(m_algae.intake());
         Pilot.rightBumper().whileTrue(m_algae.outtake());
- */   
-
-        Pilot.leftBumper().whileTrue(m_algae.intake());
-        Pilot.rightBumper().whileTrue(m_algae.outtake());
-        Pilot.povUp().whileTrue(new ArmElevatorGroup(m_elevator, m_coralArm, 4.47, 0.268));
-        Pilot.povDown().whileTrue(new ArmElevatorGroup(m_elevator, m_coralArm, 0.77, 0.3));
-      //  Pilot.x().whileTrue(new PathfindToPose(drivetrain));
-        Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntakeUntilIR(-1));
+        Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntakeUntilIR(-1).alongWith(m_Agitator.runAgitatorWhenReading(2)));
         Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(1));
-        Pilot.povRight().whileTrue(m_elevator.runVoltage(2));
-        Pilot.povLeft().whileTrue(m_elevator.runVoltage(-2));
-        Pilot.x().whileTrue(m_coralArm.runVoltage(-0.5));
-        Pilot.y().whileTrue(m_coralArm.runVoltage(0.5));
-        Pilot.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        Copilot.leftTrigger().whileTrue(
-          AutoBuilder.pathfindToPose(
-            new Pose2d(14.08, 2.24, Rotation2d.fromDegrees(30)),
-            new PathConstraints(
-              1.0, 1.0,
-              edu.wpi.first.math.util.Units.degreesToRadians(360), edu.wpi.first.math.util.Units.degreesToRadians(540)
-            ),
-            0
-          )          
-        );
-        /*
-        Pilot.b().whileTrue(AutoBuilder.pathfindToPose(
-          new Pose2d(13.95, 2.77, Rotation2d.fromDegrees(35)),
-          new PathConstraints(
-            0.6, 0.5,
-            edu.wpi.first.math.util.Units.degreesToRadians(30), edu.wpi.first.math.util.Units.degreesToRadians(540)
-          ),
-          0
-        )); */
+        //POV Controls
+        Pilot.povLeft().whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(-0.02 * MaxSpeed).withVelocityY(0)));
+        Pilot.povRight().whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityX(0.02 * MaxSpeed).withVelocityY(0)));
+        Pilot.povUp().whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(0.02 * MaxSpeed).withVelocityX(0)));
+        Pilot.povDown().whileTrue(drivetrain.applyRequest(() -> robotDrive.withVelocityY(-0.02 * MaxSpeed).withVelocityX(0)));
 
-/*
-        Pilot.povLeft().whileTrue(m_elevator.setMotionMagicPosition(()-> 3));
-        Pilot.povRight().whileTrue(m_coralArm.setMotionMagicPosition(() -> DynamicConstants.ArmSetpoints.armTestPos));
-        Pilot.povUp().whileTrue(m_coralArm.setMotionMagicPosition(() -> 0.0));
-        Pilot.povDown().whileTrue(m_elevator.setMotionMagicPosition(() -> 0.0));
-        Pilot.leftTrigger().whileTrue(mCoral_Hopper.runIntake(0.8));
-        Pilot.rightTrigger().whileTrue(mCoral_Hopper.runIntake(-1));
-        Copilot.povUp().whileTrue(new ArmElevatorGroup(m_elevator, m_coralArm, 3, 0.3));
-        Copilot.rightTrigger().whileTrue(m_elevator.runVoltage(2));
-        Copilot.leftTrigger().whileTrue(m_elevator.runVoltage(-2));
-        Copilot.leftBumper().whileTrue(m_elevator.SafeHopperReturn(m_coralArm).alongWith(m_coralArm.setTest(0, m_elevator)));
-        Copilot.rightBumper().whileTrue(m_coralArm.runVoltage(-0.5));
-        Copilot.x().whileTrue(m_coralArm.runVoltage(-1));
- */
-      //  Pilot.rightBumper().onTrue(m_coralArm.ArmPosVoltage(3));
-       // Pilot.leftBumper().onTrue(m_coralArm.ArmPosVoltage(1));
+        //Face Button Controls
+        Pilot.y().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        //Pilot.x().whileTrue(null); // Save for pose driving.
+        //Pilot.b().whileTrue(null); // Save for pose driving.
+        //Pilot.a().whileTrue(null); // Save for climbing.
 
-      //  Pilot.a().whileTrue(drivetrain.applyRequest(() -> brake));
-     //   Pilot.b().whileTrue(drivetrain.applyRequest(() ->
-     //       point.withModuleDirection(new Rotation2d(-Pilot.getLeftY(), -Pilot.getLeftX()))
-     //   ));
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-     Pilot.back().and(Pilot.y()).whileTrue(m_elevator.sysIdDynamic(Direction.kForward));
-      Pilot.back().and(Pilot.x()).whileTrue(m_elevator.sysIdDynamic(Direction.kReverse));
-      Pilot.start().and(Pilot.y()).whileTrue(m_elevator.sysIdQuasistatic(Direction.kForward));
-       Pilot.start().and(Pilot.x()).whileTrue(m_elevator.sysIdQuasistatic(Direction.kReverse));
+        ///Copilot
+        //Copilot.povLeft().whileTrue(m_coralArm.safeArmMovement((m_coralArm.getPosition() - .01), m_elevator));
+        //Copilot.povRight().whileTrue(m_coralArm.safeArmMovement((m_coralArm.getPosition() + .01), m_elevator));
+        Copilot.povUp().whileTrue(m_elevator.setMotionMagicPositionDB(m_elevator.getPositionNormal() + 0.1)); // fix
+        Copilot.povDown().whileTrue(m_elevator.setMotionMagicPositionDB(m_elevator.getPositionNormal() - 0.1)); // fix
+        Copilot.povUp().and(Copilot.leftBumper()).whileTrue(m_elevator.runVoltage(2));
+        Copilot.povDown().and(Copilot.leftBumper()).whileTrue(m_elevator.runVoltage(-2));
+        Copilot.povLeft().and(Copilot.leftBumper()).whileTrue(m_coralArm.runVoltage(-1));
+        Copilot.povRight().and(Copilot.leftBumper()).whileTrue(m_coralArm.runVoltage(1));
 
-        // reset the field-centric heading on left bumper press
+        //Copilot.leftTrigger().onTrue(null); // Save for feeder selection
+       // Copilot.rightTrigger().onTrue(null); // Save for feeder selection
 
-        drivetrain.registerTelemetry(logger::telemeterize);
 
-      //  Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1));
+        //Face Button Controls Height selection
+
+
+        Copilot.y().whileTrue(new SafeArm(m_elevator, m_coralArm, Constants.ArmSetpointConfigs.L4_SCORING_POS).alongWith(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_L4_SETPOINT)));
+        Copilot.x().whileTrue(new SafeArm(m_elevator, m_coralArm, Constants.ArmSetpointConfigs.ARM_SCORE_POSITION).alongWith(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_SCORE_POSITION)).andThen((new SafeArm(m_elevator, m_coralArm, Constants.ArmSetpointConfigs.L3_SCORING_POS).alongWith(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_L3_SETPOINT))))); // Save for TBD.
+        Copilot.b().whileTrue(new SafeArm(m_elevator, m_coralArm, Constants.ArmSetpointConfigs.ARM_SCORE_POSITION).alongWith(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_SCORE_POSITION)).andThen((new SafeArm(m_elevator, m_coralArm, Constants.ArmSetpointConfigs.L2_SCORING_POS).alongWith(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_L2_SETPOINT))))); // Save for TBD.
+        Copilot.a().whileTrue(new HopperReturn(m_elevator, m_coralArm));
+        Copilot.y().and(Copilot.rightBumper()).whileTrue(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_ALGAE_TOP_SETPOINT));
+        Copilot.b().and(Copilot.rightBumper()).whileTrue(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_ALGAE_GROUND_SETPOINT));
+        Copilot.x().and(Copilot.rightBumper()).whileTrue(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_ALGAE_BOT_SETPOINT));
+        Copilot.a().and(Copilot.rightBumper()).whileTrue(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_ALGAE_TEE_SETPOINT));
+
+      //   Copilot.leftTrigger().whileTrue(
+      //     AutoBuilder.pathfindToPose(
+      //       new Pose2d(14.08, 2.24, Rotation2d.fromDegrees(30)),
+      //       new PathConstraints(
+      //         1.0, 1.0,
+      //         edu.wpi.first.math.util.Units.degreesToRadians(360), edu.wpi.first.math.util.Units.degreesToRadians(540)
+      //       ),
+      //       0
+      //     )          
+      // );
+
+
+      drivetrain.registerTelemetry(logger::telemeterize);
     }
+
 
     public Command getAutonomousCommand() {
       return new Command() {
         
       };
-      //  return new PathfindingCommand(null, null, null, null, null, null, null, null)
+    //   //  return new PathfindingCommand(null, null, null, null, null, null, null, null)
     }
 
     public void configureTestBindings() {
@@ -205,7 +189,7 @@ public class RobotContainer {
       //test.x().whileTrue(m_algae.intake());
       test.y().whileTrue(m_algae.outtake());
      // test.y().whileTrue(mCoral_Hopper.runCoralAgitator(0.1));
-      test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
+     // test.a().whileTrue(mCoral_Hopper.runCoralAgitator(-0.1));
 
       test.povLeft().whileTrue(m_algae.intake());
 
@@ -214,8 +198,6 @@ public class RobotContainer {
       test.leftBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5, test.leftBumper().getAsBoolean()));
      // test.rightBumper().whileTrue(new ElevatorSetpoint(m_elevator, 5));
 
-
-      
     }
 
 

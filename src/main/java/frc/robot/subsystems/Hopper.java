@@ -20,21 +20,14 @@ import frc.robot.subsystems.CoralArm;
 
 public class Hopper extends SubsystemBase {
     private AnalogInput bucketIR;
-    private AnalogInput stuckIR;
 
-    TalonSRX agitator;
     TalonSRX coralIntake;
   /** Creates a new Coral_Hopper. */
   public Hopper() {
     bucketIR = new AnalogInput(1);
-    stuckIR = new AnalogInput(2);
-    agitator = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.AGITATOR);
     coralIntake = new TalonSRX(Constants.CAN_IDS.CORAL_MECHANISM.CORAL_INTAKE);
 
     coralIntake.configFactoryDefault();
-    agitator.configFactoryDefault();
-    stuckIR.setAverageBits(4);
-    stuckIR.setOversampleBits(4);
     bucketIR.setOversampleBits(4);
     bucketIR.setAverageBits(4);
 
@@ -43,7 +36,7 @@ public class Hopper extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("CoralIR", getStuckIRreading());
+
     SmartDashboard.putNumber("BucketIR", getBucketIRReading());
   //  runAgitatorWhenReading(1);
     //SmartDashboard.putBoolean("", getBucketIRReading());
@@ -53,12 +46,8 @@ public class Hopper extends SubsystemBase {
 
   public void setDutyCycle(double dc) {
     coralIntake.set(TalonSRXControlMode.PercentOutput, dc);
-    agitator.set(TalonSRXControlMode.PercentOutput, dc);
 }
 
-public double getStuckIRreading(){
-    return stuckIR.getAverageVoltage();
- }
 
  public double getBucketIRReading(){
     return bucketIR.getAverageVoltage();
@@ -73,30 +62,6 @@ public boolean hasCoral() {
     integ = 0;
    }
    return integ >=5;
-}
-
-public Command runAgitatorWhenReading(double voltage) {
-    return runEnd(() -> {
-        if(getStuckIRreading() < DynamicConstants.IRThresholds.bucketIRthreshold){
-            agitator.set(TalonSRXControlMode.PercentOutput, voltage);
-        }
-        else{
-            new WaitCommand(2.0);
-            agitator.set(TalonSRXControlMode.PercentOutput, 0);
-        }
-    },
-    () -> {
-        agitator.set(TalonSRXControlMode.PercentOutput, 0);
-    });
-}
-
-public Command runCoralAgitator(double percentOut) {
-    return runEnd(() -> {
-        agitator.set(TalonSRXControlMode.PercentOutput, percentOut);
-    },
-    () -> {
-        agitator.set(TalonSRXControlMode.PercentOutput, 0);
-    });
 }
 
 

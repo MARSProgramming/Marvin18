@@ -51,7 +51,6 @@ public class CoralArm extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false; // TESTING ONLY
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false; // TESTING ONLY
 
-        // masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
         armConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         armConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         armConfig.Feedback.SensorToMechanismRatio = 48;
@@ -61,10 +60,10 @@ public class CoralArm extends SubsystemBase {
         armConfig.Voltage.PeakReverseVoltage = -16;
         armConfig.MotionMagic.MotionMagicCruiseVelocity = 0.3;
         armConfig.MotionMagic.MotionMagicAcceleration = 3;
-        armConfig.Slot0.kP = 90;
-        armConfig.Slot0.kI = 0.1;
+        armConfig.Slot0.kP = 120;
+        armConfig.Slot0.kI = 0.5;
         armConfig.Slot0.kD = 8;
-        armConfig.Slot0.kS = 0.05;
+        armConfig.Slot0.kS = 0;
         armConfig.Slot0.kG = 0.3;
         arm.getConfigurator().apply(armConfig);
         arm.setPosition(0);
@@ -83,12 +82,35 @@ public class CoralArm extends SubsystemBase {
     public Command setMotionMagicPositionDB(double position) {
         return runEnd(() -> {
             arm.setControl(motionMagicRequest.withPosition(position));
-        }, () -> {
-            arm.set(0);
-        });
+        }, () -> 
+            arm.set(0));
+        };
+    
+
+    public void setPosition(double position) {
+        arm.setControl(motionMagicRequest.withPosition(position));
     }
 
+    public void stopMotorHold() {
+        arm.setControl(motionMagicRequest.withPosition(arm.getPosition().getValueAsDouble()));
+    }
 
+    public void stopMotor() {
+        arm.set(0);
+    }
+
+    public void runVolt(double voltage) {
+        arm.setControl(voltageRequest.withOutput(voltage));
+    }
+
+    public boolean isSafe() {
+        if (arm.getPosition().getValueAsDouble() > Constants.ArmSetpointConfigs.ARM_SAFE_POSITION) {
+            return true;}
+        else if (arm.getPosition().getValueAsDouble() < Constants.ArmSetpointConfigs.ARM_DEADZONE_DIST) {
+            return true;}
+        else return false;
+
+    }
 
   public boolean isNear(double rotations) {
     boolean targetReached = false;
@@ -99,51 +121,6 @@ public class CoralArm extends SubsystemBase {
   }
 
 
-  /*  public boolean isNear(double position) {
-        if (arm.getPosition().getValueAsDouble() > (position - ArmSetpointConfigs.ARM_DEADZONE_DIST) && arm.getPosition().getValueAsDouble() < (position + ArmSetpointConfigs.ARM_DEADZONE_DIST)) {
-         return true;
-         } else {
-            return false;
-         }
-    }
- */
-    public Command setMotionMagicPositionSafe(double position, Elevator elevator) {
-        return runEnd(() -> {
-            if (elevator.getPositionNormal() > 6) {
-                arm.setControl(motionMagicRequest.withPosition(position));
-            } else
-                return;
-        }, () -> {
-            arm.set(0);
-        });
-    }
-
-    public Command setTest(double position, Elevator elevator) {
-        return new Command() {
-            @Override
-            public void execute() {
-                if (elevator.getPositionNormal() > 6) {
-                    arm.setControl(voltageRequest.withOutput(-.8));
-                } else
-                    return;
-
-            }
-
-            @Override
-            public void end(boolean interrupted) {
-                arm.set(0);
-            }
-
-            @Override
-            public boolean isFinished() {
-                if (arm.getPosition().getValueAsDouble() > (position - 0.01)
-                        && arm.getPosition().getValueAsDouble() < (position + 0.01)) {
-                    return true;
-                }
-                return false;
-            }
-        };
-    }
 
     public Command ArmPosVoltage(double position) {
         return runEnd(() -> {

@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.Second;
@@ -42,151 +43,127 @@ import frc.robot.constants.Constants.ArmSetpointConfigs;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 
 public class Elevator extends SubsystemBase {
-    private TalonFX master; // right SIDE MOTOR
-    private TalonFX follower; // left SIDE MOTOR
-    private double positionCoefficient = 1/12;
-    private final VoltageOut sysIdVoltage = new VoltageOut(0);
-    Time sysIdTimeout = Time.ofBaseUnits(5, Units.Second);
-   // Velocity<VoltageUnit> rampRate = Velocity.ofBaseUnits(1.0, VelocityUnit.combine(Units.Volt.getBaseUnit(), 1.0));
-     Velocity<VoltageUnit> rampRate = Velocity.ofBaseUnits(0.3, VelocityUnit.combine(Volt, Second));
+  private TalonFX master; // right SIDE MOTOR
+  private TalonFX follower; // left SIDE MOTOR
+  private double positionCoefficient = 1 / 12;
+  private final VoltageOut sysIdVoltage = new VoltageOut(0);
+  Time sysIdTimeout = Time.ofBaseUnits(5, Units.Second);
+  // Velocity<VoltageUnit> rampRate = Velocity.ofBaseUnits(1.0,
+  // VelocityUnit.combine(Units.Volt.getBaseUnit(), 1.0));
+  Velocity<VoltageUnit> rampRate = Velocity.ofBaseUnits(0.3, VelocityUnit.combine(Volt, Second));
 
-    private boolean softLimitEnabled;
-    private DigitalInput climbLimit;
-    private double mostRecentTarget; // in rotations, converted using position coefficient.
-    
+  private boolean softLimitEnabled;
+  private DigitalInput climbLimit;
+  private double mostRecentTarget; // in rotations, converted using position coefficient.
 
-    public boolean elevatorZeroInProgress = false;
-    public boolean elevatorZeroed = false;
-    public double deadzoneDist = 1.0 / Constants.ElevatorSetpointConfigs.INCHES_PER_ROTATION; // the deadzone distance, in adjusted motor rotations 
-    VoltageOut voltageRequest;
-    PositionVoltage positionVoltageRequest;
-    MotionMagicVoltage motionRequest;
+  public boolean elevatorZeroInProgress = false;
+  public boolean elevatorZeroed = false;
+  public double deadzoneDist = 1.0 / Constants.ElevatorSetpointConfigs.INCHES_PER_ROTATION; // the deadzone distance, in
+                                                                                            // adjusted motor rotations
+  VoltageOut voltageRequest;
+  PositionVoltage positionVoltageRequest;
+  MotionMagicVoltage motionRequest;
 
-    public Angle currentElevatorRightPos;
-    public Angle currentElevatorLeftPos;
-    public Distance elevatorRotationsInInchesMulti;
+  public Angle currentElevatorRightPos;
+  public Angle currentElevatorLeftPos;
+  public Distance elevatorRotationsInInchesMulti;
 
-    public Elevator() {
+  public Elevator() {
 
-        // Motors
-        follower = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_FOLLOWER, "CAN-2"); // left SIDE MOTOR
-        master = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_MASTER, "CAN-2"); // RIGHT SIDE MOTOR
-        climbLimit = new DigitalInput(Constants.DIO_IDS.CLIMB_LIMIT);
-        // Elevator Speed/Target Configs 
-        mostRecentTarget = 0; // configure units before testing - get in terms of encoder positions
-        voltageRequest = new VoltageOut(0);
-        motionRequest = new MotionMagicVoltage(0);
-        positionVoltageRequest = new PositionVoltage(0);
-        currentElevatorLeftPos = Rotations.of(0); // Follower
-        currentElevatorRightPos = Rotations.of(0); // Master
-        TalonFXConfiguration masterConfig = new TalonFXConfiguration();
+    // Motors
+    follower = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_FOLLOWER, "CAN-2"); // left SIDE MOTOR
+    master = new TalonFX(Constants.CAN_IDS.ELEVATOR.ELEVATOR_MASTER, "CAN-2"); // RIGHT SIDE MOTOR
+    climbLimit = new DigitalInput(Constants.DIO_IDS.CLIMB_LIMIT);
+    // Elevator Speed/Target Configs
+    mostRecentTarget = 0; // configure units before testing - get in terms of encoder positions
+    voltageRequest = new VoltageOut(0);
+    motionRequest = new MotionMagicVoltage(0);
+    positionVoltageRequest = new PositionVoltage(0);
+    currentElevatorLeftPos = Rotations.of(0); // Follower
+    currentElevatorRightPos = Rotations.of(0); // Master
+    TalonFXConfiguration masterConfig = new TalonFXConfiguration();
 
-        masterConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        masterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        masterConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.ElevatorSetpointConfigs.ELEVATOR_FORWARD_LIMIT;
-        masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.ElevatorSetpointConfigs.ELEVATOR_REVERSE_LIMIT;
-        masterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false; // TESTING ONLY
-        masterConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false; // TESTING ONLY
-      //  masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
-        masterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        masterConfig.CurrentLimits.SupplyCurrentLimit = 20;
-        masterConfig.CurrentLimits.StatorCurrentLimit =  60;
-        masterConfig.Feedback.SensorToMechanismRatio = 12;
-        masterConfig.Voltage.PeakForwardVoltage = 16;
-        masterConfig.Voltage.PeakReverseVoltage = -16;
+    masterConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    masterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    masterConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.ElevatorSetpointConfigs.ELEVATOR_FORWARD_LIMIT;
+    masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.ElevatorSetpointConfigs.ELEVATOR_REVERSE_LIMIT;
+    masterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false; // TESTING ONLY
+    masterConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false; // TESTING ONLY
+    // masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
+    masterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    masterConfig.CurrentLimits.SupplyCurrentLimit = 20;
+    masterConfig.CurrentLimits.StatorCurrentLimit = 60;
+    masterConfig.Feedback.SensorToMechanismRatio = 12;
+    masterConfig.Voltage.PeakForwardVoltage = 16;
+    masterConfig.Voltage.PeakReverseVoltage = -16;
 
-        masterConfig.Slot0.kP = 12;
-        masterConfig.Slot0.kI = 4;
-        masterConfig.Slot0.kD = 2;
-        masterConfig.Slot0.kG = 0.3;
-        masterConfig.Slot0.kS = 0.1;
-        masterConfig.MotionMagic.MotionMagicCruiseVelocity = 1.5;
-        masterConfig.MotionMagic.MotionMagicAcceleration = 15;
+    masterConfig.Slot0.kP = 12;
+    masterConfig.Slot0.kI = 4;
+    masterConfig.Slot0.kD = 2;
+    masterConfig.Slot0.kG = 0.3;
+    masterConfig.Slot0.kS = 0.1;
+    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 1.5;
+    masterConfig.MotionMagic.MotionMagicAcceleration = 15;
 
-        masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-        master.getConfigurator().apply(masterConfig);
-        follower.getConfigurator().apply(masterConfig);
-       // master.getConfigurator().apply(new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
-        follower.setControl(new Follower(master.getDeviceID(), true));
-      //  leftLimit = new DigitalInput(0);
-      //rightLimit = new DigitalInput(0);
-        
-        master.setPosition(0.0); // resets elevator encoders to 0
-        follower.setPosition(0.0);
+    masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+    master.getConfigurator().apply(masterConfig);
+    follower.getConfigurator().apply(masterConfig);
+    // master.getConfigurator().apply(new
+    // MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive));
+    follower.setControl(new Follower(master.getDeviceID(), true));
+    // leftLimit = new DigitalInput(0);
+    // rightLimit = new DigitalInput(0);
 
-    }
+    master.setPosition(0.0); // resets elevator encoders to 0
+    follower.setPosition(0.0);
 
-
-    public Command setMotionMagicPosition(DoubleSupplier rotations) {
-      return runEnd(() -> {
-        master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
-      }, () -> {
-        master.set(0);
-      }).until(
-         () -> isNear(rotations.getAsDouble())
-      );
-    }
-
-    public void setMotionMagic(DoubleSupplier rotations) {
-      master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
-    }
-
-    public Command setMotionMagicPositionDB(double rotations) {
-      return runEnd(() -> {
-        master.setControl(motionRequest.withPosition(rotations));
-      }, () -> {
-        master.set(0);
-      });
-    }
-
-    public Command SafeHopperReturn(CoralArm coralArm) {
-      return runEnd(() -> {
-        if(coralArm.getPosition() < 0.03)
-        master.setControl(motionRequest.withPosition(0));
-        else master.setControl(motionRequest.withPosition(Constants.ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION));
-      }, () -> {
-        master.set(0);
-      });
-    }
-
-    public Command ElevatorSetpoint(double rotations) {
-      return runEnd(
-        () -> 
-        master.setControl(motionRequest.withPosition(rotations)),
-      () -> master.set(0));
-    }
-
-    public Command MoveElevatorOnTrue(double rotations, Elevator elevator) {
-      return new Command() {
-          @Override
-          public void execute() {
-              master.setControl(motionRequest.withPosition(rotations));
-          }
-
-          @Override
-          public void end(boolean interrupted) {
-              master.set(0);
-          }
-
-          @Override
-          public boolean isFinished() {
-              if (elevator.getPositionNormal() > (rotations - 0.1)
-                      && elevator.getPositionNormal() < (rotations + 0.1)) {
-                  return true;
-              }
-              return false;
-          }
-      };
   }
 
+  public Command setMotionMagicPosition(DoubleSupplier rotations) {
+    return runEnd(() -> {
+      master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
+    }, () -> {
+      master.set(0);
+    }).until(
+        () -> isNear(rotations.getAsDouble()));
+  }
 
+  public void setMotionMagic(DoubleSupplier rotations) {
+    master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
+  }
 
-    public double getLastDesiredPosition() {
-      return mostRecentTarget;
-    }
+  public void setRotations(Double rotations) {
+    master.setControl(motionRequest.withPosition(rotations));
+  }
 
-    public double getAdjustedRotations() {
+  public void stopMotorHold() {
+    master.setControl(motionRequest.withPosition(master.getPosition().getValueAsDouble()));
+  }
+
+  public void stopMotor() {
+    master.set(0);
+  }
+
+  public Command setMotionMagicPositionDB(double rotations) {
+    return runEnd(() -> {
+      master.setControl(motionRequest.withPosition(rotations));
+    }, () -> {
+      master.set(0);
+    });
+  }
+
+  public Command ElevatorSetpoint(double rotations) {
+    return runEnd(
+        () -> master.setControl(motionRequest.withPosition(rotations)),
+        () -> master.set(0));
+  }
+
+  public double getLastDesiredPosition() {
+    return mostRecentTarget;
+  }
+
+  public double getAdjustedRotations() {
     return master.getPosition().getValueAsDouble() * positionCoefficient;
   }
 
@@ -203,12 +180,11 @@ public class Elevator extends SubsystemBase {
     double offset = getAdjustedRotations() - getLastDesiredPosition();
     if (offset > 0) {
       return ((offset - deadzoneDist) > 0);
-      }
+    }
 
     if (offset < 0) {
       return ((offset + deadzoneDist) > 0);
-    }
-    else {
+    } else {
       return false;
     }
   }
@@ -216,12 +192,17 @@ public class Elevator extends SubsystemBase {
   public boolean isNear(double rotations) {
     boolean targetReached = false;
     if (Math.abs(getPositionNormal() - rotations) < ElevatorSetpointConfigs.ELEVATOR_DEADZONE_DIST) {
-        targetReached = true;
-    } 
+      targetReached = true;
+    }
     return targetReached;
   }
 
-
+  public boolean isSafe() {
+    if (master.getPosition().getValueAsDouble() > Constants.ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION) {
+      return true;
+    } else
+      return false;
+  }
 
   public AngularVelocity getSpinVelocity() {
     return master.getRotorVelocity().getValue();
@@ -245,55 +226,46 @@ public class Elevator extends SubsystemBase {
   }
 
   public Command runVoltage(double voltage) {
-        return runEnd(() -> {
-            master.setControl(voltageRequest.withOutput(voltage));
-        }, () -> {
-            master.set(0);
-        });
-    }
-
-    public Command runVoltageSafe(double voltage, CoralArm coralArm) {
-      return runEnd(() -> {
-        if(coralArm.getPosition() < 0.03)
-          master.setControl(voltageRequest.withOutput(voltage));
-      }, () -> {
-          master.set(0);
-      });
+    return runEnd(() -> {
+      master.setControl(voltageRequest.withOutput(voltage));
+    }, () -> {
+      master.set(0);
+    });
   }
 
-    public Command runVoltageRequest(double voltage) {
-      return runEnd(() -> {
-          master.setControl(voltageRequest.withOutput(0));
-      }, () -> {
-        master.set(0);
-      });
+  public Command runVoltageRequest(double voltage) {
+    return runEnd(() -> {
+      master.setControl(voltageRequest.withOutput(0));
+    }, () -> {
+      master.set(0);
+    });
   }
 
-    public Command resetPositions(double position) {
-      return runEnd(() -> {
-          master.setControl(new DutyCycleOut(0));
-          master.setPosition(position);
-      }, () -> 
-      master.setPosition(position));
+  public Command resetPositions(double position) {
+    return runEnd(() -> {
+      master.setControl(new DutyCycleOut(0));
+      master.setPosition(position);
+    }, () -> master.setPosition(position));
   }
-/*    public Command zeroElevatorWithLimit() {
-        return runEnd(() -> {
-          setMotionMagicPosition(() -> 0.0);
-        }, () -> {
-          if (leftLimitSwitch.get() || rightLimitSwitch.get()) {
-            master.set(0);
-          }
-        }).until(() -> leftLimitSwitch.get() || rightLimitSwitch.get());
-    }
- */
+  /*
+   * public Command zeroElevatorWithLimit() {
+   * return runEnd(() -> {
+   * setMotionMagicPosition(() -> 0.0);
+   * }, () -> {
+   * if (leftLimitSwitch.get() || rightLimitSwitch.get()) {
+   * master.set(0);
+   * }
+   * }).until(() -> leftLimitSwitch.get() || rightLimitSwitch.get());
+   * }
+   */
 
-    public boolean isPosNearZero() {
-      if (Math.abs(getAdjustedRotations()) < Constants.ElevatorSetpointConfigs.ELEVATOR_ROTATIONS_DEADZONE) {
-        return true;
-      } else {
-        return false;
-      }
+  public boolean isPosNearZero() {
+    if (Math.abs(getAdjustedRotations()) < Constants.ElevatorSetpointConfigs.ELEVATOR_ROTATIONS_DEADZONE) {
+      return true;
+    } else {
+      return false;
     }
+  }
 
   public void setSoftwareLimits(boolean reverseLimitEnable, boolean forwardLimitEnable) {
     TalonFXConfiguration masterConfig = new TalonFXConfiguration();
@@ -308,31 +280,25 @@ public class Elevator extends SubsystemBase {
     follower.setPosition(setpoint.in(Inches));
   }
 
-  
-private final SysIdRoutine m_sysIdRoutine =
-   new SysIdRoutine(
+  private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
       new SysIdRoutine.Config(
-         rampRate,        // Use default ramp rate (1 V/s)
-         Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
-         sysIdTimeout,        // Use default timeout (10 s)
-                      // Log state with Phoenix SignalLogger class
-         (state) -> SignalLogger.writeString("elevatorState", state.toString())
-      ),
+          rampRate, // Use default ramp rate (1 V/s)
+          Volts.of(1), // Reduce dynamic step voltage to 4 to prevent brownout
+          sysIdTimeout, // Use default timeout (10 s)
+          // Log state with Phoenix SignalLogger class
+          (state) -> SignalLogger.writeString("elevatorState", state.toString())),
       new SysIdRoutine.Mechanism(
-         (volts) -> master.setControl(sysIdVoltage.withOutput(volts.in(Volts))),
-         null,
-         this
-      )
-   );
+          (volts) -> master.setControl(sysIdVoltage.withOutput(volts.in(Volts))),
+          null,
+          this));
 
-   public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
-   return m_sysIdRoutine.quasistatic(direction);
-   }
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.quasistatic(direction);
+  }
 
-   public Command sysIdDynamic(SysIdRoutine.Direction direction) {
-   return m_sysIdRoutine.dynamic(direction);
-   }
-  
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return m_sysIdRoutine.dynamic(direction);
+  }
 
   @Override
   public void periodic() {
@@ -340,18 +306,20 @@ private final SysIdRoutine m_sysIdRoutine =
     currentElevatorLeftPos = Units.Rotations.of(follower.getPosition().getValueAsDouble());
     currentElevatorRightPos = Units.Rotations.of(master.getPosition().getValueAsDouble());
 
-    // assume follower just maintains master values. follower returns position as negative because it is inverted
+    // assume follower just maintains master values. follower returns position as
+    // negative because it is inverted
 
     SmartDashboard.putNumber("Elevator/CLO", master.getClosedLoopOutput().getValueAsDouble());
     SmartDashboard.putNumber("Elevator/Output", master.get());
     SmartDashboard.putNumber("Elevator/Inverted", master.getAppliedRotorPolarity().getValueAsDouble());
     SmartDashboard.putNumber("Elevator/Current", master.getSupplyCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Elevator/AdjustedPosition", master.getPosition().getValueAsDouble() * positionCoefficient);
+    SmartDashboard.putNumber("Elevator/AdjustedPosition",
+        master.getPosition().getValueAsDouble() * positionCoefficient);
     SmartDashboard.putNumber("Elevator/TruePosition", master.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Elevator/LimitDIO", getLimit());
 
     if (getLimit() && (getPositionNormal() != 0)) {
-      master.setPosition(0);  
+      master.setPosition(0);
     }
   }
 }

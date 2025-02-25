@@ -22,16 +22,17 @@ public final class Constants {
         public static final double INCHES_PER_ROTATION = 3; // in testing the chassis moves 3 inches per full rotation.
         public static final double ELEVATOR_FORWARD_LIMIT = 97; // for master.
         public static final double ELEVATOR_REVERSE_LIMIT = 0; // for master.
-        public static final double ELEVATOR_ROTATIONS_DEADZONE = 0.5;
-        public static final double ELEVATOR_SAFE_POSITION = 6;
+        public static final double ELEVATOR_ROTATIONS_DEADZONE = 0.1;
+        public static final double ELEVATOR_SAFE_POSITION = 5.5;
+        public static final double ELEVATOR_SCORE_POSITION = 6;
 
         // write setpoints, in adjusted rotations, here.
-        public static final double ELEVATOR_L4_SETPOINT = 8;
+        public static final double ELEVATOR_L4_SETPOINT = 7.50;
         public static final double ELEVATOR_L3_SETPOINT = 4.08;
         public static final double ELEVATOR_L2_SETPOINT = 1.68;
         public static final double ELEVATOR_L1_SETPOINT = 0;
         public static final double ELEVATOR_ARM_CLEAR_SETPOINT = 0;
-        public static final double ELEVATOR_ALGAE_TOP_SETPOINT = 7.55;
+        public static final double ELEVATOR_ALGAE_TOP_SETPOINT = 7.50;
         public static final double ELEVATOR_ALGAE_BOT_SETPOINT = 5.52;
         public static final double ELEVATOR_ALGAE_TEE_SETPOINT = 2.81;
         public static final double ELEVATOR_ALGAE_GROUND_SETPOINT = 0.73;
@@ -47,6 +48,8 @@ public final class Constants {
         public static final double L2_SCORING_POS = 0.3; // fixed
         public static final double L1_SCORING_POS = 0; // fix
         public static final double ARM_DEADZONE_DIST = 0.005;
+        public static final double ARM_SAFE_POSITION = 0.17;
+        public static final double ARM_SCORE_POSITION = 0.2;
 
     }   
 
