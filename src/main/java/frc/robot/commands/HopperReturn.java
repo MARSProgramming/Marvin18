@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import frc.robot.subsystems.CoralArm;
 import frc.robot.subsystems.Elevator;
-import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ArmSetpointConfigs;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 
@@ -37,13 +36,13 @@ public class HopperReturn extends Command {
       m_CoralArm.runVolt(-1.0);
     }
     else if (m_Elevator.isSafe()) {
-      m_Elevator.setRotations(Constants.ElevatorSetpointConfigs.ELEVATOR_SCORE_POSITION);
+      m_Elevator.setRotations(ElevatorSetpointConfigs.ELEVATOR_SCORE_POSITION);
       m_CoralArm.setPosition(0.0);
     }
     else {
-      m_Elevator.setRotations(Constants.ElevatorSetpointConfigs.ELEVATOR_SCORE_POSITION);
-      if (m_CoralArm.getPosition() > Constants.ArmSetpointConfigs.ARM_SCORE_POSITION) {
-       m_CoralArm.setPosition(Constants.ArmSetpointConfigs.ARM_SCORE_POSITION);}
+      m_Elevator.setRotations(ElevatorSetpointConfigs.ELEVATOR_SCORE_POSITION);
+      if (m_CoralArm.getPosition() > ArmSetpointConfigs.ARM_SCORE_POSITION) {
+       m_CoralArm.setPosition(ArmSetpointConfigs.ARM_SCORE_POSITION);}
     }
   }
 
