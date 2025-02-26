@@ -119,15 +119,7 @@ public class Elevator extends SubsystemBase {
 
   }
 
-  public Command setMotionMagicPosition(DoubleSupplier rotations) {
-    return runEnd(() -> {
-      master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
-    }, () -> {
-      master.set(0);
-    }).until(
-        () -> isNear(rotations.getAsDouble()));
-  }
-
+  /// Methods to Move motor
   public void setMotionMagic(DoubleSupplier rotations) {
     master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
   }
@@ -136,26 +128,17 @@ public class Elevator extends SubsystemBase {
     master.setControl(motionRequest.withPosition(rotations));
   }
 
+  public void advanceRotations(double rotations) {
+    master.setControl(motionRequest.withPosition(getPositionNormal() + rotations));
+  }
+
+  /// Methods to Stop motor
   public void stopMotorHold() {
     master.setControl(motionRequest.withPosition(master.getPosition().getValueAsDouble()));
   }
 
   public void stopMotor() {
     master.set(0);
-  }
-
-  public Command setMotionMagicPositionDB(double rotations) {
-    return runEnd(() -> {
-      master.setControl(motionRequest.withPosition(rotations));
-    }, () -> {
-      master.set(0);
-    });
-  }
-
-  public Command ElevatorSetpoint(double rotations) {
-    return runEnd(
-        () -> master.setControl(motionRequest.withPosition(rotations)),
-        () -> master.set(0));
   }
 
   public double getLastDesiredPosition() {
@@ -169,7 +152,6 @@ public class Elevator extends SubsystemBase {
   public double getPositionNormal() {
     return master.getPosition().getValueAsDouble();
   }
-
 
   public boolean getLimit() {
     return !climbLimit.get();
@@ -207,14 +189,6 @@ public class Elevator extends SubsystemBase {
     return master.getRotorVelocity().getValue();
   }
 
-  public Command elevatorPositionVoltage(double position) {
-    return runEnd(() -> {
-      master.setControl(positionVoltageRequest.withPosition(0));
-    }, () -> {
-      master.set(0);
-    });
-  }
-
   public boolean isStopped() {
     return getSpinVelocity().isNear(Units.RotationsPerSecond.zero(), 0.01);
   }
@@ -222,6 +196,63 @@ public class Elevator extends SubsystemBase {
   public void setNeutral() {
     master.setControl(new NeutralOut());
     follower.setControl(new NeutralOut());
+  }
+
+  public boolean isPosNearZero() {
+    if (Math.abs(getAdjustedRotations()) < Constants.ElevatorSetpointConfigs.ELEVATOR_ROTATIONS_DEADZONE) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public void setSoftwareLimits(boolean reverseLimitEnable, boolean forwardLimitEnable) {
+    TalonFXConfiguration masterConfig = new TalonFXConfiguration();
+    masterConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    masterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    master.getConfigurator().apply(masterConfig);
+    follower.getConfigurator().apply(masterConfig);
+  }
+
+  public void resetSensorPosition(Distance setpoint) {
+    master.setPosition(setpoint.in(Inches));
+    follower.setPosition(setpoint.in(Inches));
+  }
+
+  public Command ElevatorSetpoint(double rotations) {
+    return runEnd(
+        () -> master.setControl(motionRequest.withPosition(rotations)),
+        () -> master.set(0));
+  }
+
+  public Command advanceRotationsCommand(double rotations) {
+    return runOnce(
+        () -> advanceRotations(rotations));
+  }
+
+  public Command setMotionMagicPosition(DoubleSupplier rotations) {
+    return runEnd(() -> {
+      master.setControl(motionRequest.withPosition(rotations.getAsDouble()));
+    }, () -> {
+      master.set(0);
+    }).until(
+        () -> isNear(rotations.getAsDouble()));
+  }
+
+  public Command setMotionMagicPositionDB(double rotations) {
+    return runEnd(() -> {
+      master.setControl(motionRequest.withPosition(rotations));
+    }, () -> {
+      master.set(0);
+    });
+  }
+
+  public Command elevatorPositionVoltage(double position) {
+    return runEnd(() -> {
+      master.setControl(positionVoltageRequest.withPosition(0));
+    }, () -> {
+      master.set(0);
+    });
   }
 
   public Command runVoltage(double voltage) {
@@ -257,27 +288,6 @@ public class Elevator extends SubsystemBase {
    * }).until(() -> leftLimitSwitch.get() || rightLimitSwitch.get());
    * }
    */
-
-  public boolean isPosNearZero() {
-    if (Math.abs(getAdjustedRotations()) < Constants.ElevatorSetpointConfigs.ELEVATOR_ROTATIONS_DEADZONE) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  public void setSoftwareLimits(boolean reverseLimitEnable, boolean forwardLimitEnable) {
-    TalonFXConfiguration masterConfig = new TalonFXConfiguration();
-    masterConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    masterConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-    master.getConfigurator().apply(masterConfig);
-    follower.getConfigurator().apply(masterConfig);
-  }
-
-  public void resetSensorPosition(Distance setpoint) {
-    master.setPosition(setpoint.in(Inches));
-    follower.setPosition(setpoint.in(Inches));
-  }
 
   private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(
       new SysIdRoutine.Config(

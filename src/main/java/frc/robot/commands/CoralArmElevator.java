@@ -3,14 +3,12 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
-
+//Import Command Class
 import edu.wpi.first.wpilibj2.command.Command;
-
-import edu.wpi.first.wpilibj2.command.Subsystem;
+// Import Subsystems
 import frc.robot.subsystems.CoralArm;
 import frc.robot.subsystems.Elevator;
-import frc.robot.constants.Constants;
-import frc.robot.constants.Constants.ArmSetpointConfigs;
+// Import Constants
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
@@ -36,16 +34,14 @@ public class CoralArmElevator extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_CoralArm.isSafe()) {
+    if (m_CoralArm.isForward()) {
       m_Elevator.setRotations(m_elevatorsetpoint);
     }
     else {
-      m_Elevator.setRotations(Constants.ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION + 0.1);
+      m_Elevator.setRotations(ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION + 0.1);
     }
     if (m_Elevator.isSafe()) {
       m_CoralArm.setPosition(m_armsetpoint);
-    }
-    else {
     }
   }
 
@@ -56,13 +52,13 @@ public class CoralArmElevator extends Command {
       m_Elevator.setRotations(m_elevatorsetpoint);
     }
     else {
-      m_Elevator.stopmotorhold();
+      m_Elevator.stopMotorHold();
     }
     if (m_CoralArm.isNear(m_armsetpoint)) {
       m_CoralArm.setPosition(m_armsetpoint);
     }
     else {
-      m_CoralArm.stopmotorhold();
+      m_CoralArm.stopMotorHold();
     }
   }
 
