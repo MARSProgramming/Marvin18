@@ -39,7 +39,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
-import frc.robot.constants.Constants.ArmSetpointConfigs;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 
 public class Elevator extends SubsystemBase {

@@ -38,7 +38,7 @@ import frc.robot.auto.PathfindToPose;
 import frc.robot.commands.ArmElevatorGroup;
 import frc.robot.commands.HopperReturn;
 import frc.robot.commands.elevator.ElevatorSetpoint;
-import frc.robot.commands.elevator.SafeElevator;
+import frc.robot.commands.CoralArmElevator;
 import frc.robot.commands.arm.SafeArm;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
@@ -143,9 +143,9 @@ public class RobotContainer {
         //Face Button Controls Height selection
 
 
-        Copilot.y().whileTrue(new SafeArm(m_elevator, m_coralArm, Constants.ArmSetpointConfigs.L4_SCORING_POS).alongWith(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_L4_SETPOINT)));
-        Copilot.x().whileTrue(new SafeArm(m_elevator, m_coralArm, Constants.ArmSetpointConfigs.ARM_SCORE_POSITION).alongWith(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_SCORE_POSITION)).andThen((new SafeArm(m_elevator, m_coralArm, Constants.ArmSetpointConfigs.L3_SCORING_POS).alongWith(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_L3_SETPOINT))))); // Save for TBD.
-        Copilot.b().whileTrue(new SafeArm(m_elevator, m_coralArm, Constants.ArmSetpointConfigs.ARM_SCORE_POSITION).alongWith(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_SCORE_POSITION)).andThen((new SafeArm(m_elevator, m_coralArm, Constants.ArmSetpointConfigs.L2_SCORING_POS).alongWith(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_L2_SETPOINT))))); // Save for TBD.
+        Copilot.y().whileTrue();
+        Copilot.x().whileTrue();
+        Copilot.b().whileTrue();
         Copilot.a().whileTrue(new HopperReturn(m_elevator, m_coralArm));
         Copilot.y().and(Copilot.rightBumper()).whileTrue(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_ALGAE_TOP_SETPOINT));
         Copilot.b().and(Copilot.rightBumper()).whileTrue(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_ALGAE_GROUND_SETPOINT));

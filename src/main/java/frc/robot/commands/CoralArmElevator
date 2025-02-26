@@ -1,0 +1,76 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.commands;
+
+import edu.wpi.first.wpilibj2.command.Command;
+
+import com.ctre.phoenix6.signals.MotionMagicIsRunningValue;
+
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.CoralArm;
+import frc.robot.subsystems.Elevator;
+import frc.robot.commands.arm.SafeArm;
+import frc.robot.commands.elevator.SafeElevator;
+import frc.robot.constants.Constants;
+import frc.robot.constants.Constants.ArmSetpointConfigs;
+import frc.robot.constants.Constants.ElevatorSetpointConfigs;
+
+/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+public class CoralArmElevator extends Command {
+    Elevator m_Elevator;
+    CoralArm m_CoralArm;
+  /** Creates a new ArmReturn. */
+  public CoralArmElevator(Elevator elevator, CoralArm coralArm, double elevatorSetpoint, double armSetpoint) {
+    m_Elevator = elevator;
+    m_CoralArm = coralArm;
+    m_armsetpoint = armSetpoint;
+    m_elevatorsetpoint = elevatorSetpoint;
+    addRequirements(m_Elevator, m_CoralArm);
+    // Use addRequirements() here to declare subsystem dependencies.
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {}
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    if (m_CoralArm.isSafe()) {
+      m_Elevator.setRotations(m_elevatorsetpoint);
+    }
+    else {
+      m_Elevator.setRotations(Constants.ElevatorSetpointConfigs.ELEVATOR_SAFE_POSITION + 0.1);
+    }
+    if (m_Elevator.isSafe()) {
+      m_CoralArm.setPosition(m_armsetpoint);
+    }
+    else {
+    }
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    if (m_Elevator.isNear(m_elevatorsetpoint)) {
+      m_Elevator.setRotations(m_elevatorsetpoint);
+    }
+    else {
+      m_Elevator.stopmotorhold();
+    }
+    if (m_CoralArm.isNear(m_armsetpoint)) {
+      m_CoralArm.setPosition(m_armsetpoint);
+    }
+    else {
+      m_CoralArm.stopmotorhold();
+    }
+  }
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+   return m_Elevator.isNear(m_elevatorsetpoint) && m_CoralArm.isNear(m_armsetpoint);
+  }
+}
