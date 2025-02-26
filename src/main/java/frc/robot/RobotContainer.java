@@ -143,9 +143,9 @@ public class RobotContainer {
         //Face Button Controls Height selection
 
 
-        Copilot.y().whileTrue();
-        Copilot.x().whileTrue();
-        Copilot.b().whileTrue();
+        Copilot.y().whileTrue(new CoralArmElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.LEVEL_4_SETPOINT, Constants.CoralArmSetpointConfigs.CORAL_ARM_LEVEL_4_SETPOINT));
+        Copilot.b().whileTrue(new CoralArmElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.LEVEL_3_SETPOINT, Constants.CoralArmSetpointConfigs.CORAL_ARM_LEVEL_3_SETPOINT));
+        Copilot.x().whileTrue(new CoralArmElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.LEVEL_2_SETPOINT, Constants.CoralArmSetpointConfigs.CORAL_ARM_LEVEL_2_SETPOINT));
         Copilot.a().whileTrue(new HopperReturn(m_elevator, m_coralArm));
         Copilot.y().and(Copilot.rightBumper()).whileTrue(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_ALGAE_TOP_SETPOINT));
         Copilot.b().and(Copilot.rightBumper()).whileTrue(new SafeElevator(m_elevator, m_coralArm, Constants.ElevatorSetpointConfigs.ELEVATOR_ALGAE_GROUND_SETPOINT));

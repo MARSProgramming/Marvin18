@@ -6,13 +6,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
-import com.ctre.phoenix6.signals.MotionMagicIsRunningValue;
-
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.CoralArm;
 import frc.robot.subsystems.Elevator;
-import frc.robot.commands.arm.SafeArm;
-import frc.robot.commands.elevator.SafeElevator;
 import frc.robot.constants.Constants;
 import frc.robot.constants.Constants.ArmSetpointConfigs;
 import frc.robot.constants.Constants.ElevatorSetpointConfigs;
@@ -21,6 +17,8 @@ import frc.robot.constants.Constants.ElevatorSetpointConfigs;
 public class CoralArmElevator extends Command {
     Elevator m_Elevator;
     CoralArm m_CoralArm;
+    double m_armsetpoint;
+    double m_elevatorsetpoint;
   /** Creates a new ArmReturn. */
   public CoralArmElevator(Elevator elevator, CoralArm coralArm, double elevatorSetpoint, double armSetpoint) {
     m_Elevator = elevator;
