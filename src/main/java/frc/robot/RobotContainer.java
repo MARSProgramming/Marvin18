@@ -91,14 +91,14 @@ public class RobotContainer {
     NamedCommands.registerCommand("Nearest Tag Align Left",
         new DriveCoralScorePose(drivetrain,
             new Transform2d(DynamicConstants.AlignTransforms.LeftXL4, DynamicConstants.AlignTransforms.LeftYL4,
-                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot)), 2));
+                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot)), 3));
     NamedCommands.registerCommand("Nearest Tag Align Center",
         new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX,
-            DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 0.5));
+            DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 1));
     NamedCommands.registerCommand("Nearest Tag Align Right",
         new DriveCoralScorePose(drivetrain,
             new Transform2d(DynamicConstants.AlignTransforms.RightXL4, DynamicConstants.AlignTransforms.RightYL4,
-                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot)), 2));
+                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot)), 3));
 
     NamedCommands.registerCommand("Feeder Align", new AligntoFeeder(drivetrain, m_coral, 5));
     NamedCommands.registerCommand("Elevator Setpoint L1",
