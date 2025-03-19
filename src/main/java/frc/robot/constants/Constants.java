@@ -140,7 +140,7 @@ public final class Constants {
         public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.2);
 
         public static final Time kEndTriggerDebounce = Seconds.of(0.02);
-        public static final PathConstraints kPathConstraints = new PathConstraints(2.00, 1.0, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
+        public static final PathConstraints kPathConstraints = new PathConstraints(5.50, 5, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
         public static final PathConstraints kSlowPathConstraints = new PathConstraints(0.3, 0.1, 1/5 * Math.PI, 0.2 * Math.PI); // The constraints for this path.
         public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
 

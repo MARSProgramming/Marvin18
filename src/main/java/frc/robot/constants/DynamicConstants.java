@@ -26,11 +26,11 @@ public final class DynamicConstants {
 
     public static class ElevatorSetpoints {
         public static double elevL4 = 8.48;
-        public static double elevL3 = 4.45;
+        public static double elevL3 = 4.5;
         public static double elevL2 = 2.02;
         public static double elevL1 = 0;
         public static double elevAlgaeTop = 7.72;
-        public static double elevAlgaeBot = 5.25;
+        public static double elevAlgaeBot = 5.45;
         public static double elevAlgaeTee = 2.2;
         public static double elevAlgaeGround = 1;
         public static double elevClimb = 0;
