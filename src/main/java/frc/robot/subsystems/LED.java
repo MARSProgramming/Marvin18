@@ -52,9 +52,18 @@ public class LED extends SubsystemBase {
         return runOnce(() -> {
           //  LEDSegment.BatteryIndicator.fullClear();
 
-          candle.setLEDs(255, 0, 0, 0, 0, 100        );
+          candle.setLEDs(255, 0, 0, 0, 0, 100);
         });
     }
+
+    public Command greenIt() {
+        return runOnce(() -> {
+          //  LEDSegment.BatteryIndicator.fullClear();
+
+          candle.setLEDs(0, 255, 0, 0, 0, 100);
+        });
+    }
+
 
     public Command clearSegmentCommand(LEDSegment segment) {
         return runOnce(() -> {
