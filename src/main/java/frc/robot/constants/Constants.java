@@ -1,5 +1,6 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.Centimeter;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
@@ -115,31 +116,23 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
-                3.0,
+                5.0,
                 0,
                 0);
         public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
-                3.0,
+                5.0,
                 0,
                 0);
 
-        public static final PIDConstants ALIGN_DRIVE_PID = new PIDConstants(
-                    2.8,
-                    0,
-                    0);
-        public static final PIDConstants ALIGN_STEER_PID = new PIDConstants(
-                    2.8,
-                    0,
-                    0);
         public static final PPHolonomicDriveController kDriveController = new PPHolonomicDriveController(
                 AUTO_DRIVE_PID,
                 AUTO_STEER_PID);
 
-        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(1);
-        public static final Distance kPositionTolerance = Inches.of(0.3);
-        public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.2);
+        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(3);
+        public static final Distance kPositionTolerance = Centimeter.of(1.5);
+        public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(2);
 
-        public static final Time kEndTriggerDebounce = Seconds.of(0.02);
+        public static final Time kEndTriggerDebounce = Seconds.of(0.04);
         public static final PathConstraints kPathConstraints = new PathConstraints(5.50, 5, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
         public static final PathConstraints kSlowPathConstraints = new PathConstraints(0.3, 0.1, 1/5 * Math.PI, 0.2 * Math.PI); // The constraints for this path.
         public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);

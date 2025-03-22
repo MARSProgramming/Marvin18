@@ -18,6 +18,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
@@ -60,6 +61,8 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final SwerveRequest.FieldCentricFacingAngle angle = new SwerveRequest.FieldCentricFacingAngle();
+
+  private final SwerveRequest.ApplyRobotSpeeds doNothing = new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds());
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -170,14 +173,16 @@ public class RobotContainer {
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral, 10));
-    Pilot.y().whileTrue(new DriveCoralScorePose(
-        drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
-            Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));
+    //Pilot.y().whileTrue(new DriveCoralScorePose(
+    //    drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
+     //       Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));
+
+    Pilot.y().whileTrue(drivetrain.applyRequest(() -> doNothing));
     // Alternative bindings
     // Pilot.x().whileTrue(poseSelector);
     // Pilot.b().onTrue(m_elevator.goToSelectedPointCommand());
 
-    Pilot.x().whileTrue(leftSideSelector);
+    Pilot.x().onTrue(leftSideSelector);
     Pilot.b().whileTrue(rightSideSelector);
 
     /// Copilot
