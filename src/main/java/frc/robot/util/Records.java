@@ -22,4 +22,10 @@ public class Records {
          * Represents a timestamped pose.
          */
     }
+
+    public static final record TimestampedState(SwerveDriveState reportedState, double reportedTimestamp) {
+        /*
+         * Represents a timestamped pose.
+         */
+    }
 }
