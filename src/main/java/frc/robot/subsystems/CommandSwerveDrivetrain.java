@@ -58,7 +58,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     public int selectedSide = 1;
-    private Optional<EstimatedRobotPose> alignPose;
 
     private SwerveDrivePoseEstimator localizedPoseEstimator;
 
@@ -423,14 +422,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         ChassisSpeeds fieldVelocity = getFieldRelativeSpeeds();
         return Math.sqrt(fieldVelocity.vxMetersPerSecond * fieldVelocity.vxMetersPerSecond
                 + fieldVelocity.vyMetersPerSecond * fieldVelocity.vyMetersPerSecond);
-    }
-
-    public void setLatestTrigPose(Optional<EstimatedRobotPose> poseToGet) {
-        alignPose = poseToGet;
-    }
-
-    public Optional<EstimatedRobotPose> getLatestTrigPose() {
-        return alignPose;
     }
 
     public void updateLocalizedEstimator(VisionMeasurement measure) {

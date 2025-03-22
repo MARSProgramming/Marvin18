@@ -52,7 +52,7 @@ public class IntegratedVision extends SubsystemBase {
         
         constrainedPnpParams = Optional.of(new ConstrainedSolvepnpParams(true, 0.0));
 
-        driver = dt;
+        dt = driver;
         // photonvision turbo unlocker
 
         NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
@@ -244,11 +244,9 @@ public class IntegratedVision extends SubsystemBase {
     public void periodic() {
 
         TimestampedState stateAtLoopIteration = new TimestampedState(dt.getState(), Timer.getFPGATimestamp());
-        TimestampedPose poseAtLoopIteration = new TimestampedPose(dt.getState().Pose, Timer.getFPGATimestamp());
-
         List<VisionMeasurement> currentMeasurements = refresh(stateAtLoopIteration);
 
-        addTrigSolveReference(new TimestampedPose(poseAtLoopIteration.reportedPose(), poseAtLoopIteration.reportedTimestamp()));
+        addTrigSolveReference(new TimestampedPose(stateAtLoopIteration.reportedState().Pose, stateAtLoopIteration.reportedTimestamp()));
 
         dt.updateLocalizedEstimator(currentMeasurements.get(0));
         dt.updateGlobalEstimator(currentMeasurements.get(1));

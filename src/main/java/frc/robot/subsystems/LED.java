@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.MoreMath;
 
 public class LED extends SubsystemBase {
-    private static final CANdle candle = new CANdle(30);
+    private static final CANdle candle = new CANdle(40);
 
     // Team colors
     public static final Color orange = new Color(255, 25, 0);
@@ -76,7 +76,7 @@ public class LED extends SubsystemBase {
        // https://github.com/FRC2539/javabot-2023/blob/main/src/main/java/frc/robot/subsystems/LightsSubsystem.java
        // example LED implementaiton.
 
-        MainStrip(0, 300, 2);
+        MainStrip(0, 100, 2);
 
         public final int startIndex;
         public final int segmentSize;
