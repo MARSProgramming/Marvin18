@@ -20,6 +20,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -161,6 +162,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             startSimThread();
         }
         configureAutoBuilder();
+
+
+        localizedPoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().Pose.getRotation(),
+                getState().ModulePositions, new Pose2d(),
+                VecBuilder.fill(1, 1, 3),
+                VecBuilder.fill(1, 1, 3));
+
     }
 
     /**

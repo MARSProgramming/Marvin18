@@ -39,7 +39,6 @@ public class LED extends SubsystemBase {
         candleConfiguration.disableWhenLOS = false;
         candleConfiguration.stripType = LEDStripType.RGB;
         candleConfiguration.brightnessScalar = 1.0;
-        candleConfiguration.vBatOutputMode = VBatOutputMode.Modulated;
         candle.configAllSettings(candleConfiguration, 100);
 
         setDefaultCommand(defaultCommand());
@@ -53,7 +52,7 @@ public class LED extends SubsystemBase {
         return runOnce(() -> {
           //  LEDSegment.BatteryIndicator.fullClear();
 
-            LEDSegment.MainStrip.setColor(red);
+          candle.setLEDs(255, 0, 0, 0, 0, 50        );
         });
     }
 
@@ -159,5 +158,12 @@ public class LED extends SubsystemBase {
 
             return new Color(newRed, newGreen, newBlue);
         }
+
+
+    }
+
+    @Override
+    public void periodic() {
+        defaultCommand().schedule();
     }
 }
