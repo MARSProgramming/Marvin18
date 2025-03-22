@@ -54,7 +54,7 @@ public class IntegratedVision extends SubsystemBase {
 
         driver = dt;
         // photonvision turbo unlocker
-        
+
         NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
     }
 
@@ -125,7 +125,7 @@ public class IntegratedVision extends SubsystemBase {
 
         if (reefReady) {
             for (PhotonPipelineResult result : reef.getAllUnreadResults()) {
-                if (Math.abs(state.reportedState().Speeds.omegaRadiansPerSecond) < Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
+                if (Math.abs(state.reportedState().Speeds.omegaRadiansPerSecond) > Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
 
                 // If disabled, run multitag processing to get an initial pose (UNTESTED)
                 reef_local.setPrimaryStrategy(
@@ -148,7 +148,7 @@ public class IntegratedVision extends SubsystemBase {
                     if (tagLocation.isEmpty()) continue; // Redundant, but every team I saw is using this. 
 
                     double dist = target.bestCameraToTarget.getTranslation().getNorm();
-                    if (dist < 4) continue; // Tune this. Basically if our camera distance is within a set amount, change.
+                    if (dist > 4) continue; // Tune this. Basically if our camera distance is within a set amount, change.
                     // likely larger for a global pose estimate and REALLY tiny for the trigsolve.
 
                     reefGlobalDistStdDevs = 0.1 * dist * dist;
@@ -171,7 +171,7 @@ public class IntegratedVision extends SubsystemBase {
                     if (tagLocation.isEmpty()) continue; // Redundant, but every team I saw is using this. 
 
                     double dist = target.bestCameraToTarget.getTranslation().getNorm();
-                    if (dist < 2) continue; // Tune this. Basically if our camera distance is within a set amount, change.
+                    if ((dist > 2)) continue; // Tune this. Basically if our camera distance is within a set amount, change.
                     // likely larger for a global pose estimate and REALLY tiny for the trigsolve.
 
                     reefLocalDistStdDevs = 0.1 * dist * dist;
@@ -193,7 +193,7 @@ public class IntegratedVision extends SubsystemBase {
 
         if (feederReady) {
             for (PhotonPipelineResult result : feeder.getAllUnreadResults()) {
-                if (Math.abs(state.reportedState().Speeds.omegaRadiansPerSecond) < Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
+                if (Math.abs(state.reportedState().Speeds.omegaRadiansPerSecond) > Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
 
                 feeder_global.setPrimaryStrategy(
                     PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
@@ -210,7 +210,7 @@ public class IntegratedVision extends SubsystemBase {
                     if (tagLocation.isEmpty()) continue; // Redundant, but every team I saw is using this. 
 
                     double dist = target.bestCameraToTarget.getTranslation().getNorm();
-                    if (dist < 4) continue; // Tune this. Basically if our camera distance is within a set amount, change.
+                    if (dist > 4) continue; // Tune this. Basically if our camera distance is within a set amount, change.
                     // likely larger for a global pose estimate and REALLY tiny for the trigsolve.
 
                     feederGlobalDistStdDevs = 0.1 * dist * dist;
