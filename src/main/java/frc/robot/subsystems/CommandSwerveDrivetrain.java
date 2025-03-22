@@ -23,6 +23,7 @@ import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -38,12 +39,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import frc.robot.constants.Constants;
 import frc.robot.constants.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.util.Records.TimestampedState;
+import frc.robot.util.Records.VisionMeasurement;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -55,6 +59,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double m_lastSimTime;
     public int selectedSide = 1;
     private Optional<EstimatedRobotPose> alignPose;
+
+    private SwerveDrivePoseEstimator localizedPoseEstimator;
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -286,7 +292,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
+        localizedPoseEstimator.updateWithTime(Timer.getFPGATimestamp(), getState().Pose.getRotation(),
+                getState().ModulePositions);
+
     }
+
+
 
     private void startSimThread() {
         m_lastSimTime = Utils.getCurrentTimeSeconds();
@@ -350,7 +361,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
                     () -> getState().Pose, // Supplier of current robot pose
-                    this::resetPose, // Consumer for seeding pose against auto
+                    this::resetAllEstimatorPoses, // Consumer for seeding pose against auto
                     () -> getState().Speeds, // Supplier of current robot speeds
                     // Consumer of ChassisSpeeds and feedforwards to drive the robot
                     (speeds, feedforwards) -> setControl(
@@ -421,4 +432,31 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public Optional<EstimatedRobotPose> getLatestTrigPose() {
         return alignPose;
     }
+
+    public void updateLocalizedEstimator(VisionMeasurement measure) {
+        Matrix<N3, N1> stdevsToUpdate = measure.stDevs();
+        localizedPoseEstimator.setVisionMeasurementStdDevs(stdevsToUpdate);
+        localizedPoseEstimator.addVisionMeasurement(measure.pose().reportedPose(), measure.pose().reportedTimestamp());
+    }
+
+    public Pose2d getLocalizedPose() {
+        return localizedPoseEstimator.getEstimatedPosition();
+    }
+
+    public void resetLocalizedPose(VisionMeasurement measure) {
+        localizedPoseEstimator.resetPose(measure.pose().reportedPose());
+    }
+
+    public void resetAllEstimatorPoses(Pose2d pose) {
+        localizedPoseEstimator.resetPose(pose);
+        resetPose(pose);
+    }
+
+    public void updateGlobalEstimator(VisionMeasurement measure) {
+        Matrix<N3, N1> stdevsToUpdate = measure.stDevs();
+        setVisionMeasurementStdDevs(stdevsToUpdate);
+        addVisionMeasurement(measure.pose().reportedPose(), measure.pose().reportedTimestamp());
+    }
+
+
 }

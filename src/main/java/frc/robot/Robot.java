@@ -48,36 +48,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-  //  DynamicConstants.periodic();
-
-   // var feederEst = m_robotContainer.feeder_vision.getEstimatedGlobalPose();
-  // feederEst.ifPresent(
-  //     estF -> {
-          // Change our trust in the measurement based on the tags we can see
-   //     var estStdDevsF = m_robotContainer.feeder_vision.getEstimationStdDevs();
-
-     //  m_robotContainer.drivetrain.addVisionMeasurement(
-     //      estF.estimatedPose.toPose2d(), estF.timestampSeconds, estStdDevsF);
-     // });
-
-    var reefEst = m_robotContainer.reef_vision.getEstimatedGlobalPose();
-    reefEst.ifPresent(
-        estR -> {
-          // Change our trust in the measurement based on the tags we can see
-          var estStdDevsR = m_robotContainer.reef_vision.getEstimationStdDevs();
-
-          m_robotContainer.drivetrain.addVisionMeasurement(
-              estR.estimatedPose.toPose2d(), estR.timestampSeconds, estStdDevsR);
-              Logger.recordOutput(
-                "Reef Pose", estR.estimatedPose);
-        });
-    var rotation = m_robotContainer.drivetrain.getState().Pose.getRotation();
-
-    if (m_currentAlliance == Alliance.Red) {
-      rotation = rotation.plus(Rotation2d.k180deg); // if we are on the red alliance, make sure the reported trig rotation is adjusted EXACTLY 180 degrees.
-      // must confirm this value is in Degrees.
-    }
-    
   }
 
   @Override

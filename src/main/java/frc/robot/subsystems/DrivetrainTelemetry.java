@@ -34,7 +34,7 @@ public class DrivetrainTelemetry extends SubsystemBase {
         SmartDashboard.putNumber("DrivetrainStates/RotationRadians", dt.getState().Pose.getRotation().getRadians());
 
 
-        publisher.set(dt.getState().Pose);
-        arrayPublisher.set(new Pose2d[] {dt.getState().Pose});
+      //  publisher.set(dt.getState().Pose);
+      //  arrayPublisher.set(new Pose2d[] {dt.getState().Pose});
     }
 }

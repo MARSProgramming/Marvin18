@@ -14,7 +14,11 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.constants.Constants;
@@ -35,6 +39,9 @@ public class IntegratedVision extends SubsystemBase {
 
     private CommandSwerveDrivetrain dt;
 
+    
+
+
     public IntegratedVision(CommandSwerveDrivetrain driver) {
         reef = new PhotonCamera("reef");
         feeder = new PhotonCamera("feeder");
@@ -46,7 +53,18 @@ public class IntegratedVision extends SubsystemBase {
         constrainedPnpParams = Optional.of(new ConstrainedSolvepnpParams(true, 0.0));
 
         driver = dt;
+        NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
     }
+
+   StructPublisher<Pose2d> globalPublisher = NetworkTableInstance.getDefault()
+  .getStructTopic("Onboard Pose Estimate", Pose2d.struct).publish();
+   StructArrayPublisher<Pose2d> globalArrayPublisher = NetworkTableInstance.getDefault()
+  .getStructArrayTopic("Onboard Pose Estimate Array", Pose2d.struct).publish();
+
+  StructPublisher<Pose2d> localPublisher = NetworkTableInstance.getDefault()
+  .getStructTopic("Local Pose Estimate", Pose2d.struct).publish();
+   StructArrayPublisher<Pose2d> localArrayPublisher = NetworkTableInstance.getDefault()
+  .getStructArrayTopic("Local Pose Estimate Array", Pose2d.struct).publish();
 
     /* 
      *  Add heading data to the reef estimator.
@@ -98,6 +116,10 @@ public class IntegratedVision extends SubsystemBase {
         boolean pushLocal = false;
         boolean pushReefGlobal = false;
         boolean pushFeederGlobal = false;
+
+        // PhotonVision Turbo Button
+        NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
+
 
         if (reefReady) {
             for (PhotonPipelineResult result : reef.getAllUnreadResults()) {
@@ -219,8 +241,23 @@ public class IntegratedVision extends SubsystemBase {
     @Override
     public void periodic() {
 
-    }
+        TimestampedState stateAtLoopIteration = new TimestampedState(dt.getState(), Timer.getFPGATimestamp());
+        TimestampedPose poseAtLoopIteration = new TimestampedPose(dt.getState().Pose, Timer.getFPGATimestamp());
 
+        List<VisionMeasurement> currentMeasurements = refresh(stateAtLoopIteration);
+
+        addTrigSolveReference(new TimestampedPose(poseAtLoopIteration.reportedPose(), poseAtLoopIteration.reportedTimestamp()));
+
+        dt.updateLocalizedEstimator(currentMeasurements.get(0));
+        dt.updateGlobalEstimator(currentMeasurements.get(1));
+        dt.updateGlobalEstimator(currentMeasurements.get(2));
+
+        // Logging
+
+        globalPublisher.set(dt.getState().Pose);
+        globalArrayPublisher.set(new Pose2d[] {dt.getState().Pose});
     
-    
+        localPublisher.set(dt.getLocalizedPose());
+        localArrayPublisher.set(new Pose2d[] {dt.getLocalizedPose()});
+    }
 }
