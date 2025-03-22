@@ -4,12 +4,16 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Rotation;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,9 +24,11 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  private final Alliance m_currentAlliance;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    m_currentAlliance = DriverStation.getAlliance().get();
 
   }
 
@@ -65,7 +71,12 @@ public class Robot extends TimedRobot {
               Logger.recordOutput(
                 "Reef Pose", estR.estimatedPose);
         });
+    var rotation = m_robotContainer.drivetrain.getState().Pose.getRotation();
 
+    if (m_currentAlliance == Alliance.Red) {
+      rotation = rotation.plus(Rotation2d.k180deg); // if we are on the red alliance, make sure the reported trig rotation is adjusted EXACTLY 180 degrees.
+      // must confirm this value is in Degrees.
+    }
     
   }
 

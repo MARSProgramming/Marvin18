@@ -2,7 +2,10 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Optional;
 import java.util.function.Supplier;
+
+import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
@@ -51,6 +54,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     public int selectedSide = 1;
+    private Optional<EstimatedRobotPose> alignPose;
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -408,5 +412,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         ChassisSpeeds fieldVelocity = getFieldRelativeSpeeds();
         return Math.sqrt(fieldVelocity.vxMetersPerSecond * fieldVelocity.vxMetersPerSecond
                 + fieldVelocity.vyMetersPerSecond * fieldVelocity.vyMetersPerSecond);
+    }
+
+    public void setLatestTrigPose(Optional<EstimatedRobotPose> poseToGet) {
+        alignPose = poseToGet;
+    }
+
+    public Optional<EstimatedRobotPose> getLatestTrigPose() {
+        return alignPose;
     }
 }
