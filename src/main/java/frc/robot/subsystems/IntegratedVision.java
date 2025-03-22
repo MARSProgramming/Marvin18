@@ -119,7 +119,6 @@ public class IntegratedVision extends SubsystemBase {
         boolean pushFeederGlobal = false;
 
         // PhotonVision Turbo Button
-        NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
 
 
         if (reefReady) {

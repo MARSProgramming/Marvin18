@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Update Constants", m_robotContainer.configureBindingsCommand());
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
+    NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
     
   }
 
