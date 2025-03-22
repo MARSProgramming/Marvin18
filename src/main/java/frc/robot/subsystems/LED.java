@@ -52,7 +52,7 @@ public class LED extends SubsystemBase {
         return runOnce(() -> {
           //  LEDSegment.BatteryIndicator.fullClear();
 
-          candle.setLEDs(255, 0, 0, 0, 0, 50        );
+          candle.setLEDs(255, 0, 0, 0, 0, 100        );
         });
     }
 

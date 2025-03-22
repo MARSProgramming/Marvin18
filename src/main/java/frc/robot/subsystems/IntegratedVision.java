@@ -40,11 +40,11 @@ public class IntegratedVision extends SubsystemBase {
     private CommandSwerveDrivetrain dt;
 
     
-    
+
 
     public IntegratedVision(CommandSwerveDrivetrain driver) {
-        reef = new PhotonCamera("reef");
-        feeder = new PhotonCamera("feeder");
+        reef = new PhotonCamera("reef_cam");
+        feeder = new PhotonCamera("feeder_cam");
 
         reef_local = new PhotonPoseEstimator(aprilTags, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE, Constants.Vision.reefRobotToCam);
         reef_global = new PhotonPoseEstimator(aprilTags, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, Constants.Vision.reefRobotToCam);
@@ -55,7 +55,6 @@ public class IntegratedVision extends SubsystemBase {
         dt = driver;
         // photonvision turbo unlocker
 
-        NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
     }
 
    StructPublisher<Pose2d> globalPublisher = NetworkTableInstance.getDefault()
