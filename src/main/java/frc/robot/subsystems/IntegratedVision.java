@@ -53,6 +53,8 @@ public class IntegratedVision extends SubsystemBase {
         constrainedPnpParams = Optional.of(new ConstrainedSolvepnpParams(true, 0.0));
 
         driver = dt;
+        // photonvision turbo unlocker
+        
         NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
     }
 

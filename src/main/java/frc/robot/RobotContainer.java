@@ -41,10 +41,6 @@ import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntegratedVision;
 import frc.robot.subsystems.LED;
-import frc.robot.subsystems.LED.LEDColor;
-import frc.robot.subsystems.LED.LEDSection;
-import frc.robot.subsystems.LED.Rolling;
-import frc.robot.subsystems.LED.State;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -75,7 +71,6 @@ public class RobotContainer {
 
   public final Timer m_timer = new Timer();
 
-  private final LED LEDController = LED.getInstance();
 
   public final Algae m_algae = new Algae();
   public final Elevator m_elevator = new Elevator();
@@ -84,6 +79,7 @@ public class RobotContainer {
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
 
   public final IntegratedVision integVis = new IntegratedVision(drivetrain);
+  public final LED leds = new LED();
   private PoseSelector2 leftSideSelector = new PoseSelector2(drivetrain, m_elevator, 0);
   private PoseSelector2 rightSideSelector = new PoseSelector2(drivetrain, m_elevator, 1);
 
@@ -152,7 +148,7 @@ public class RobotContainer {
     // Bumper and Trigger Controls
     Pilot.leftBumper().whileTrue(new ElevatorAlgaeComand(m_elevator, m_algae));
     Pilot.rightBumper().whileTrue(m_algae.outtake());
-    Pilot.rightTrigger().whileTrue(m_coral.runIntake(1).alongWith(LEDController.setState(getRightTriggerColors())));
+    Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
     Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand());
 
     // POV Controls
@@ -286,12 +282,4 @@ public class RobotContainer {
       return 0.0;
     }
   }
-
-  private Map<LEDSection, State> getRightTriggerColors() {
-    Map<LEDSection, State> map = new HashMap<>();
-    map.put(LEDSection.CORALINTAKEUP, new State(LEDColor.BLUE, Rolling.FORWARD));
-    map.put(LEDSection.CORALINTAKEDOWN, new State(LEDColor.BLUE, Rolling.REVERSE));
-    return map;
-  }
-
 }
