@@ -377,6 +377,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Get Voltage5V", RobotController.getVoltage5V());
     SmartDashboard.putNumber("Get Voltage3V3", RobotController.getVoltage3V3());
     SmartDashboard.putNumber("Get Voltage6V", RobotController.getVoltage6V());
+    SmartDashboard.putNumber("Get Voltage", RobotController.getInputVoltage());
 
     if (getLimit() && (getPositionNormal() != 0)) {
       master.setPosition(0);
