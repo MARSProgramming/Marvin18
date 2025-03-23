@@ -13,6 +13,7 @@ import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.SingleFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.MoreMath;
 
@@ -33,6 +34,8 @@ public class LED extends SubsystemBase {
     public static final Color blue = new Color(8, 32, 255);
     public static final Color red = new Color(255, 0, 0);
 
+    public static final Color marvin_red = new Color(135, 32, 0);
+
     public LED() {
         CANdleConfiguration candleConfiguration = new CANdleConfiguration();
         candleConfiguration.statusLedOffWhenActive = true;
@@ -40,8 +43,6 @@ public class LED extends SubsystemBase {
         candleConfiguration.stripType = LEDStripType.RGB;
         candleConfiguration.brightnessScalar = 1.0;
         candle.configAllSettings(candleConfiguration, 100);
-
-        setDefaultCommand(defaultCommand());
     }
 
     public void setBrightness(double percent) {
@@ -60,8 +61,13 @@ public class LED extends SubsystemBase {
         return run(() -> {
           //  LEDSegment.BatteryIndicator.fullClear();
 
-          candle.setLEDs(0, 255, 0, 0, 0, 100);
-        });
+          LEDSegment.MainStrip.setStrobeAnimation(green, 0.5);
+        }).withTimeout(0.5).andThen(
+            runOnce(() -> {
+                LEDSegment.MainStrip.setColor(red);
+            }
+            )
+        );
     }
 
 
@@ -101,9 +107,15 @@ public class LED extends SubsystemBase {
             candle.setLEDs(color.red, color.green, color.blue, 0, startIndex, segmentSize);
         }
 
+        public void white() {
+            clearAnimation();
+            candle.setLEDs(0, 0, 0, 255, startIndex, segmentSize);
+        }
+
         private void setAnimation(Animation animation) {
             candle.animate(animation, animationSlot);
         }
+        
 
         public void fullClear() {
             clearAnimation();

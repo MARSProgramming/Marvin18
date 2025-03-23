@@ -187,6 +187,10 @@ public class Elevator extends SubsystemBase {
     return Math.abs(getPositionNormal() - rotations) < ElevatorSetpointConfigs.ELEVATOR_DEADZONE_DIST;
   }
 
+  public boolean isNearZero(double rotations) {
+    return Math.abs(getPositionNormal() - rotations) < 0.05;
+  }
+
   public AngularVelocity getSpinVelocity() {
     return master.getRotorVelocity().getValue();
   }
@@ -378,7 +382,7 @@ public class Elevator extends SubsystemBase {
     SmartDashboard.putNumber("Get Voltage3V3", RobotController.getVoltage3V3());
     SmartDashboard.putNumber("Get Voltage6V", RobotController.getVoltage6V());
 
-    if (getLimit() && (getPositionNormal() != 0)) {
+    if (getLimit() && (getPositionNormal() < 0.2)) {
       master.setPosition(0);
     }
   }

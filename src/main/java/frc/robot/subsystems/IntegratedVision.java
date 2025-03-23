@@ -118,8 +118,6 @@ public class IntegratedVision extends SubsystemBase {
         boolean pushReefGlobal = false;
         boolean pushFeederGlobal = false;
 
-        // PhotonVision Turbo Button
-
 
         if (reefReady) {
             for (PhotonPipelineResult result : reef.getAllUnreadResults()) {
@@ -141,6 +139,8 @@ public class IntegratedVision extends SubsystemBase {
                     var target = estimateInReefGlobalPipeline.get().targetsUsed.get(0);
                     int id = target.fiducialId;
                     if (!useTag(id)) continue;
+
+                    if (target.poseAmbiguity > 0.2) continue;
 
                     var tagLocation = aprilTags.getTagPose(id);
                     if (tagLocation.isEmpty()) continue; // Redundant, but every team I saw is using this. 
@@ -246,9 +246,9 @@ public class IntegratedVision extends SubsystemBase {
 
         addTrigSolveReference(new TimestampedPose(stateAtLoopIteration.reportedState().Pose, stateAtLoopIteration.reportedTimestamp()));
 
-        dt.updateLocalizedEstimator(currentMeasurements.get(0));
+     //   dt.updateLocalizedEstimator(currentMeasurements.get(0));
         dt.updateGlobalEstimator(currentMeasurements.get(1));
-        dt.updateGlobalEstimator(currentMeasurements.get(2));
+      //  dt.updateGlobalEstimator(currentMeasurements.get(2));
 
         // Logging
 

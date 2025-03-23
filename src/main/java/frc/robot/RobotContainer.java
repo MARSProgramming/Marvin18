@@ -20,11 +20,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.planner.AligntoFeeder;
@@ -42,6 +44,7 @@ import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntegratedVision;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LED.LEDSegment;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -134,7 +137,9 @@ public class RobotContainer {
   }
 
   public void configureBindings() {
-    leds.setDefaultCommand(leds.defaultCommand());
+    
+
+
     m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -172,17 +177,17 @@ public class RobotContainer {
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral, 10));
-    //Pilot.y().whileTrue(new DriveCoralScorePose(
-    //    drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
-     //       Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));
+   //Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral, 10));
+    Pilot.y().whileTrue(new DriveCoralScorePose(
+        drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
+           Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));
 
-    Pilot.y().whileTrue(drivetrain.applyRequest(() -> doNothing));
+   Pilot.a().whileTrue(drivetrain.applyRequest(() -> doNothing));
     // Alternative bindings
     // Pilot.x().whileTrue(poseSelector);
     // Pilot.b().onTrue(m_elevator.goToSelectedPointCommand());
 
-    Pilot.x().onTrue(leftSideSelector);
+    Pilot.x().whileTrue(leftSideSelector);
     Pilot.b().whileTrue(rightSideSelector);
 
     /// Copilot

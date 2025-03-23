@@ -116,11 +116,11 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
-                5.0,
+            2.5,
                 0,
                 0);
         public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
-                5.0,
+                2.5,
                 0,
                 0);
 

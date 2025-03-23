@@ -19,7 +19,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.constants.DynamicConstants;
+import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LED.LEDSegment;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -44,6 +47,9 @@ public class Robot extends TimedRobot {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
+
+    LEDSegment.MainStrip.fullClear();
+    LEDSegment.MainStrip.setColor(LED.yellow);
     
   }
 
@@ -54,7 +60,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
-    m_robotContainer.leds.defaultCommand().schedule();
+    LEDSegment.MainStrip.fullClear();
+    LEDSegment.MainStrip.setColor(LED.purple);
+
   }
 
 
@@ -73,14 +81,17 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    LEDSegment.MainStrip.fullClear();
   }
 
   @Override
   public void autonomousPeriodic() {
+
   }
 
   @Override
   public void autonomousExit() {
+    LEDSegment.MainStrip.fullClear();
   }
 
   @Override
@@ -88,10 +99,15 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    LEDSegment.MainStrip.fullClear();
+    LEDSegment.MainStrip.setColor(LED.red);
   }
 
   @Override
   public void teleopPeriodic() {
+    //LEDSegment.MainStrip.setFadeAnimation(LED.red, 0.5);
+
   }
 
   @Override
