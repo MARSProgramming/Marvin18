@@ -47,6 +47,17 @@ public Command intake() {
     });
 }
 
+public Command intakeWithStop() {
+  return runEnd(() -> {
+      //setPercentage(DynamicConstants.Algae.intakePercent);
+      algae.set(1);
+  },
+  () -> {
+    algae.set(0);
+
+  });
+}
+
 public Command outtake() {
   return runEnd(() -> {
   //  setPercentage(DynamicConstants.Algae.outtakePercent);

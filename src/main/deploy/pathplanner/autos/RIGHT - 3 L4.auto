@@ -23,10 +23,84 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S6-B"
+                  "pathName": "S6-C"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Nearest Tag Align Center"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Nearest Tag Align Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Setpoint L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Zero Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C-U1"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Feeder Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Passive Intake"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "U1-C"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Nearest Tag Align Center"
           }
         },
         {
@@ -63,11 +137,11 @@
         {
           "type": "path",
           "data": {
-            "pathName": "B-U1"
+            "pathName": "C-U1"
           }
         },
         {
-          "type": "parallel",
+          "type": "race",
           "data": {
             "commands": [
               {
@@ -88,7 +162,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "U1-C"
+            "pathName": "U1-D"
           }
         },
         {
@@ -125,7 +199,7 @@
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

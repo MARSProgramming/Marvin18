@@ -8,6 +8,8 @@ import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,6 +34,8 @@ public class Robot extends TimedRobot {
     m_robotContainer.m_elevator.setServoCommand(0).schedule();
 
     SmartDashboard.putData("Update Constants", m_robotContainer.configureBindingsCommand());
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
     
   }
 

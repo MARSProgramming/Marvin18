@@ -5,9 +5,28 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "S1-F"
+            "name": "Passive Intake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Deploy Algae"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S6-C"
+                }
+              }
+            ]
           }
         },
         {
@@ -23,7 +42,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Elevator Setpoint L2"
+                  "name": "Elevator Setpoint L4"
                 }
               }
             ]
@@ -44,7 +63,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "F-U2"
+            "pathName": "C-U1"
           }
         },
         {
@@ -69,7 +88,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "U2-F"
+            "pathName": "U1-C"
           }
         },
         {
@@ -85,7 +104,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Elevator Setpoint L2"
+                  "name": "Elevator Setpoint L4"
                 }
               }
             ]
@@ -101,6 +120,25 @@
           "type": "named",
           "data": {
             "name": "Zero Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C-U1"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Feeder Align"
+                }
+              }
+            ]
           }
         }
       ]

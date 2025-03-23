@@ -25,16 +25,16 @@ public final class DynamicConstants {
      */
 
     public static class ElevatorSetpoints {
-        public static double elevL4 = 8.28;
-        public static double elevL3 = 4.47;
-        public static double elevL2 = 2.04;
+        public static double elevL4 = 7.7;
+        public static double elevL3 = 4.45;
+        public static double elevL2 = 2.02;
         public static double elevL1 = 0;
         public static double elevAlgaeTop = 7.72;
         public static double elevAlgaeBot = 5.25;
         public static double elevAlgaeTee = 2.2;
         public static double elevAlgaeGround = 1;
         public static double elevClimb = 0;
-        public static double elevClimbVoltage = -4;
+        public static double elevClimbVoltage = -5;
 
         public static double elevTestPos = 1;
     }
@@ -55,30 +55,30 @@ public final class DynamicConstants {
     public static class AlignTransforms {
 
         public static double RightXL1 = .41;
-        public static double RightYL1 = .45;
+        public static double RightYL1 = .44;
         
         public static double RightXL2 = .41;
-        public static double RightYL2 = .45;
+        public static double RightYL2 = .44;
         
         public static double RightXL3 = .41;
-        public static double RightYL3 = .45;
+        public static double RightYL3 = .44;
 
         public static double RightXL4 = .45;
-        public static double RightYL4 = .48;
+        public static double RightYL4 = .485;
         
         public static double RightRot = 90;
         
         public static double LeftXL1 = .41;
-        public static double LeftYL1 = .09;
+        public static double LeftYL1 = .10;
         
         public static double LeftXL2 = .41;
-        public static double LeftYL2 = .09;
+        public static double LeftYL2 = .10;
         
         public static double LeftXL3 = .41;
-        public static double LeftYL3 = .09;
+        public static double LeftYL3 = .10;
         
         public static double LeftXL4 = .45;
-        public static double LeftYL4 = .12;
+        public static double LeftYL4 = .13;
 
 
         public static double LeftRot = 90;
@@ -86,7 +86,7 @@ public final class DynamicConstants {
         public static double CentX = 1;
         public static double CentY = 0;
         public static double CentRot = 90;
-        public static double feederX = .429;
+        public static double feederX = .4;
         public static double feederY = 0.0;
 
     }

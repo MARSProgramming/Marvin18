@@ -5,15 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "S6-C"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "Nearest Tag Align Center"
+            "name": "Passive Intake"
           }
         },
         {
@@ -23,65 +17,16 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Left"
+                  "name": "Deploy Algae"
                 }
               },
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "Elevator Setpoint L4"
+                  "pathName": "S1-E"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Zero Elevator"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Copy of C-U1"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Feeder Align"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Passive Intake"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "U1-C"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Nearest Tag Align Center"
           }
         },
         {
@@ -118,7 +63,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Copy of C-U1"
+            "pathName": "E-U2"
           }
         },
         {
@@ -130,8 +75,57 @@
                 "data": {
                   "name": "Feeder Align"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Passive Intake"
+                }
               }
             ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "U2-E"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Nearest Tag Align Left"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Setpoint L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Zero Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "E-U2"
           }
         }
       ]

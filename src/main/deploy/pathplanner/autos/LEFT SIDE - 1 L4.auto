@@ -5,6 +5,18 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Deploy Algae"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Passive Intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "S1-F"
@@ -45,6 +57,18 @@
           "type": "named",
           "data": {
             "name": "Zero Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "F-U2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Feeder Align"
           }
         }
       ]

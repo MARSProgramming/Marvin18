@@ -5,6 +5,18 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Deploy Algae"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Passive Intake"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "S6-B"
@@ -45,6 +57,12 @@
           "type": "named",
           "data": {
             "name": "Zero Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B-U1"
           }
         }
       ]

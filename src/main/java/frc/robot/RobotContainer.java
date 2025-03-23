@@ -87,6 +87,7 @@ public class RobotContainer {
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
 
   public RobotContainer() {
+    configureBindings();
 
     NamedCommands.registerCommand("Nearest Tag Align Left",
         new DriveCoralScorePose(drivetrain,
@@ -98,7 +99,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Nearest Tag Align Right",
         new DriveCoralScorePose(drivetrain,
             new Transform2d(DynamicConstants.AlignTransforms.RightXL4, DynamicConstants.AlignTransforms.RightYL4,
-                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot)), 3));
+                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot)), 2));
+    NamedCommands.registerCommand("Deploy Algae",
+                m_algae.intakeWithStop().withTimeout(0.6));
 
     NamedCommands.registerCommand("Feeder Align", new AligntoFeeder(drivetrain, m_coral, 5));
     NamedCommands.registerCommand("Elevator Setpoint L1",
@@ -108,7 +111,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Elevator Setpoint L3",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3));
     NamedCommands.registerCommand("Elevator Setpoint L4",
-        m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4));
+        m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4).withTimeout(2));
     NamedCommands.registerCommand("Elevator Setpoint Algae Ground",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround));
     NamedCommands.registerCommand("Elevator Setpoint Algae Processor",
@@ -123,7 +126,6 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
     NamedCommands.registerCommand("Passive Intake", m_coral.coralCheck());
 
-    configureBindings();
     configureLEDTriggers();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("AutoChooser", autoChooser);
@@ -135,12 +137,12 @@ public class RobotContainer {
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(deadband(-Pilot.getLeftY(), 0.1) * 0.5 * MaxSpeed) // Drive
+        drivetrain.applyRequest(() -> drive.withVelocityX(deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed) // Drive
                                                                                                              // forward
                                                                                                              // with
                                                                                                              // negative
                                                                                                              // Y (up)
-            .withVelocityY(deadband(-Pilot.getLeftX(), 0.1) * 0.5 * MaxSpeed) // Drive left with negative X (left)
+            .withVelocityY(deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate) // Drive counterclockwise with
                                                                                     // negative X (left)
         ));
@@ -200,6 +202,10 @@ public class RobotContainer {
     Copilot.x().onTrue(m_elevator.setLevel(2));
     Copilot.y().onTrue(m_elevator.setLevel(4));
 
+
+    Copilot.leftStick().onTrue(m_elevator.advanceRotationsCommand(-0.1));
+    Copilot.rightStick().onTrue(m_elevator.advanceRotationsCommand(0.1));
+
     drivetrain.registerTelemetry(logger::telemeterize);
 
     // Run SysId routines when holding back/start and X/Y.
@@ -233,7 +239,7 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
+   // m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
     return autoChooser.getSelected();
     // return new Command() {
     //

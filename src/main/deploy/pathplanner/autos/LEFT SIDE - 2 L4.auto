@@ -5,9 +5,28 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "S1-F"
+            "name": "Passive Intake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Deploy Algae"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "S1-F"
+                }
+              }
+            ]
           }
         },
         {

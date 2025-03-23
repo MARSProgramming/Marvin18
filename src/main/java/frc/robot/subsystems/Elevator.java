@@ -108,8 +108,8 @@ public class Elevator extends SubsystemBase {
     masterConfig.Slot0.kD = 2;
     masterConfig.Slot0.kG = 0.3;
     masterConfig.Slot0.kS = 0.1;
-    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 20;
-    masterConfig.MotionMagic.MotionMagicAcceleration = 15;
+    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 35;
+    masterConfig.MotionMagic.MotionMagicAcceleration = 55;
 
     masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
     master.getConfigurator().apply(masterConfig);
@@ -136,7 +136,7 @@ public class Elevator extends SubsystemBase {
   }
 
   public void advanceRotations(double rotations) {
-    if (!getLimit() && (rotations > 0))
+    if (!getLimit())
       master.setControl(motionRequest.withPosition(getPositionNormal() + rotations));
   }
 
@@ -327,7 +327,7 @@ public class Elevator extends SubsystemBase {
       if(getPositionNormal() > 2) {
       setRotations(0.0);}
       else  {
-        runVoltageRequest(-3);
+        runVoltageRequest(-5);
       }
     }, () -> {
       stopMotor();
