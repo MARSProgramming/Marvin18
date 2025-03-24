@@ -85,7 +85,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Left"
+                  "name": "Nearest Tag Align Right"
                 }
               }
             ]
@@ -131,7 +131,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "U2-E"
+            "pathName": "U2-D"
           }
         },
         {
@@ -147,7 +147,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Right"
+                  "name": "Nearest Tag Align Left"
                 }
               }
             ]
