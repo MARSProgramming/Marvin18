@@ -486,7 +486,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         calculate(getState().Pose.getRotation().getRadians(), desiredRot.getRadians());
 
         // clamp
-        calculatedYaw = MathUtil.clamp(calculatedYaw, Constants.AlignmentConstants.kMaximumRotSpeed.in(Units.RadiansPerSecond), Constants.AlignmentConstants.kMaximumRotSpeed.in(Units.RadiansPerSecond));
+        calculatedYaw = MathUtil.clamp(calculatedYaw, -Constants.AlignmentConstants.kMaximumRotSpeed.in(Units.RadiansPerSecond), Constants.AlignmentConstants.kMaximumRotSpeed.in(Units.RadiansPerSecond));
 
         return Units.RadiansPerSecond.of(calculatedYaw);
     }
@@ -546,7 +546,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                  new Transform2d(
                      (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftXL4) : (DynamicConstants.AlignTransforms.RightXL4),
                      (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftYL4) : (DynamicConstants.AlignTransforms.LeftYL4),
-                     new Rotation2d((leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftRot) : (DynamicConstants.AlignTransforms.RightRot))));
+                     new Rotation2d((leftSideRequested) ? (Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)) : (Math.toRadians(DynamicConstants.AlignTransforms.RightRot)))));
          }
  
          if (level == 3) {
@@ -554,7 +554,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                  new Transform2d(
                      (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftXL3) : (DynamicConstants.AlignTransforms.RightXL3),
                      (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftYL3) : (DynamicConstants.AlignTransforms.RightYL3),
-                     new Rotation2d((leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftRot) : (DynamicConstants.AlignTransforms.RightRot))));
+                     new Rotation2d((leftSideRequested) ? (Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)) : (Math.toRadians(DynamicConstants.AlignTransforms.RightRot)))));
          }
  
          if (level == 2) {
@@ -562,7 +562,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                  new Transform2d(
                      (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftXL2) : (DynamicConstants.AlignTransforms.RightXL2),
                      (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftYL2) : (DynamicConstants.AlignTransforms.RightYL2),
-                     new Rotation2d((leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftRot) : (DynamicConstants.AlignTransforms.RightRot))));
+                     new Rotation2d((leftSideRequested) ? (Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)) : (Math.toRadians(DynamicConstants.AlignTransforms.RightRot)))));
          }
  
          if (level == 1) {
@@ -570,14 +570,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                  new Transform2d(
                      (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftXL1) : (DynamicConstants.AlignTransforms.RightXL1),
                      (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftYL1) : (DynamicConstants.AlignTransforms.RightYL1),
-                     new Rotation2d((leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftRot) : (DynamicConstants.AlignTransforms.RightRot))));
+                     new Rotation2d((leftSideRequested) ? (Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)) : (Math.toRadians(DynamicConstants.AlignTransforms.RightRot)))));
          }
  
          // if no conditions are met perform center alignment (you can just feed level = -1 lol)
          else {
              return poseToGet.transformBy(
                  new Transform2d(
-                     DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(DynamicConstants.AlignTransforms.CentRot))); 
+                     DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.CentRot)))); 
          }
      }
 

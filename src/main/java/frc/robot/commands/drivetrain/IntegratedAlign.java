@@ -73,7 +73,7 @@ public class IntegratedAlign extends Command {
     @Override
     public void end(boolean interrupted) {
         // "Do nothing"
-        mDt.applyRequest(() -> new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds()));
+        mDt.drive(new ChassisSpeeds());
     }
 
     @Override
