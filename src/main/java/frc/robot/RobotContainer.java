@@ -16,9 +16,11 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
@@ -129,6 +131,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Passive Intake", m_coral.coralCheck());
 
     configureLEDTriggers();
+
+    // Set the robot state standard deviation.
+    // This sets trust in built-in robot odometry.
+    drivetrain.setStateStdDevs(VecBuilder.fill(0.05, 0.05, Units.Radians.convertFrom(5, Units.Degrees)));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("AutoChooser", autoChooser);
   }

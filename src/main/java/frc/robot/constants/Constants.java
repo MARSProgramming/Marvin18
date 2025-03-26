@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.Optional;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.config.PIDConstants;
@@ -16,15 +17,24 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public final class Constants {
     public static class AltSwerveConstants {
@@ -139,9 +149,44 @@ public final class Constants {
 
     }
 
+    public static class AlignmentConstants {
+        public static final Distance kMinimumXYAlignDistance = Units.Meters.of(2);
+        public static final Distance kPointTolerance = Units.Inches.of(0.5);
+        public static final Distance kAlignmentTolerance = Units.Inches.of(1);
+        public static final Angle kRotTolerance = Units.Degrees.of(1);
+        public static final AngularVelocity kMaximumRotSpeed = Units.DegreesPerSecond.of(360);
+        public static final LinearVelocity TeleoperatedMaximumVelocity = Units.MetersPerSecond.of(TunerConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.7);
+        public static final double kMinimumElevatorMultiplier = 0.1;
+
+        public static final PIDController kTransController = new PIDController(4, 0, 0);
+        public static final ProfiledPIDController kRotController = new ProfiledPIDController(3, 0, 0, 
+        new TrapezoidProfile.Constraints(kMaximumRotSpeed.in(Units.DegreesPerSecond), Math.pow(kMaximumRotSpeed.in(Units.DegreesPerSecond), 2)));
+
+        static {
+            kTransController.setTolerance(kPointTolerance.in(Units.Meters));
+            kRotController.enableContinuousInput(0, 360);
+            kRotController.setTolerance(kRotTolerance.in(Units.Degrees));
+        }
+
+        public static HolonomicDriveController kTeleoperatedAlignmentController = new HolonomicDriveController(kTransController, kTransController, kRotController);
+        
+    }
+
 
     public static class FieldConstants {
         // tune this
+
+        public static Optional<Alliance> ALLIANCE = Optional.empty();
+
+        // Returns false if no alliance is found (Default to Blue side origin.. Caution when using)
+        public static boolean isRedAlliance() {
+        var alliance = ALLIANCE;
+        if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+        };
+
         public static final double FIELD_WIDTH = 16.541;
         public static final double FIELD_LENGTH = 8.211;
         public static final double REEF_APRILTAG_HEIGHT = 6.875; // feet? figure out units
