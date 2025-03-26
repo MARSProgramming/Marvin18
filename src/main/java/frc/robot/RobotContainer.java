@@ -44,9 +44,12 @@ import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntegratedVision;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LED.LEDSection;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -76,6 +79,7 @@ public class RobotContainer {
 
   public final Timer m_timer = new Timer();
 
+  private final LED led = new LED(40);
 
   public final Algae m_algae = new Algae();
   public final Elevator m_elevator = new Elevator();
@@ -84,7 +88,6 @@ public class RobotContainer {
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
 
   public final IntegratedVision integVis = new IntegratedVision(drivetrain);
-  public final LED leds = new LED();
   private PoseSelector2 leftSideSelector = new PoseSelector2(drivetrain, m_elevator, 0);
   private PoseSelector2 rightSideSelector = new PoseSelector2(drivetrain, m_elevator, 1);
 
@@ -140,7 +143,8 @@ public class RobotContainer {
   }
 
   public void configureBindings() {
-    leds.setDefaultCommand(leds.defaultCommand());
+    configureLEDTriggers();
+    /* 
     m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -159,7 +163,8 @@ public class RobotContainer {
     Pilot.leftBumper().whileTrue(new ElevatorAlgaeComand(m_elevator, m_algae));
     Pilot.rightBumper().whileTrue(m_algae.outtake());
     Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
-    Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand());
+  //  Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand().alongWith(led.setLEDColorCommand(255,0,0)));
+    Pilot.leftTrigger().onTrue((led.setLEDColorSectionCommand(LEDSection.R45, 0, 0, 255)));
 
     // POV Controls
     Pilot.povLeft()
@@ -231,7 +236,7 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1));
+    // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1)); */
   }
 
   public Command configureBindingsCommand() {
@@ -279,7 +284,15 @@ public class RobotContainer {
   }
 
   private void configureLEDTriggers() {
-    // Pilot.rightTrigger().whileTrue(LEDController.setState(getRightTriggerColors()));
+    led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
+    Pilot.a().whileTrue(led.setLEDColorSectionCommand(LEDSection.R45, 0, 255, 0));
+    Pilot.b().whileTrue(led.setLEDColorCommand(0, 255, 0));
+    Pilot.x().whileTrue(led.setLEDColorCommand(0, 0, 255));
+    Pilot.y().whileTrue(led.setLEDColorCommand(255, 255, 255));
+    Pilot.start().whileTrue(led.setRainbowAnimationCommand()); //not working
+    Pilot.back().whileTrue(led.setStrobeAnimationCommand(255, 0, 0, 1)); //not working
+    Pilot.leftBumper().whileTrue(led.setColorFlowAnimationCommand(0, 255, 0, false));
+    Pilot.rightBumper().whileTrue(led.setColorFlowAnimationCommand(0, 0, 255, true));
   }
 
   private static double deadband(double value, double deadband) {
