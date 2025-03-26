@@ -87,6 +87,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     /* Swerve requests for robot-centric alignment */
     private final SwerveRequest.ApplyRobotSpeeds m_alignApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    private final SwerveRequest.ApplyRobotSpeeds mChassiSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
 
     /*
@@ -264,6 +265,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier) {
         return run(() -> this.setControl(requestSupplier.get()));
+    }
+
+    public void drive(ChassisSpeeds speeds) {
+        setControl(mChassiSpeeds.withSpeeds(speeds));
     }
 
     /**
@@ -488,14 +493,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     public void rotationalAlign(Pose2d desiredTarget, LinearVelocity xVelocity, LinearVelocity yVelocity) {
         // Rotational-only auto-align
-        applyRequest(() -> 
-        m_alignApplyRobotSpeeds.withSpeeds(
+        drive(
             new ChassisSpeeds(
                 xVelocity.in(Units.MetersPerSecond),
                 yVelocity.in(Units.MetersPerSecond),
                 calculateRobotRelativeRot(desiredTarget.getRotation()).in(Units.RadiansPerSecond)
-            )
-        ));
+            )       
+        );
+        
+        
     }
 
     
@@ -526,8 +532,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 }
             }
 
-            applyRequest(() -> 
-            m_alignApplyRobotSpeeds.withSpeeds(desiredSpeeds));
+            drive(desiredSpeeds);
         }
     }
 
