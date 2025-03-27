@@ -398,7 +398,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                             // PID constants for translation
                             new PIDConstants(10, 0, 0),
                             // PID constants for rotation
-                            new PIDConstants(11, 0, 0)),
+                            new PIDConstants(5.8, 0, 0)),
                     config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the
                     // case
@@ -449,10 +449,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 + fieldVelocity.vyMetersPerSecond * fieldVelocity.vyMetersPerSecond);
     }
 
-    public void updateLocalizedEstimator(VisionMeasurement measure) {
-        Matrix<N3, N1> stdevsToUpdate = measure.stDevs();
+    public void updateLocalizedEstimator(Pose2d ptd, double time, Matrix<N3, N1> stdevs) {
+        Matrix<N3, N1> stdevsToUpdate = stdevs;
         localizedPoseEstimator.setVisionMeasurementStdDevs(stdevsToUpdate);
-        localizedPoseEstimator.addVisionMeasurement(measure.pose().reportedPose(), measure.pose().reportedTimestamp());
+        localizedPoseEstimator.addVisionMeasurement(ptd, time);
     }
 
     public Pose2d getLocalizedPose() {
@@ -545,7 +545,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
              return poseToGet.transformBy(
                  new Transform2d(
                      (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftXL4) : (DynamicConstants.AlignTransforms.RightXL4),
-                     (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftYL4) : (DynamicConstants.AlignTransforms.LeftYL4),
+                     (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftYL4) : (DynamicConstants.AlignTransforms.RightYL4),
                      new Rotation2d((leftSideRequested) ? (Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)) : (Math.toRadians(DynamicConstants.AlignTransforms.RightRot)))));
          }
  
@@ -574,11 +574,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          }
  
          // if no conditions are met perform center alignment (you can just feed level = -1 lol)
-         else {
+         if (level == -1) {
              return poseToGet.transformBy(
                  new Transform2d(
-                     DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.CentRot)))); 
-         }
+                     DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.AlgaeRot)))); 
+         } else {
+            return poseToGet.transformBy(
+                new Transform2d(
+                    DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.CentRot)))); 
+        }
      }
 
 
