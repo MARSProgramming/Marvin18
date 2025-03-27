@@ -48,6 +48,7 @@ import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntegratedVision;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LED.LEDSection;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -89,7 +90,8 @@ public class RobotContainer {
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
 
   public final IntegratedVision integVis = new IntegratedVision(drivetrain);
-  public final LED leds = new LED();
+  public final LED leds = new LED(40);
+
   private PoseSelector2 leftSideSelector = new PoseSelector2(drivetrain, m_elevator, 0);
   private PoseSelector2 rightSideSelector = new PoseSelector2(drivetrain, m_elevator, 1);
 
@@ -98,7 +100,7 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
-
+    configureLEDTriggers();
 
     NamedCommands.registerCommand("Nearest Tag Align Left",
         new DriveCoralScorePose(drivetrain,
@@ -154,7 +156,6 @@ public class RobotContainer {
       .onFalse(Commands.runOnce(
           () -> Pilot.setRumble(RumbleType.kBothRumble, 0)));
 
-    leds.setDefaultCommand(leds.defaultCommand());
     m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -305,8 +306,19 @@ public class RobotContainer {
   }
 
   private void configureLEDTriggers() {
-    // Pilot.rightTrigger().whileTrue(LEDController.setState(getRightTriggerColors()));
-  }
+    // The primary purpose of this LED code is to introduce base trigger functionalities. 
+     leds.setDefaultCommand(leds.setLEDColorCommand(255, 0, 0));
+     // Feeder align: Turn purple
+     Pilot.a().whileTrue(leds.setLEDColorCommand(184, 0, 185));
+     // Reef align - turn yellow
+     Pilot.b().whileTrue(leds.setLEDColorCommand(255, 165, 0)); 
+     // Reef align - turn yellow
+     Pilot.x().whileTrue(leds.setLEDColorCommand(255, 165, 0));
+     // Algae align - turn blue 
+     Pilot.y().whileTrue(leds.setLEDColorCommand(0, 0, 255)); 
+     // Scoring - turn green 
+     Pilot.rightTrigger().whileTrue(leds.setLEDColorCommand(0, 255, 0));
+    }
 
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
