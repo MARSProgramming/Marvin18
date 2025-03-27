@@ -91,6 +91,7 @@ public final class DynamicConstants {
         public static double AlgaeRot = 180;
         public static double feederX = .4;
         public static double feederY = 0.0;
+        public static double feederRot = -90;
 
     }
 

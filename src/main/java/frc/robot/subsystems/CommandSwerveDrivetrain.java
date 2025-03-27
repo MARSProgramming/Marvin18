@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static edu.wpi.first.units.Units.*;
 
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 
 import org.photonvision.EstimatedRobotPose;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
@@ -54,7 +56,6 @@ import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants.TunerSwerveDrivetrain;
 import frc.robot.util.MoreMath;
-import frc.robot.util.Records.TimestampedState;
 import frc.robot.util.Records.VisionMeasurement;
 
 /**
@@ -88,6 +89,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Swerve requests for robot-centric alignment */
     private final SwerveRequest.ApplyRobotSpeeds m_alignApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
     private final SwerveRequest.ApplyRobotSpeeds mChassiSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    private final SwerveRequest.FieldCentric mFieldDrive = new SwerveRequest.FieldCentric();
 
 
     /*
@@ -271,6 +273,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         setControl(mChassiSpeeds.withSpeeds(speeds));
     }
 
+    public void fieldDrive(DoubleSupplier fieldX, DoubleSupplier fieldY, DoubleSupplier fieldRot, boolean openLoop) {
+        DriveRequestType requestType = (openLoop) ? (DriveRequestType.OpenLoopVoltage) : (DriveRequestType.Velocity);
+        setControl(mFieldDrive.
+        withVelocityX(
+            fieldX.getAsDouble()
+        ).withVelocityY(
+            fieldY.getAsDouble()
+        ).withRotationalRate(
+            fieldRot.getAsDouble()
+        ).withDriveRequestType(requestType)
+        );
+    }
+
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine
      * specified by {@link #m_sysIdRoutineToApply}.
@@ -435,13 +450,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().Pose.getRotation());
     }
 
-    public Command driveToPose() {
-        return AutoBuilder.pathfindToPose(new Pose2d(15, 2, Rotation2d.fromDegrees(0)),
-                new PathConstraints(LinearVelocity.ofBaseUnits(1.0, MetersPerSecond),
-                        LinearAcceleration.ofBaseUnits(0.5, MetersPerSecondPerSecond),
-                        AngularVelocity.ofBaseUnits(360, DegreesPerSecond),
-                        AngularAcceleration.ofBaseUnits(540, DegreesPerSecondPerSecond)));
-    }
 
     public double getSpeedAsDouble() {
         ChassisSpeeds fieldVelocity = getFieldRelativeSpeeds();
@@ -574,17 +582,38 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          }
  
          // if no conditions are met perform center alignment (you can just feed level = -1 lol)
-         if (level == -1) {
-             return poseToGet.transformBy(
-                 new Transform2d(
-                     DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.AlgaeRot)))); 
-         } else {
+          else {
             return poseToGet.transformBy(
                 new Transform2d(
                     DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.CentRot)))); 
         }
      }
 
+     public Pose2d getAlgaeRequest() {
+        // return (DriverStation.getAlliance().get() == Alliance.Blue) ? (id >= 17 && id <= 22) : (id >= 6 && id <= 11);
+         Pose2d poseToGet = MoreMath.getNearest(getState().Pose, (DriverStation.getAlliance().get() == Alliance.Blue) ? (Constants.VisionFiducials.BLUE_CORAL_TAGS) : (Constants.VisionFiducials.RED_CORAL_TAGS));
+        // new Transform2d(x, y, rot);
+         return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.AlgaeRot))));
+     }
+
+     public Pose2d getFeederRequest() {
+        Pose2d poseToGet = MoreMath.getNearest(getState().Pose, (DriverStation.getAlliance().get() == Alliance.Blue) ? (Constants.VisionFiducials.BLUE_FEEDER_TAGS) : (Constants.VisionFiducials.RED_FEEDER_TAGS));
+        return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.feederRot))));
+     }
+
+     public void integratedFeederAlignment(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+        Pose2d desiredFeeder = getFeederRequest();
+        Distance distFromFeeder = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredFeeder.getTranslation()));
+        integratedAutoAlignment(distFromFeeder, getAlgaeRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
+     }
+
+
+     public void integratedAlgaeAlignment(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+        Pose2d desiredAlgae = getAlgaeRequest();
+        Distance distFromAlgae = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredAlgae.getTranslation()));
+
+        integratedAutoAlignment(distFromAlgae, getAlgaeRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
+     }
 
      public void integratedReefAlignment(boolean leftBranch, int level, LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
         Pose2d desiredReef = getReefRequest(leftBranch, level);

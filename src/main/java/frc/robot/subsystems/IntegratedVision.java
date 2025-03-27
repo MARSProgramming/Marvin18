@@ -133,6 +133,9 @@ public class IntegratedVision extends SubsystemBase {
                     var target = estimateInReefGlobalPipeline.get().targetsUsed.get(0);
                     int id = target.fiducialId;
                     if (!useTag(id)) continue;
+                    // experimental - reject vision updates if the target is smaller than 20% of the cameraspace
+                    // this may help us a lot. no vision updates when we are too far away
+                    if (target.getArea() < 0.2) continue; 
 
                     var tagLocation = aprilTags.getTagPose(id);
                     if (tagLocation.isEmpty()) continue; // Redundant, but every team I saw is using this. 
