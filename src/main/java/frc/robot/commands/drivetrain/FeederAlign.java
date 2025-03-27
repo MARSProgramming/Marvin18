@@ -18,18 +18,18 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.util.MoreMath;
 
-public class AlgaeAlign extends Command {
+public class FeederAlign extends Command {
     Elevator mElevator;
     CommandSwerveDrivetrain mDt;
     DoubleSupplier mX, mY, mRot;
 
-
-    public AlgaeAlign(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r) {
+    public FeederAlign(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r) {
         mElevator = elev;
         mDt = dt;
         mX = x;
         mY = y;
         mRot = r;
+
 
         addRequirements(dt); // Don't require elevator, we only want to look at its position.
     }
@@ -57,7 +57,7 @@ public class AlgaeAlign extends Command {
         .of(-mRot.getAsDouble() * Constants.AlignmentConstants.kMaximumRotSpeed.in(Units.RadiansPerSecond)
             * elevatorHeightMultiplier);
 
-        mDt.integratedAlgaeAlignment(
+        mDt.integratedFeederAlignment(
             xVelocity, 
             yVelocity, 
             rVelocity, 

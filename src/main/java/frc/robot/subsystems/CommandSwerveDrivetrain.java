@@ -450,13 +450,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().Pose.getRotation());
     }
 
-    public Command driveToPose() {
-        return AutoBuilder.pathfindToPose(new Pose2d(15, 2, Rotation2d.fromDegrees(0)),
-                new PathConstraints(LinearVelocity.ofBaseUnits(1.0, MetersPerSecond),
-                        LinearAcceleration.ofBaseUnits(0.5, MetersPerSecondPerSecond),
-                        AngularVelocity.ofBaseUnits(360, DegreesPerSecond),
-                        AngularAcceleration.ofBaseUnits(540, DegreesPerSecondPerSecond)));
-    }
 
     public double getSpeedAsDouble() {
         ChassisSpeeds fieldVelocity = getFieldRelativeSpeeds();
@@ -608,15 +601,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.feederRot))));
      }
 
-     public void integratedFeederAlignment(boolean leftBranch, int level, LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+     public void integratedFeederAlignment(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
         Pose2d desiredFeeder = getFeederRequest();
         Distance distFromFeeder = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredFeeder.getTranslation()));
-
         integratedAutoAlignment(distFromFeeder, getAlgaeRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
      }
 
 
-     public void integratedAlgaeAlignment(boolean leftBranch, int level, LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+     public void integratedAlgaeAlignment(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
         Pose2d desiredAlgae = getAlgaeRequest();
         Distance distFromAlgae = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredAlgae.getTranslation()));
 

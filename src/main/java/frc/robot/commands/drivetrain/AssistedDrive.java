@@ -11,14 +11,21 @@ public class AssistedDrive extends Command {
     DoubleSupplier mX, mY, mRot;
     double PigeonRoll, PigeonPitch;
     double vX, vY;
+    double kTiltMulti;
 
     public AssistedDrive(CommandSwerveDrivetrain drive) {
         mdt = drive;
         addRequirements(drive);
     }
 
+    // TODO: Let's dynamically scale the vX and vY based on tilt amount. like, vX = (TiltMulti * minimum) where tiltmulti scales off of pigeon reading
+    // https://ctre.download/files/user-manual/Pigeon2%20User's%20Guide.pdf
+    // page 10
     @Override
     public void initialize() {
+        vX = 0;
+        vY = 0;
+        kTiltMulti = 1; // Maximum tilt multiplier. 
         // Describing Pitch and Roll
         // We need to put these periodically on the dashboard to measure the threshold at which we must trigger
         // overtake of driver control
