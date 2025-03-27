@@ -88,10 +88,10 @@ public final class DynamicConstants {
         public static double CentY = 0;
         public static double CentRot = 90;
 
-        public static double AlgaeRot = 180;
+        public static double AlgaeRot = 0;
         public static double feederX = .4;
         public static double feederY = 0.0;
-        public static double feederRot = -90;
+        public static double feederRot = 0;
 
     }
 
@@ -112,7 +112,7 @@ public final class DynamicConstants {
     }
 
     public static class IRThresholds {
-        public static double IRthreshold = 1.75;
+        public static double IRthreshold = 1.8;
     }
 
     private static HashMap<Field, SimpleWidget> entries;

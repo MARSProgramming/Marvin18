@@ -159,7 +159,7 @@ public final class Constants {
         public static final double kMinimumElevatorMultiplier = 0.1;
 
         public static final PIDController kTransController = new PIDController(3, 0, 0);
-        public static final ProfiledPIDController kRotController = new ProfiledPIDController(2, 0, 0, 
+        public static final ProfiledPIDController kRotController = new ProfiledPIDController(3, 0, 0, 
         new TrapezoidProfile.Constraints(kMaximumRotSpeed.in(Units.DegreesPerSecond), Math.pow(kMaximumRotSpeed.in(Units.DegreesPerSecond), 2)));
 
         static {

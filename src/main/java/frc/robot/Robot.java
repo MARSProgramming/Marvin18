@@ -37,8 +37,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
    // DynamicConstants.init();
    // DynamicConstants.periodic();
-    PathfindingCommand.warmupCommand().schedule();
-    m_robotContainer.m_elevator.setServoCommand(0).schedule();
+   // w
+    //m_robotContainer.m_elevator.setServoCommand(0).schedule();
 
     SmartDashboard.putData("Update Constants", m_robotContainer.configureBindingsCommand());
     DataLogManager.start();

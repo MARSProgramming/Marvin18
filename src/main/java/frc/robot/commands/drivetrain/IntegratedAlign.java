@@ -23,16 +23,16 @@ public class IntegratedAlign extends Command {
     CommandSwerveDrivetrain mDt;
     DoubleSupplier mX, mY, mRot;
     int level;
-    boolean right;
+    boolean left;
 
-    public IntegratedAlign(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, int lev, boolean rightside) {
+    public IntegratedAlign(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, int lev, boolean leftside) {
         mElevator = elev;
         mDt = dt;
         mX = x;
         mY = y;
         mRot = r;
         level = lev;
-        right = rightside;
+        left = leftside;
 
         addRequirements(dt); // Don't require elevator, we only want to look at its position.
     }
@@ -61,7 +61,7 @@ public class IntegratedAlign extends Command {
             * elevatorHeightMultiplier);
 
         mDt.integratedReefAlignment(
-            right, 
+            left, 
             mElevator.selectedLevel, 
             xVelocity, 
             yVelocity, 

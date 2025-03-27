@@ -31,6 +31,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
+import frc.robot.commands.drivetrain.AlgaeAlign;
+import frc.robot.commands.drivetrain.FeederAlign;
 import frc.robot.commands.drivetrain.IntegratedAlign;
 import frc.robot.commands.drivetrain.IntegratedAlignWithTermination;
 import frc.robot.commands.drivetrain.planner.AligntoFeeder;
@@ -90,15 +92,12 @@ public class RobotContainer {
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
 
   public final IntegratedVision integVis = new IntegratedVision(drivetrain);
-  public final LED leds = new LED(40);
-
-  private PoseSelector2 leftSideSelector = new PoseSelector2(drivetrain, m_elevator, 0);
-  private PoseSelector2 rightSideSelector = new PoseSelector2(drivetrain, m_elevator, 1);
-
+ public final LED leds = new LED(40);
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
   private final Trigger readyToPlaceCoral = new Trigger(() -> drivetrain.isAligned());
 
   public RobotContainer() {
+    drivetrain.setStateStdDevs(VecBuilder.fill(0.01, 0.01, Math.toRadians(5)));
     configureBindings();
     configureLEDTriggers();
 
@@ -139,12 +138,12 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
     NamedCommands.registerCommand("Passive Intake", m_coral.coralCheck());
     NamedCommands.registerCommand("Alt Right Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, false));
+    NamedCommands.registerCommand("Alt Left Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, true));
 
     configureLEDTriggers();
 
     // Set the robot state standard deviation.
     // This sets trust in built-in robot odometry.
-    drivetrain.setStateStdDevs(VecBuilder.fill(0.01, 0.01, Units.Radians.convertFrom(1, Units.Degrees)));
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("AutoChooser", autoChooser);
   }
@@ -152,7 +151,7 @@ public class RobotContainer {
   public void configureBindings() {
 
     readyToPlaceCoral.onTrue(Commands.runOnce(
-      () -> Pilot.setRumble(RumbleType.kBothRumble, 0.4)))
+      () -> Pilot.setRumble(RumbleType.kBothRumble, 0.4)).withTimeout(1))
       .onFalse(Commands.runOnce(
           () -> Pilot.setRumble(RumbleType.kBothRumble, 0)));
 
@@ -193,16 +192,19 @@ public class RobotContainer {
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral, 10));
+    Pilot.a().whileTrue(new AlgaeAlign(m_elevator, drivetrain, 
+    () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
+    () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
+   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate));
     //Pilot.y().whileTrue(new DriveCoralScorePose(
     //    drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
      //       Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));
 
 
-     Pilot.y().whileTrue(new IntegratedAlign(m_elevator, drivetrain, 
+     Pilot.y().whileTrue(new FeederAlign(m_elevator, drivetrain, 
      () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
      () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
-    () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, -1, false));
+    () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate));
          // Alternative bindings
     // Pilot.x().whileTrue(poseSelector);
     // Pilot.b().onTrue(m_elevator.goToSelectedPointCommand());
@@ -307,7 +309,7 @@ public class RobotContainer {
 
   private void configureLEDTriggers() {
     // The primary purpose of this LED code is to introduce base trigger functionalities. 
-     leds.setDefaultCommand(leds.setLEDColorCommand(255, 0, 0));
+   leds.setDefaultCommand(leds.setLEDColorCommand(255, 0, 0));
      // Feeder align: Turn purple
      Pilot.a().whileTrue(leds.setLEDColorCommand(184, 0, 185));
      // Reef align - turn yellow

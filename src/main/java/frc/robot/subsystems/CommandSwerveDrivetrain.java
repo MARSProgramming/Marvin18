@@ -330,10 +330,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
-
-        localizedPoseEstimator.updateWithTime(Timer.getFPGATimestamp(), getState().Pose.getRotation(),
-                getState().ModulePositions);
-
     }
 
 
@@ -604,7 +600,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      public void integratedFeederAlignment(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
         Pose2d desiredFeeder = getFeederRequest();
         Distance distFromFeeder = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredFeeder.getTranslation()));
-        integratedAutoAlignment(distFromFeeder, getAlgaeRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
+        integratedAutoAlignment(distFromFeeder, getFeederRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
      }
 
 

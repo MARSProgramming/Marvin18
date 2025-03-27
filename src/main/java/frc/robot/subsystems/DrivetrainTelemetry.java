@@ -29,11 +29,6 @@ public class DrivetrainTelemetry extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("DrivetrainStates/PoseX", dt.getState().Pose.getMeasureX().baseUnitMagnitude());
-        SmartDashboard.putNumber("DrivetrainStates/PoseY", dt.getState().Pose.getMeasureY().baseUnitMagnitude());
-        SmartDashboard.putNumber("DrivetrainStates/RotationDegrees", dt.getState().Pose.getRotation().getDegrees());
-        SmartDashboard.putNumber("DrivetrainStates/RotationRadians", dt.getState().Pose.getRotation().getRadians());
-        SmartDashboard.putData(CommandScheduler.getInstance());
 
       //  publisher.set(dt.getState().Pose);
       //  arrayPublisher.set(new Pose2d[] {dt.getState().Pose});
