@@ -46,7 +46,6 @@ public class IntegratedVision extends SubsystemBase {
         reef = new PhotonCamera("reef_cam");
         feeder = new PhotonCamera("feeder_cam");
 
-        reef_local = new PhotonPoseEstimator(aprilTags, PoseStrategy.PNP_DISTANCE_TRIG_SOLVE, Constants.Vision.reefRobotToCam);
         reef_global = new PhotonPoseEstimator(aprilTags, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, Constants.Vision.reefRobotToCam);
         feeder_global = new PhotonPoseEstimator(aprilTags, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, Constants.Vision.feederRobotToCam);
         
@@ -86,11 +85,9 @@ public class IntegratedVision extends SubsystemBase {
      * 3rd: Feeder-Global
      */
 
-    public List<VisionMeasurement> refresh(TimestampedState state) {
+    public void refresh() {
 
         // Initial initialization of all metrics.
-        double reefLocalDistStdDevs = 1000; 
-        double reefLocalAngleStdDevs = 1000;
        
         double reefGlobalDistStdDevs = 1000;
         double reefGlobalAngleStdDevs = 1000;
@@ -99,43 +96,38 @@ public class IntegratedVision extends SubsystemBase {
         double feederGlobalAngleStdDevs = 1000;
 
         Optional <EstimatedRobotPose> estimateInReefGlobalPipeline;
-        Optional <EstimatedRobotPose> estimateInReefLocalPipeline;
         Optional <EstimatedRobotPose> estimateInFeederPipeline;
 
-        Pose2d reportedLocalEstimate = new Pose2d();
-        double reportedLocalTimestamp = 0; // Ensure no override of existing data. 
 
-        Pose2d reportedReefGlobalEstimate = new Pose2d();
+        Pose2d reportedReefGlobalEstimate = Pose2d.kZero;
         double reportedReefGlobalTimestamp = 0; // Ensure no override of existing data. 
 
-        Pose2d reportedFeederGlobalEstimate = new Pose2d();
+        Pose2d reportedFeederGlobalEstimate =  Pose2d.kZero;
         double reportedFeederGlobalTimestamp = 0; // Ensure no override of existing data. 
 
         boolean reefReady = reef.isConnected(); // Ensure no robot code failures.
         boolean feederReady = feeder.isConnected(); // Ensure no robot code failures. 
 
-        boolean pushLocal = false;
         boolean pushReefGlobal = false;
         boolean pushFeederGlobal = false;
 
+        feeder_global.setPrimaryStrategy(
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
+        ); 
+
+        reef_global.setPrimaryStrategy(
+            PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
+        ); 
         // PhotonVision Turbo Button
 
 
         if (reefReady) {
             for (PhotonPipelineResult result : reef.getAllUnreadResults()) {
-                if (Math.abs(state.reportedState().Speeds.omegaRadiansPerSecond) > Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
+                if (Math.abs(dt.getState().Speeds.omegaRadiansPerSecond) > Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
 
                 // If disabled, run multitag processing to get an initial pose (UNTESTED)
-                reef_local.setPrimaryStrategy(
-                    DriverStation.isEnabled() ? PoseStrategy.PNP_DISTANCE_TRIG_SOLVE : PoseStrategy.CONSTRAINED_SOLVEPNP
-                ); 
-
-                reef_global.setPrimaryStrategy(
-                    PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
-                ); 
                 
                 estimateInReefGlobalPipeline = reef_global.update(result, Optional.empty(), Optional.empty(), constrainedPnpParams);
-                estimateInReefLocalPipeline = reef_local.update(result, Optional.empty(), Optional.empty(), constrainedPnpParams);
 
                 if (!(estimateInReefGlobalPipeline.isEmpty() || estimateInReefGlobalPipeline.get().targetsUsed.isEmpty())) {
                     var target = estimateInReefGlobalPipeline.get().targetsUsed.get(0);
@@ -159,44 +151,12 @@ public class IntegratedVision extends SubsystemBase {
                         reportedReefGlobalTimestamp = estimateInReefGlobalPipeline.get().timestampSeconds;
                     }
                 }
-
-                if (!(estimateInReefLocalPipeline.isEmpty() || estimateInReefLocalPipeline.get().targetsUsed.isEmpty())) {
-                    var target = estimateInReefLocalPipeline.get().targetsUsed.get(0);
-                    int id = target.fiducialId;
-                    if (!useTag(id)) continue;
-
-                    var tagLocation = aprilTags.getTagPose(id);
-                    if (tagLocation.isEmpty()) continue; // Redundant, but every team I saw is using this. 
-
-                    double dist = target.bestCameraToTarget.getTranslation().getNorm();
-                    if ((dist > 2)) continue; // Tune this. Basically if our camera distance is within a set amount, change.
-                    // likely larger for a global pose estimate and REALLY tiny for the trigsolve.
-
-                    reefLocalDistStdDevs = 0.1 * dist * dist;
-                
-                    // change angular pose estimation weight because TRIG_SOLVE does NOT use heading data, we don't want to duplicate data.
-                    reefLocalAngleStdDevs = !reef_local.getPrimaryStrategy().equals(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE)
-                    ? 0.12 * Math.pow(dist, 2)
-                    : 1e5;
-
-                    pushLocal = true;
-
-                    if (estimateInReefLocalPipeline.isPresent() && pushLocal) {
-                        reportedLocalEstimate = estimateInReefLocalPipeline.get().estimatedPose.toPose2d();
-                        reportedLocalTimestamp = estimateInReefLocalPipeline.get().timestampSeconds;
-                    }
-                }
              }
         }
 
         if (feederReady) {
             for (PhotonPipelineResult result : feeder.getAllUnreadResults()) {
-                if (Math.abs(state.reportedState().Speeds.omegaRadiansPerSecond) > Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
-
-                feeder_global.setPrimaryStrategy(
-                    PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
-                ); 
-                
+                if (Math.abs(dt.getState().Speeds.omegaRadiansPerSecond) > Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
                 estimateInFeederPipeline = feeder_global.update(result, Optional.empty(), Optional.empty(), constrainedPnpParams);
 
                 if (!(estimateInFeederPipeline.isEmpty() || estimateInFeederPipeline.get().targetsUsed.isEmpty())) {
@@ -224,12 +184,15 @@ public class IntegratedVision extends SubsystemBase {
             }
         }
 
-        return List.of(
-            new VisionMeasurement(new TimestampedPose(reportedLocalEstimate, reportedLocalTimestamp), VecBuilder.fill(reefLocalDistStdDevs, reefLocalDistStdDevs, reefLocalAngleStdDevs)),
-            new VisionMeasurement(new TimestampedPose(reportedReefGlobalEstimate, reportedReefGlobalTimestamp), VecBuilder.fill(reefGlobalDistStdDevs, reefGlobalDistStdDevs, reefGlobalAngleStdDevs)),
-            new VisionMeasurement(new TimestampedPose(reportedFeederGlobalEstimate, reportedFeederGlobalTimestamp), VecBuilder.fill(feederGlobalDistStdDevs, feederGlobalDistStdDevs, feederGlobalAngleStdDevs))
+        if (pushReefGlobal == true) {
+            dt.setVisionMeasurementStdDevs(VecBuilder.fill(reefGlobalDistStdDevs, reefGlobalDistStdDevs, reefGlobalAngleStdDevs));
+            dt.addVisionMeasurement(reportedReefGlobalEstimate, reportedReefGlobalTimestamp);    
+        }
 
-        );
+        if (pushFeederGlobal == true) {
+            dt.updateLocalizedEstimator(reportedFeederGlobalEstimate, reportedFeederGlobalTimestamp, VecBuilder.fill(feederGlobalDistStdDevs, feederGlobalDistStdDevs, feederGlobalAngleStdDevs));
+        }
+
     }
 
     // a simple utility function to indicate whether an estimate is to be trusted (based on AprilTag IDs)
@@ -241,21 +204,14 @@ public class IntegratedVision extends SubsystemBase {
     @Override
     public void periodic() {
 
-        TimestampedState stateAtLoopIteration = new TimestampedState(dt.getState(), Timer.getFPGATimestamp());
-        List<VisionMeasurement> currentMeasurements = refresh(stateAtLoopIteration);
-
-        addTrigSolveReference(new TimestampedPose(stateAtLoopIteration.reportedState().Pose, stateAtLoopIteration.reportedTimestamp()));
-
-        dt.updateLocalizedEstimator(currentMeasurements.get(0));
-        dt.updateGlobalEstimator(currentMeasurements.get(1));
-        dt.updateGlobalEstimator(currentMeasurements.get(2));
+        refresh();
+ 
 
         // Logging
-
         globalPublisher.set(dt.getState().Pose);
         globalArrayPublisher.set(new Pose2d[] {dt.getState().Pose});
-    
         localPublisher.set(dt.getLocalizedPose());
         localArrayPublisher.set(new Pose2d[] {dt.getLocalizedPose()});
+
     }
 }

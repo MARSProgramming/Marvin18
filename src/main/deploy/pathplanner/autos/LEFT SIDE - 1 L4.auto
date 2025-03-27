@@ -7,12 +7,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Deploy Algae"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Passive Intake"
           }
         },
@@ -23,19 +17,13 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.0
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Right"
+                  "name": "Alt Right Side Align"
                 }
               },
               {
@@ -57,18 +45,6 @@
           "type": "named",
           "data": {
             "name": "Zero Elevator"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "F-U2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Feeder Align"
           }
         }
       ]

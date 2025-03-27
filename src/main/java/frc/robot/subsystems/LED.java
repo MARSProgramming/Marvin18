@@ -173,6 +173,6 @@ public class LED extends SubsystemBase {
 
     @Override
     public void periodic() {
-        defaultCommand().schedule();
+       // defaultCommand().schedule();
     }
 }

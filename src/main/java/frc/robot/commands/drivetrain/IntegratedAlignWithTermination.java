@@ -18,14 +18,14 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.util.MoreMath;
 
-public class IntegratedAlign extends Command {
+public class IntegratedAlignWithTermination extends Command {
     Elevator mElevator;
     CommandSwerveDrivetrain mDt;
     DoubleSupplier mX, mY, mRot;
     int level;
     boolean right;
 
-    public IntegratedAlign(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, int lev, boolean rightside) {
+    public IntegratedAlignWithTermination(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, int lev, boolean rightside) {
         mElevator = elev;
         mDt = dt;
         mX = x;
@@ -78,6 +78,6 @@ public class IntegratedAlign extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return mDt.isAligned();
     }
 }
