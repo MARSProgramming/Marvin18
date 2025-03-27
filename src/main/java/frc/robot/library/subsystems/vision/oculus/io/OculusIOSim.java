@@ -10,15 +10,15 @@
 *
 * Source code must be publicly available on GitHub or an alternative web accessible site
 */
-package frc.alotobots.library.subsystems.vision.oculus.io;
+package frc.robot.library.subsystems.vision.oculus.io;
 
-import static frc.alotobots.library.subsystems.vision.oculus.constants.OculusConstants.*;
+import static frc.robot.library.subsystems.vision.oculus.constants.OculusConstants.*;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Quaternion;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
-import frc.alotobots.library.subsystems.vision.oculus.constants.OculusConstants;
+import frc.robot.library.subsystems.vision.oculus.constants.OculusConstants;
 import java.util.Random;
 import org.ironmaple.simulation.drivesims.SwerveDriveSimulation;
 

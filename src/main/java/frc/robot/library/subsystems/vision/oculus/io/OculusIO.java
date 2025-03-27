@@ -10,7 +10,7 @@
 *
 * Source code must be publicly available on GitHub or an alternative web accessible site
 */
-package frc.alotobots.library.subsystems.vision.oculus.io;
+package frc.robot.library.subsystems.vision.oculus.io;
 
 import org.littletonrobotics.junction.AutoLog;
 

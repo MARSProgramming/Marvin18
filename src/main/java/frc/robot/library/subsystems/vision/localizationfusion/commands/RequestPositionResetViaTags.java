@@ -10,10 +10,10 @@
 *
 * Source code must be publicly available on GitHub or an alternative web accessible site
 */
-package frc.alotobots.library.subsystems.vision.localizationfusion.commands;
+package frc.robot.library.subsystems.vision.localizationfusion.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.alotobots.library.subsystems.vision.localizationfusion.LocalizationFusion;
+import frc.robot.library.subsystems.vision.localizationfusion.LocalizationFusion;
 
 /**
  * A command that requests a position reset using AprilTag detection. This command attempts to reset

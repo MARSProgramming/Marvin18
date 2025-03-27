@@ -46,7 +46,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
-import frc.robot.subsystems.IntegratedVision;
 import frc.robot.subsystems.LED;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -88,7 +87,7 @@ public class RobotContainer {
   public final Vision reef_vision = new Vision(Constants.Vision.reefCameraName, Constants.Vision.reefRobotToCam);
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
 
-  public final IntegratedVision integVis = new IntegratedVision(drivetrain);
+
   public final LED leds = new LED();
   private PoseSelector2 leftSideSelector = new PoseSelector2(drivetrain, m_elevator, 0);
   private PoseSelector2 rightSideSelector = new PoseSelector2(drivetrain, m_elevator, 1);
