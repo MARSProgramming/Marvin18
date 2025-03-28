@@ -152,8 +152,8 @@ public final class Constants {
     public static class AlignmentConstants {
         public static final Distance kMinimumXYAlignDistance = Units.Meters.of(2);
         public static final Distance kPointTolerance = Units.Inches.of(0.5);
-        public static final Distance kAlignmentTolerance = Units.Inches.of(1);
-        public static final Angle kRotTolerance = Units.Degrees.of(1);
+        public static final Distance kAlignmentTolerance = Units.Inches.of(1.5);
+        public static final Angle kRotTolerance = Units.Degrees.of(3.5);
         public static final AngularVelocity kMaximumRotSpeed = Units.DegreesPerSecond.of(360);
         public static final LinearVelocity TeleoperatedMaximumVelocity = Units.MetersPerSecond.of(TunerConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.7);
         public static final double kMinimumElevatorMultiplier = 0.1;
