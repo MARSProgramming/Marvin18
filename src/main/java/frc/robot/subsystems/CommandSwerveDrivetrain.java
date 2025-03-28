@@ -411,9 +411,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                                             com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType.Velocity)),
                     new PPHolonomicDriveController(
                             // PID constants for translation
-                            new PIDConstants(10, 0, 0),
+                            new PIDConstants(5, 0, 0.2),
                             // PID constants for rotation
-                            new PIDConstants(5.8, 0, 0)),
+                            new PIDConstants(4.5, 0, 0.1)),
                     config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the
                     // case
@@ -593,7 +593,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // return (DriverStation.getAlliance().get() == Alliance.Blue) ? (id >= 17 && id <= 22) : (id >= 6 && id <= 11);
          Pose2d poseToGet = MoreMath.getNearest(getState().Pose, (DriverStation.getAlliance().get() == Alliance.Blue) ? (Constants.VisionFiducials.BLUE_CORAL_TAGS) : (Constants.VisionFiducials.RED_CORAL_TAGS));
         // new Transform2d(x, y, rot);
-         return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.AlgaeRot))));
+         return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.CentRot))));
      }
 
      public Pose2d getFeederRequest() {

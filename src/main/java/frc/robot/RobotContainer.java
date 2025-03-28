@@ -141,6 +141,7 @@ public class RobotContainer {
                                                                                                      // down if limit
                                                                                                      // isn't read.
     NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
+    NamedCommands.registerCommand("Score Faster", m_coral.runIntake(1).withTimeout(0.3));
     NamedCommands.registerCommand("Passive Intake", m_coral.coralCheck());
     NamedCommands.registerCommand("Alt Right Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, false));
     NamedCommands.registerCommand("Alt Left Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, true));

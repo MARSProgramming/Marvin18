@@ -6,6 +6,7 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -24,6 +25,7 @@ public class IntegratedAlignWithTermination extends Command {
     DoubleSupplier mX, mY, mRot;
     int level;
     boolean right;
+    Debouncer finishDebounce;
 
     public IntegratedAlignWithTermination(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, int lev, boolean rightside) {
         mElevator = elev;
@@ -33,6 +35,8 @@ public class IntegratedAlignWithTermination extends Command {
         mRot = r;
         level = lev;
         right = rightside;
+
+        finishDebounce = new Debouncer(0.1); // 5 Loop Cycles
 
         addRequirements(dt); // Don't require elevator, we only want to look at its position.
     }
@@ -78,6 +82,6 @@ public class IntegratedAlignWithTermination extends Command {
 
     @Override
     public boolean isFinished() {
-        return mDt.isAligned();
+        return (finishDebounce.calculate(mDt.isAligned()));
     }
 }
