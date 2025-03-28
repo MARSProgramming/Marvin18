@@ -17,7 +17,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1-F"
+                  "pathName": "S6-C"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Setpoint L2"
                 }
               }
             ]
@@ -57,7 +63,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "F-U2"
+            "pathName": "C-U1"
           }
         },
         {
@@ -82,7 +88,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "U2-E"
+            "pathName": "U1-C"
           }
         },
         {
@@ -92,7 +98,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Alt Right Side Align"
+                  "name": "Alt Left Side Align"
                 }
               },
               {
@@ -119,7 +125,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

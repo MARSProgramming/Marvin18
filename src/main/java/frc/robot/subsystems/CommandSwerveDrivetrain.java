@@ -44,6 +44,7 @@ import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.RobotState;
@@ -330,6 +331,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        SmartDashboard.putNumber("Pigeon Roll", getPigeon2().getRoll().getValueAsDouble());
+        SmartDashboard.putNumber("Pigeon Pitch", getPigeon2().getPitch().getValueAsDouble());
     }
 
 
@@ -639,6 +643,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     
       public boolean atPose(Pose2d desiredPose) {
         return isAtRotation(desiredPose.getRotation()) && isAtPosition(desiredPose);
+      }
+
+      public boolean notSafe() {
+        return (180 - Math.abs(getPigeon2().getRoll().getValueAsDouble()) > 15) 
+        || (Math.abs(getPigeon2().getPitch().getValueAsDouble()) > 15);
       }
 
       // for logging / dashboard odom

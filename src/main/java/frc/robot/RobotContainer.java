@@ -68,6 +68,9 @@ public class RobotContainer {
   private final SwerveRequest.RobotCentric robotDrive = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(
           SteerRequestType.MotionMagicExpo); // Use Closed-loop control for drive motors at low speeds
+  
+  private final SwerveRequest.ApplyRobotSpeeds robot = new SwerveRequest.ApplyRobotSpeeds();
+
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final SwerveRequest.FieldCentricFacingAngle angle = new SwerveRequest.FieldCentricFacingAngle();
@@ -95,6 +98,8 @@ public class RobotContainer {
  public final LED leds = new LED(40);
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
   private final Trigger readyToPlaceCoral = new Trigger(() -> drivetrain.isAligned());
+  private final Trigger algaeWarning = new Trigger(() -> drivetrain.notSafe());
+
 
   public RobotContainer() {
     drivetrain.setStateStdDevs(VecBuilder.fill(0.01, 0.01, Math.toRadians(5)));
@@ -155,6 +160,10 @@ public class RobotContainer {
       .onFalse(Commands.runOnce(
           () -> Pilot.setRumble(RumbleType.kBothRumble, 0)));
 
+    algaeWarning.onTrue(Commands.runOnce(() -> drivetrain.drive(new ChassisSpeeds())).withTimeout(3));
+
+    
+      
     m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.

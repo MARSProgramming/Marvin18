@@ -49,27 +49,7 @@ public class AssistedDrive extends Command {
         if (safe) {
             mdt.fieldDrive(mX, mY, mRot, true);
         } else {
-            // but what speed do we drive at? 
-            if (PigeonRoll < 0) { // so if roll is less than 0, we are tilting backward. Drive backward, robot relative. 
-                vX = -1;
-                // is 1 meter per second fast enough? Does this work?
-            }
-            if (PigeonRoll > 0) {
-                vX = 1;
-            }
-            if (PigeonPitch < 0) {
-                vY = 1;
-            }
-            if (PigeonPitch > 0) {
-                vY = -1;
-            }
-            // this logic is intended to account for scenarios where we drive a corner into an algae
-            // but it may be too aggressive and cause us to flip or something
-            // I don't think we want to introduce complex angular calculations because this should work for
-            // most use cases. 
-            mdt.drive(new ChassisSpeeds(
-                vX, vY, 0
-            ));
+            mdt.drive(new ChassisSpeeds());
         }
     }
 
