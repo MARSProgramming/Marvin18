@@ -194,6 +194,25 @@
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Setpoint L4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Alt Right Side Align"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Elevator Setpoint L4"

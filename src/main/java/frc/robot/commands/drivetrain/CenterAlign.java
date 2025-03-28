@@ -18,13 +18,13 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.util.MoreMath;
 
-public class AlgaeAlign extends Command {
+public class CenterAlign extends Command {
     Elevator mElevator;
     CommandSwerveDrivetrain mDt;
     DoubleSupplier mX, mY, mRot;
 
 
-    public AlgaeAlign(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r) {
+    public CenterAlign(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r) {
         mElevator = elev;
         mDt = dt;
         mX = x;
@@ -57,7 +57,7 @@ public class AlgaeAlign extends Command {
         .of(-mRot.getAsDouble() * Constants.AlignmentConstants.kMaximumRotSpeed.in(Units.RadiansPerSecond)
             * elevatorHeightMultiplier);
 
-        mDt.integratedAlgaeAlignment(
+        mDt.integratedCenterAlign(
             xVelocity, 
             yVelocity, 
             rVelocity, 

@@ -336,7 +336,7 @@ public class Elevator extends SubsystemBase {
       stopMotor();
     }).until(
         () -> getLimit()
-        );
+        ).withTimeout(3); // three second timeout
   }
 
   private final SysIdRoutine m_sysIdRoutine = new SysIdRoutine(

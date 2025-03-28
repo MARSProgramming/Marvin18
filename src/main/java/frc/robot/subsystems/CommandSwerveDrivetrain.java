@@ -270,6 +270,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
+    public Command DoNothingForTime(double seconds) {
+        return applyRequest(() -> mChassiSpeeds.withSpeeds(new ChassisSpeeds())).withTimeout(seconds);
+    }
+
     public void drive(ChassisSpeeds speeds) {
         setControl(mChassiSpeeds.withSpeeds(speeds));
     }
@@ -332,8 +336,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             });
         }
 
-        SmartDashboard.putNumber("Pigeon Roll", getPigeon2().getRoll().getValueAsDouble());
-        SmartDashboard.putNumber("Pigeon Pitch", getPigeon2().getPitch().getValueAsDouble());
     }
 
 
@@ -411,9 +413,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                                             com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType.Velocity)),
                     new PPHolonomicDriveController(
                             // PID constants for translation
-                            new PIDConstants(5, 0, 0.2),
+                            new PIDConstants(5, 0, 0.1),
                             // PID constants for rotation
-                            new PIDConstants(4.5, 0, 0.1)),
+                            new PIDConstants(4, 0, 0.05)),
                     config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the
                     // case
@@ -589,7 +591,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
      }
 
-     public Pose2d getAlgaeRequest() {
+     public Pose2d getCenterRequest() {
         // return (DriverStation.getAlliance().get() == Alliance.Blue) ? (id >= 17 && id <= 22) : (id >= 6 && id <= 11);
          Pose2d poseToGet = MoreMath.getNearest(getState().Pose, (DriverStation.getAlliance().get() == Alliance.Blue) ? (Constants.VisionFiducials.BLUE_CORAL_TAGS) : (Constants.VisionFiducials.RED_CORAL_TAGS));
         // new Transform2d(x, y, rot);
@@ -608,11 +610,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      }
 
 
-     public void integratedAlgaeAlignment(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
-        Pose2d desiredAlgae = getAlgaeRequest();
+     public void integratedCenterAlign(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+        Pose2d desiredAlgae = getCenterRequest();
         Distance distFromAlgae = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredAlgae.getTranslation()));
 
-        integratedAutoAlignment(distFromAlgae, getAlgaeRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
+        integratedAutoAlignment(distFromAlgae, getCenterRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
      }
 
      public void integratedReefAlignment(boolean leftBranch, int level, LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {

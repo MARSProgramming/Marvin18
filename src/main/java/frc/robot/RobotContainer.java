@@ -31,7 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
-import frc.robot.commands.drivetrain.AlgaeAlign;
+import frc.robot.commands.drivetrain.CenterAlign;
 import frc.robot.commands.drivetrain.FeederAlign;
 import frc.robot.commands.drivetrain.IntegratedAlign;
 import frc.robot.commands.drivetrain.IntegratedAlignWithTermination;
@@ -143,8 +143,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
     NamedCommands.registerCommand("Score Faster", m_coral.runIntake(1).withTimeout(0.3));
     NamedCommands.registerCommand("Passive Intake", m_coral.coralCheck());
-    NamedCommands.registerCommand("Alt Right Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, false));
-    NamedCommands.registerCommand("Alt Left Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, true));
+    NamedCommands.registerCommand("Alt Right Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, false).withTimeout(3));
+    NamedCommands.registerCommand("Alt Left Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, true).withTimeout(3));
 
     configureLEDTriggers();
 
@@ -161,7 +161,7 @@ public class RobotContainer {
       .onFalse(Commands.runOnce(
           () -> Pilot.setRumble(RumbleType.kBothRumble, 0)));
 
-    algaeWarning.onTrue(Commands.runOnce(() -> drivetrain.drive(new ChassisSpeeds())).withTimeout(3));
+    algaeWarning.onTrue(drivetrain.DoNothingForTime(3));
 
     
       
@@ -202,16 +202,13 @@ public class RobotContainer {
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    Pilot.a().whileTrue(new AlgaeAlign(m_elevator, drivetrain, 
-    () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
-    () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
-   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate));
+    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral, 2));
     //Pilot.y().whileTrue(new DriveCoralScorePose(
     //    drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
      //       Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));
 
 
-     Pilot.y().whileTrue(new FeederAlign(m_elevator, drivetrain, 
+     Pilot.y().whileTrue(new CenterAlign(m_elevator, drivetrain, 
      () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
      () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
     () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate));

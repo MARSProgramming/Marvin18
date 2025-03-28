@@ -153,13 +153,13 @@ public final class Constants {
         public static final Distance kMinimumXYAlignDistance = Units.Meters.of(2);
         public static final Distance kPointTolerance = Units.Inches.of(0.5);
         public static final Distance kAlignmentTolerance = Units.Inches.of(1.5);
-        public static final Angle kRotTolerance = Units.Degrees.of(3.5);
+        public static final Angle kRotTolerance = Units.Degrees.of(2.5);
         public static final AngularVelocity kMaximumRotSpeed = Units.DegreesPerSecond.of(360);
         public static final LinearVelocity TeleoperatedMaximumVelocity = Units.MetersPerSecond.of(TunerConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.7);
         public static final double kMinimumElevatorMultiplier = 0.1;
 
-        public static final PIDController kTransController = new PIDController(3, 0, 0.05);
-        public static final ProfiledPIDController kRotController = new ProfiledPIDController(3, 0, 0.05, 
+        public static final PIDController kTransController = new PIDController(3, 0, 0.02);
+        public static final ProfiledPIDController kRotController = new ProfiledPIDController(2.5, 0, 0.01, 
         new TrapezoidProfile.Constraints(kMaximumRotSpeed.in(Units.DegreesPerSecond), Math.pow(kMaximumRotSpeed.in(Units.DegreesPerSecond), 2)));
 
         static {
