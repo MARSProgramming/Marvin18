@@ -97,7 +97,10 @@ public class Elevator extends SubsystemBase {
     // masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
     masterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    masterConfig.CurrentLimits.SupplyCurrentLimit = 50;
+    masterConfig.CurrentLimits.SupplyCurrentLimit = 60;
+    masterConfig.CurrentLimits.SupplyCurrentLowerLimit = 30;
+    masterConfig.CurrentLimits.SupplyCurrentLowerTime = 1;
+
     masterConfig.CurrentLimits.StatorCurrentLimit = 80;
     masterConfig.Feedback.SensorToMechanismRatio = 12;
     masterConfig.Voltage.PeakForwardVoltage = 16;
@@ -109,7 +112,7 @@ public class Elevator extends SubsystemBase {
     masterConfig.Slot0.kG = 0.3;
     masterConfig.Slot0.kS = 0.1;
     masterConfig.MotionMagic.MotionMagicCruiseVelocity = 35;
-    masterConfig.MotionMagic.MotionMagicAcceleration = 55;
+    masterConfig.MotionMagic.MotionMagicAcceleration = 70;
 
     masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
     master.getConfigurator().apply(masterConfig);
@@ -324,10 +327,10 @@ public class Elevator extends SubsystemBase {
   public Command zeroElevatorCommand() {
     return runEnd(() -> {
       ratchetLock(0);
-      if(getPositionNormal() > 2) {
+      if(getPositionNormal() > 1.5) {
       setRotations(0.0);}
       else  {
-        runVoltageRequest(-5);
+        runVoltageRequest(-6);
       }
     }, () -> {
       stopMotor();

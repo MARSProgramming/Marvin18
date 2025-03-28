@@ -51,7 +51,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Score Faster"
           }
         },
         {
@@ -133,7 +133,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Score Faster"
           }
         },
         {
@@ -194,28 +194,15 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Alt Right Side Align"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "U2-D"
-                }
-              }
-            ]
+            "name": "Elevator Setpoint L4"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": null
+            "name": "Score Faster"
           }
         }
       ]
