@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
    // DynamicConstants.periodic();
    // w
     //m_robotContainer.m_elevator.setServoCommand(0).schedule();
-
+    
     SmartDashboard.putData("Update Constants", m_robotContainer.configureBindingsCommand());
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
