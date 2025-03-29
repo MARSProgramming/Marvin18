@@ -158,17 +158,20 @@ public final class Constants {
         public static final LinearVelocity TeleoperatedMaximumVelocity = Units.MetersPerSecond.of(TunerConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.7);
         public static final double kMinimumElevatorMultiplier = 0.1;
 
-        public static final PIDController kTransController = new PIDController(3, 0, 0.02);
-        public static final ProfiledPIDController kRotController = new ProfiledPIDController(2.5, 0, 0.01, 
+        public static final PIDController kXController = new PIDController(3.5, 0, 0);
+        public static final PIDController kYController = new PIDController(3.5, 0, 0);
+        public static final ProfiledPIDController kRotController = new ProfiledPIDController(3, 0, 0, 
         new TrapezoidProfile.Constraints(kMaximumRotSpeed.in(Units.DegreesPerSecond), Math.pow(kMaximumRotSpeed.in(Units.DegreesPerSecond), 2)));
 
         static {
-            kTransController.setTolerance(kPointTolerance.in(Units.Meters));
+            kXController.setTolerance(kPointTolerance.in(Units.Meters));
+            kYController.setTolerance(kPointTolerance.in(Units.Meters));
             kRotController.enableContinuousInput(0, 360);
             kRotController.setTolerance(kRotTolerance.in(Units.Degrees));
+            
         }
 
-        public static HolonomicDriveController kTeleoperatedAlignmentController = new HolonomicDriveController(kTransController, kTransController, kRotController);
+        public static HolonomicDriveController kTeleoperatedAlignmentController = new HolonomicDriveController(kXController, kYController, kRotController);
         
     }
 

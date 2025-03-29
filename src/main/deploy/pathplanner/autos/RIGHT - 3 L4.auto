@@ -15,15 +15,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Deploy Algae"
-                }
-              },
-              {
                 "type": "path",
                 "data": {
                   "pathName": "S6-C"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Setpoint L2"
                 }
               }
             ]

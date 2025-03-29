@@ -25,13 +25,13 @@ public final class DynamicConstants {
      */
 
     public static class ElevatorSetpoints {
-        public static double elevMax = 7.8;
-        public static double elevL4 = 7.8;
+        public static double elevMax = 7.82;
+        public static double elevL4 = 7.82;
         public static double elevL3 = 4.5;
         public static double elevL2 = 2.02;
         public static double elevL1 = 0;
-        public static double elevAlgaeTop = 7.2;
-        public static double elevAlgaeBot = 5.1;
+        public static double elevAlgaeTop = 7.0;
+        public static double elevAlgaeBot = 4.9;
         public static double elevAlgaeTee = 2.2;
         public static double elevAlgaeGround = 1;
         public static double elevClimb = 0;
@@ -84,7 +84,7 @@ public final class DynamicConstants {
 
         public static double LeftRot = 90;
         
-        public static double CentX = 1;
+        public static double CentX = 1.3;
         public static double CentY = 0;
         public static double CentRot = 90;
 

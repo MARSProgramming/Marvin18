@@ -51,6 +51,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntegratedVision;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LED.LEDSection;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -97,7 +98,7 @@ public class RobotContainer {
   public final IntegratedVision integVis = new IntegratedVision(drivetrain);
  public final LED leds = new LED(40);
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
-  private final Trigger readyToPlaceCoral = new Trigger(() -> drivetrain.isAligned());
+  private final Trigger readyToPlaceCoral = new Trigger(() -> (DriverStation.isTeleop() && drivetrain.isAligned()));
   private final Trigger algaeWarning = new Trigger(() -> drivetrain.notSafe());
 
 
@@ -145,8 +146,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
     NamedCommands.registerCommand("Score Faster", m_coral.runIntake(1).withTimeout(0.3));
     NamedCommands.registerCommand("Passive Intake", m_coral.coralCheck());
-    NamedCommands.registerCommand("Alt Right Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, false).withTimeout(3));
-    NamedCommands.registerCommand("Alt Left Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, true).withTimeout(3));
+    NamedCommands.registerCommand("Alt Right Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, false).withTimeout(2));
+    NamedCommands.registerCommand("Alt Left Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, true).withTimeout(2));
 
     configureLEDTriggers();
 

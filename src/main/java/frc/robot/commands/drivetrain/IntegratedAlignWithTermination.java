@@ -36,7 +36,7 @@ public class IntegratedAlignWithTermination extends Command {
         level = lev;
         right = rightside;
 
-        finishDebounce = new Debouncer(0.3); // 15 Loop Cycles
+        finishDebounce = new Debouncer(0.06); // 15 Loop Cycles
 
         addRequirements(dt); // Don't require elevator, we only want to look at its position.
     }
