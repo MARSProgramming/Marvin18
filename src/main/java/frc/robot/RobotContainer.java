@@ -100,6 +100,8 @@ public class RobotContainer {
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
   private final Trigger readyToPlaceCoral = new Trigger(() -> (DriverStation.isTeleop() && drivetrain.isAligned()));
   private final Trigger algaeWarning = new Trigger(() -> drivetrain.notSafe());
+  private final Trigger hasCoralTrigger = new Trigger(() -> m_coral.hasCoral());
+
 
 
   public RobotContainer() {
