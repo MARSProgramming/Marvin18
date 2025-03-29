@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.RunCommand;
-
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -321,7 +321,7 @@ public class RobotContainer {
 
   }
 
-  private void configureLEDTriggers() {
+   private void configureLEDTriggers() {
     /*  led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
     Pilot.a().whileTrue(led.setLEDColorSectionCommand(LEDSection.R45, 0, 255, 0)); //changed
     Pilot.b().whileTrue(led.setLEDColorCommand(0, 255, 0));
