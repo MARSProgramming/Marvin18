@@ -305,7 +305,7 @@ public class RobotContainer {
     Copilot.x().whileTrue(led.setLEDColorCommand(128, 255, 0));
     Copilot.b().whileTrue(led.setLEDColorCommand(255, 127, 0));
     Copilot.y().whileTrue(led.setLEDColorCommand(255, 255, 0));
-    Copilot.povUp().whileTrue(led.setLEDColorCommand(0, 255, 0));
+    Copilot.povUp().whileTrue(led.setColorFlowAnimationSectionCommand(LEDSection.LEFTVERT, 0, 255, 0, false));
     Copilot.povLeft().whileTrue(led.setLEDColorCommand(0, 255, 0));
     Copilot.povRight().whileTrue(led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
     Copilot.start().whileTrue(led.setStrobeAnimationCommand(0, 0, 255, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));

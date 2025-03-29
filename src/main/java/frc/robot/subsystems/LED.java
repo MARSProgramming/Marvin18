@@ -84,6 +84,14 @@ public class LED extends SubsystemBase {
         return run(() -> setColorFlowAnimation(r, g, b, reversed));  // Runs the setColorFlowAnimation method
     }
 
+    public Command setColorFlowAnimationSectionCommand(LEDSection section, int r, int g, int b, boolean reversed) {
+        return run(() -> setColorFlowAnimationSection(section, r, g, b, reversed));
+    }
+
+    public Command setColorFlowAnimationMultiSectionCommand(int r, int g, int b, boolean reversed, LEDSection... sections) {
+        return run(() -> setColorFlowAnimationMultiSection(r, g, b, reversed, sections));
+    }
+
     // Method to set the color of the entire LED strip (RGB)
     private void setLEDColor(int r, int g, int b) {
         setLEDColorSection(0, LED_COUNT, r, g, b);  // Calls setLEDColorSection to apply color to the entire strip
@@ -149,5 +157,22 @@ public class LED extends SubsystemBase {
         Animation flow = new ColorFlowAnimation(r, g, b, 0, 0.7, LED_COUNT, ColorFlowAnimation.Direction.Forward);  // Create color flow animation
         candle.animate(flow);  // Apply the color flow animation to the LED strip
     }
+    private void setColorFlowAnimationSection(LEDSection section, int r, int g, int b, boolean reversed) {
+        int start = section.getStart();
+        int length = section.getLength();
+        
+        Animation flow = new ColorFlowAnimation(r, g, b, 0, 0.7, length, reversed ? ColorFlowAnimation.Direction.Backward : ColorFlowAnimation.Direction.Forward);
+        candle.animate(flow, start); // Apply animation to a specific section
+    }
 
+    private void setColorFlowAnimationMultiSection(int r, int g, int b, boolean reversed, LEDSection... sections) {
+        for (LEDSection section : sections) {
+            int start = section.getStart();
+            int length = section.getLength();
+    
+            // Create and apply a Color Flow animation to the section
+            Animation flow = new ColorFlowAnimation(r, g, b, 0, 0.7, length, reversed ? ColorFlowAnimation.Direction.Backward : ColorFlowAnimation.Direction.Forward);
+            candle.animate(flow, start);
+        }
+    }
 }
