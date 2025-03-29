@@ -302,8 +302,7 @@ public class RobotContainer {
    // led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
 
     //pilot
-    Pilot.rightTrigger().whileTrue(led.setLEDColorCommand(0, 255, 0));
-
+    Pilot.rightTrigger().onTrue(led.setLEDColorCommand(0, 255, 0).withTimeout(1).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
 
     //copilot
     Copilot.x().whileTrue(led.setLEDColorCommand(128, 255, 0));
