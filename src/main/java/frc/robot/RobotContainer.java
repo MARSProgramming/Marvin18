@@ -133,6 +133,8 @@ public class RobotContainer {
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround));
     NamedCommands.registerCommand("Elevator Setpoint Algae Processor",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee));
+    NamedCommands.registerCommand("Elevator Setpoint Algae Bottom",
+        m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot));
     NamedCommands.registerCommand("Elevator Setpoint Algae Top",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop));
     NamedCommands.registerCommand("Zero Elevator", m_elevator.zeroElevatorCommand().withTimeout(2)); // ensure that the

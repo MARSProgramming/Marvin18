@@ -1,0 +1,74 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Passive Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Mid-A"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Alt Right Side Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Setpoint L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Zero Elevator"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "MIDDLE-PREP"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Elevator Setpoint Algae Bottom"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
