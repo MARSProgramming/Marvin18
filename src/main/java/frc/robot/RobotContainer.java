@@ -318,19 +318,43 @@ public class RobotContainer {
   }
 
   private void configureLEDTriggers() {
-    // The primary purpose of this LED code is to introduce base trigger functionalities. 
-   leds.setDefaultCommand(leds.setLEDColorCommand(255, 0, 0));
-     // Feeder align: Turn purple
-     Pilot.a().whileTrue(leds.setLEDColorCommand(184, 0, 185));
-     // Reef align - turn yellow
-     Pilot.b().whileTrue(leds.setLEDColorCommand(255, 165, 0)); 
-     // Reef align - turn yellow
-     Pilot.x().whileTrue(leds.setLEDColorCommand(255, 165, 0));
-     // Algae align - turn blue 
-     Pilot.y().whileTrue(leds.setLEDColorCommand(0, 0, 255)); 
-     // Scoring - turn green 
-     Pilot.rightTrigger().whileTrue(leds.setLEDColorCommand(0, 255, 0));
+    /*  led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
+    Pilot.a().whileTrue(led.setLEDColorSectionCommand(LEDSection.R45, 0, 255, 0)); //changed
+    Pilot.b().whileTrue(led.setLEDColorCommand(0, 255, 0));
+    Pilot.x().whileTrue(led.setLEDColorCommand(0, 0, 255));
+    Pilot.y().whileTrue(led.setLEDColorCommand(255, 255, 255));
+    Pilot.start().whileTrue(led.setRainbowAnimationCommand()); //not working
+    Pilot.back().whileTrue(led.setStrobeAnimationCommand(255, 0, 0, .8)); //not working (meh)
+    Pilot.leftBumper().whileTrue(led.setColorFlowAnimationCommand(0, 255, 0, false));
+    Pilot.rightBumper().whileTrue(led.setColorFlowAnimationCommand(0, 0, 255, true));*/
+
+    //default command
+   // led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
+
+    //pilot
+    Pilot.rightTrigger().onTrue(led.setLEDColorCommand(0, 255, 0).withTimeout(.6).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
+
+    //copilot
+    Copilot.x().whileTrue(led.setLEDColorCommand(128, 255, 0));
+    Copilot.b().whileTrue(led.setLEDColorCommand(255, 127, 0));
+    Copilot.y().whileTrue(led.setLEDColorCommand(255, 255, 0));
+  //  Copilot.povUp().whileTrue(led.setColorFlowAnimationSectionCommand(LEDSection.LEFTVERT, 0, 255, 0, false));
+    Copilot.povLeft().whileTrue(led.setLEDColorCommand(0, 255, 0));
+    Copilot.povRight().whileTrue(led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
+    Copilot.start().whileTrue(led.setStrobeAnimationCommand(0, 0, 255, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
+    Copilot.rightTrigger().whileTrue(led.setLEDColorCommand(255, 0, 0));
+
+    //Elevator Zeroed
+    if (m_elevator.climbLimit.get()) {
+      led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0));
     }
+
+    //Has Coral
+    if(m_coral.hasCoral()) {
+      led.setStrobeAnimationCommand(255, 255, 255, .2).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0));
+    }
+
+  }
 
   private static double deadband(double value, double deadband) {
     if (Math.abs(value) > deadband) {
