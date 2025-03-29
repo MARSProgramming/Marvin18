@@ -32,5 +32,6 @@ public class DrivetrainTelemetry extends SubsystemBase {
 
       //  publisher.set(dt.getState().Pose);
       //  arrayPublisher.set(new Pose2d[] {dt.getState().Pose});
+      
     }
 }

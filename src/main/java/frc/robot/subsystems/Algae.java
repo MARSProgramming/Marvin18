@@ -26,6 +26,7 @@ public class Algae extends SubsystemBase {
     config.smartCurrentLimit(40);
     config.inverted(true);
     algae.configure(config, null, null);
+    
   }
 
   @Override
