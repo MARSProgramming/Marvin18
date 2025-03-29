@@ -144,7 +144,7 @@ public class RobotContainer {
 
   public void configureBindings() {
     configureLEDTriggers();
-    /* 
+    
     m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -236,7 +236,7 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1)); */
+    // Pilot.leftTrigger().whileTrue(mCoral_Hopper.runVoltageUntilIRReading(1)); 
   }
 
   public Command configureBindingsCommand() {
@@ -283,8 +283,8 @@ public class RobotContainer {
 
   }
 
-  private void configureLEDTriggers() {/* 
-    led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
+  private void configureLEDTriggers() {
+    /*  led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
     Pilot.a().whileTrue(led.setLEDColorSectionCommand(LEDSection.R45, 0, 255, 0)); //changed
     Pilot.b().whileTrue(led.setLEDColorCommand(0, 255, 0));
     Pilot.x().whileTrue(led.setLEDColorCommand(0, 0, 255));
