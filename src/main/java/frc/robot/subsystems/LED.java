@@ -76,17 +76,26 @@ public class LED extends SubsystemBase {
 
     // Command to set a strobe animation with the given color and speed
     public Command setStrobeAnimationCommand(int r, int g, int b, double speed) {
-        return run(() -> setStrobeAnimation(r, g, b, speed));  // Runs the setStrobeAnimation method
-    }
+        return  runEnd(() -> setStrobeAnimation(r, g, b, speed), () -> candle.clearAnimation(0));
+        };  // Runs the setStrobeAnimation method
+    
 
     // Command to set a color flow animation with the given color and direction
     public Command setColorFlowAnimationCommand(int r, int g, int b, boolean reversed) {
         return run(() -> setColorFlowAnimation(r, g, b, reversed));  // Runs the setColorFlowAnimation method
     }
 
+    public Command setColorFlowAnimationSectionCommand(LEDSection section, int r, int g, int b, boolean reversed) {
+        return run(() -> setColorFlowAnimationSection(section, r, g, b, reversed));
+    }
+
+    public Command setColorFlowAnimationMultiSectionCommand(int r, int g, int b, boolean reversed, LEDSection... sections) {
+        return run(() -> setColorFlowAnimationMultiSection(r, g, b, reversed, sections));
+    }
+
     // Method to set the color of the entire LED strip (RGB)
     private void setLEDColor(int r, int g, int b) {
-        setLEDColorSection(0, LED_COUNT, r, g, b, 0);  // Calls setLEDColorSection to apply color to the entire strip
+        setLEDColorSection(0, LED_COUNT, r, g, b);  // Calls setLEDColorSection to apply color to the entire strip
     }
 
     // Method to turn off all LEDs (set them to black)
@@ -98,17 +107,15 @@ public class LED extends SubsystemBase {
     }
 
     // Method to set the color of a specific section of the LED strip (RGB)
-    private void setLEDColorSection(LEDSection section, int r, int g, int b) {
-        setLEDColorSection(section, r, g, b, 0);  // Calls the method with white channel set to 0 (no white)
-    }
+    // Removed duplicate method
 
     // Method to set the color of a specific section of the LED strip (RGB + White)
-    private void setLEDColorSection(LEDSection section, int r, int g, int b, int w) {
-        setLEDColorSection(section.getStart(), section.getLength(), r, g, b, w);  // Calls the generic method with the section's start and length
+    private void setLEDColorSection(LEDSection section, int r, int g, int b) {
+        setLEDColorSection(section.getStart(), section.getLength(), r, g, b);  // Calls the generic method with the section's start and length
     }
 
     // Method to set the color of a specific section of the LED strip (start index, length, RGB + White)
-    private void setLEDColorSection(int start, int length, int r, int g, int b, int w) {
+    private void setLEDColorSection(int start, int length, int r, int g, int b) {
         // Ensure that the length does not exceed the total LED count
         if (start + length > LED_COUNT) {
             length = LED_COUNT - start;  // Adjust length if it goes out of bounds
@@ -119,7 +126,7 @@ public class LED extends SubsystemBase {
             ledBuffer[index] = r;  // Set red value
             ledBuffer[index + 1] = g;  // Set green value
             ledBuffer[index + 2] = b;  // Set blue value
-            ledBuffer[index + 3] = w;  // Set white value
+
         }
         updateLEDs();  // Update the LEDs with the new buffer
     }
@@ -136,7 +143,7 @@ public class LED extends SubsystemBase {
 
     // Method to set a rainbow animation across the LED strip
     private void setRainbowAnimation() {
-        Animation rainbow = new RainbowAnimation(1.0, 0.5, LED_COUNT);  // Create rainbow animation
+        Animation rainbow = new RainbowAnimation(1.0, 0.8, LED_COUNT);  // Create rainbow animation
         candle.animate(rainbow);  // Apply the rainbow animation to the LED strip
     }
 
@@ -151,5 +158,22 @@ public class LED extends SubsystemBase {
         Animation flow = new ColorFlowAnimation(r, g, b, 0, 0.7, LED_COUNT, ColorFlowAnimation.Direction.Forward);  // Create color flow animation
         candle.animate(flow);  // Apply the color flow animation to the LED strip
     }
+    private void setColorFlowAnimationSection(LEDSection section, int r, int g, int b, boolean reversed) {
+        int start = section.getStart();
+        int length = section.getLength();
+        
+        Animation flow = new ColorFlowAnimation(r, g, b, 0, 0.7, length, reversed ? ColorFlowAnimation.Direction.Backward : ColorFlowAnimation.Direction.Forward);
+        candle.animate(flow, start); // Apply animation to a specific section
+    }
 
+    private void setColorFlowAnimationMultiSection(int r, int g, int b, boolean reversed, LEDSection... sections) {
+        for (LEDSection section : sections) {
+            int start = section.getStart();
+            int length = section.getLength();
+    
+            // Create and apply a Color Flow animation to the section
+            Animation flow = new ColorFlowAnimation(r, g, b, 0, 0.7, length, reversed ? ColorFlowAnimation.Direction.Backward : ColorFlowAnimation.Direction.Forward);
+            candle.animate(flow, start);
+        }
+    }
 }
