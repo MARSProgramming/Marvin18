@@ -15,18 +15,24 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "Deploy Algae"
+                  "pathName": "S1-F"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "S6-C"
+                  "name": "Elevator Setpoint L2"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
           }
         },
         {
@@ -36,7 +42,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Left"
+                  "name": "Alt Right Side Align"
                 }
               },
               {
@@ -51,44 +57,39 @@
         {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Score Faster"
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Zero Elevator"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "C-U1"
-          }
-        },
-        {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Feeder Align"
-                }
-              },
               {
                 "type": "named",
                 "data": {
                   "name": "Passive Intake"
                 }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "F-U2"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Zero Elevator"
+                      }
+                    }
+                  ]
+                }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "U1-C"
           }
         },
         {
@@ -98,7 +99,32 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Right"
+                  "name": "Elevator Setpoint L2"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "U2-E"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Alt Left Side Align"
                 }
               },
               {
@@ -113,29 +139,36 @@
         {
           "type": "named",
           "data": {
-            "name": "Score"
+            "name": "Score Faster"
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Zero Elevator"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "C-U1"
-          }
-        },
-        {
-          "type": "race",
+          "type": "deadline",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "Feeder Align"
+                  "name": "Passive Intake"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "E-U2"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Zero Elevator"
+                      }
+                    }
+                  ]
                 }
               }
             ]
