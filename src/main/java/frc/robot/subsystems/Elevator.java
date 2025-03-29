@@ -97,7 +97,7 @@ public class Elevator extends SubsystemBase {
     // masterConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
     masterConfig.CurrentLimits.StatorCurrentLimitEnable = true;
     masterConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    masterConfig.CurrentLimits.SupplyCurrentLimit = 60;
+    masterConfig.CurrentLimits.SupplyCurrentLimit = 54;
     masterConfig.CurrentLimits.SupplyCurrentLowerLimit = 30;
     masterConfig.CurrentLimits.SupplyCurrentLowerTime = 1;
 

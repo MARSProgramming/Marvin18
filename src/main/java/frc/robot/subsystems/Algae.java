@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -30,6 +31,10 @@ public class Algae extends SubsystemBase {
   @Override
   public void periodic() {
     //SmartDashboard.putBoolean("", getBucketBreakReading());
+    SmartDashboard.putNumber("algae Current", algae.getOutputCurrent());
+    SmartDashboard.putNumber("algae Voltage", algae.getBusVoltage());
+    SmartDashboard.putNumber("algae temps", algae.getMotorTemperature());
+
   }
 
   public void setPercentage(double percent) {
