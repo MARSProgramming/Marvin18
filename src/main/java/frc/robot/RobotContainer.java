@@ -294,18 +294,22 @@ public class RobotContainer {
     Pilot.leftBumper().whileTrue(led.setColorFlowAnimationCommand(0, 255, 0, false));
     Pilot.rightBumper().whileTrue(led.setColorFlowAnimationCommand(0, 0, 255, true));*/
 
+    //default command
+    led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
+
     //pilot
     Pilot.rightTrigger().whileTrue(led.setLEDColorCommand(0, 255, 0));
 
 
     //copilot
-    Copilot.x().whileTrue(led.setLEDColorCommand(255, 0, 0));
+    Copilot.x().whileTrue(led.setLEDColorCommand(128, 255, 0));
     Copilot.b().whileTrue(led.setLEDColorCommand(255, 127, 0));
     Copilot.y().whileTrue(led.setLEDColorCommand(255, 255, 0));
     Copilot.povUp().whileTrue(led.setLEDColorCommand(0, 255, 0));
     Copilot.povLeft().whileTrue(led.setLEDColorCommand(0, 255, 0));
     Copilot.povRight().whileTrue(led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
     Copilot.start().whileTrue(led.setStrobeAnimationCommand(0, 0, 255, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
+    Copilot.rightTrigger().whileTrue(led.setLEDColorCommand(255, 0, 0));
 
     //Elevator Zeroed
     if (m_elevator.climbLimit.get()) {
