@@ -96,7 +96,7 @@ public class RobotContainer {
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
 
   public final IntegratedVision integVis = new IntegratedVision(drivetrain);
- public final LED leds = new LED(40);
+ public final LED led = new LED(40);
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
   private final Trigger readyToPlaceCoral = new Trigger(() -> (DriverStation.isTeleop() && drivetrain.isAligned()));
   private final Trigger algaeWarning = new Trigger(() -> drivetrain.notSafe());
@@ -347,11 +347,6 @@ public class RobotContainer {
     Copilot.povRight().whileTrue(led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
     Copilot.start().whileTrue(led.setStrobeAnimationCommand(0, 0, 255, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
     Copilot.rightTrigger().whileTrue(led.setLEDColorCommand(255, 0, 0));
-
-    //Elevator Zeroed
-    if (m_elevator.climbLimit.get()) {
-      led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0));
-    }
 
     //Has Coral
     if(m_coral.hasCoral()) {
