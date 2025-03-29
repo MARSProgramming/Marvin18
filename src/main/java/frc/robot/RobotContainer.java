@@ -285,12 +285,12 @@ public class RobotContainer {
 
   private void configureLEDTriggers() {
     led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
-    Pilot.a().whileTrue(led.setLEDColorSectionCommand(LEDSection.R45, 0, 255, 0));
+    Pilot.a().whileTrue(led.setLEDColorSectionCommand(LEDSection.R45, 0, 255, 0)); //changed
     Pilot.b().whileTrue(led.setLEDColorCommand(0, 255, 0));
     Pilot.x().whileTrue(led.setLEDColorCommand(0, 0, 255));
     Pilot.y().whileTrue(led.setLEDColorCommand(255, 255, 255));
     Pilot.start().whileTrue(led.setRainbowAnimationCommand()); //not working
-    Pilot.back().whileTrue(led.setStrobeAnimationCommand(255, 0, 0, 1)); //not working
+    Pilot.back().whileTrue(led.setStrobeAnimationCommand(255, 0, 0, .8)); //not working (meh)
     Pilot.leftBumper().whileTrue(led.setColorFlowAnimationCommand(0, 255, 0, false));
     Pilot.rightBumper().whileTrue(led.setColorFlowAnimationCommand(0, 0, 255, true));
   }
