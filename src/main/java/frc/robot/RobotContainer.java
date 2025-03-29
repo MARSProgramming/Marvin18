@@ -187,6 +187,8 @@ public class RobotContainer {
     Pilot.rightBumper().whileTrue(m_algae.outtake());
     Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
     Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand());
+    Pilot.leftTrigger().onTrue((led.setLEDColorSectionCommand(LEDSection.R45, 0, 0, 255)));
+
 
     // POV Controls
     Pilot.povLeft()
