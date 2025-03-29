@@ -50,6 +50,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -86,7 +87,6 @@ public class RobotContainer {
   public final Coral m_coral = new Coral();
   public final Vision reef_vision = new Vision(Constants.Vision.reefCameraName, Constants.Vision.reefRobotToCam);
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
-
   public final IntegratedVision integVis = new IntegratedVision(drivetrain);
   private PoseSelector2 leftSideSelector = new PoseSelector2(drivetrain, m_elevator, 0);
   private PoseSelector2 rightSideSelector = new PoseSelector2(drivetrain, m_elevator, 1);
@@ -283,7 +283,7 @@ public class RobotContainer {
 
   }
 
-  private void configureLEDTriggers() {
+  private void configureLEDTriggers() {/* 
     led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
     Pilot.a().whileTrue(led.setLEDColorSectionCommand(LEDSection.R45, 0, 255, 0)); //changed
     Pilot.b().whileTrue(led.setLEDColorCommand(0, 255, 0));
@@ -292,7 +292,35 @@ public class RobotContainer {
     Pilot.start().whileTrue(led.setRainbowAnimationCommand()); //not working
     Pilot.back().whileTrue(led.setStrobeAnimationCommand(255, 0, 0, .8)); //not working (meh)
     Pilot.leftBumper().whileTrue(led.setColorFlowAnimationCommand(0, 255, 0, false));
-    Pilot.rightBumper().whileTrue(led.setColorFlowAnimationCommand(0, 0, 255, true));
+    Pilot.rightBumper().whileTrue(led.setColorFlowAnimationCommand(0, 0, 255, true));*/
+
+    //pilot
+    Pilot.rightTrigger().whileTrue(led.setLEDColorCommand(0, 255, 0));
+
+
+    //copilot
+    Copilot.x().whileTrue(led.setLEDColorCommand(255, 0, 0));
+    Copilot.b().whileTrue(led.setLEDColorCommand(255, 127, 0));
+    Copilot.y().whileTrue(led.setLEDColorCommand(255, 255, 0));
+    Copilot.povUp().whileTrue(led.setLEDColorCommand(0, 255, 0));
+    Copilot.povLeft().whileTrue(led.setLEDColorCommand(0, 255, 0));
+    Copilot.povRight().whileTrue(led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
+    Copilot.start().whileTrue(led.setStrobeAnimationCommand(0, 0, 255, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
+
+    //Elevator Zeroed
+    if (m_elevator.climbLimit.get()) {
+      led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0));
+    }
+
+    //Has Coral
+    if(m_coral.hasCoral()) {
+      led.setStrobeAnimationCommand(255, 255, 255, .2).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0));
+    }
+
+    //alligned to tag
+    if (drivetrain.isAligned()) {
+      led.setLEDColorCommand(0, 0, 255).andThen(new WaitCommand(1.5)).andThen(led.setLEDColorCommand(255, 0, 0));
+    }
   }
 
   private static double deadband(double value, double deadband) {
