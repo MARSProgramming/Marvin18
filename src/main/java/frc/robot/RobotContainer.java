@@ -302,7 +302,7 @@ public class RobotContainer {
    // led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
 
     //pilot
-    Pilot.rightTrigger().onTrue(led.setLEDColorCommand(0, 255, 0).withTimeout(1).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
+    Pilot.rightTrigger().onTrue(led.setLEDColorCommand(0, 255, 0).withTimeout(.6).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
 
     //copilot
     Copilot.x().whileTrue(led.setLEDColorCommand(128, 255, 0));
@@ -324,10 +324,6 @@ public class RobotContainer {
       led.setStrobeAnimationCommand(255, 255, 255, .2).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0));
     }
 
-    //alligned to tag
-    if (drivetrain.isAligned()) {
-      led.setLEDColorCommand(0, 0, 255).andThen(new WaitCommand(1.5)).andThen(led.setLEDColorCommand(255, 0, 0));
-    }
   }
 
   private static double deadband(double value, double deadband) {
