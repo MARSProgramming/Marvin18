@@ -25,8 +25,8 @@ public final class DynamicConstants {
      */
 
     public static class ElevatorSetpoints {
-        public static double elevMax = 7.82;
-        public static double elevL4 = 7.82;
+        public static double elevMax = 7.78;
+        public static double elevL4 = 7.74;
         public static double elevL3 = 4.5;
         public static double elevL2 = 2.02;
         public static double elevL1 = 0;

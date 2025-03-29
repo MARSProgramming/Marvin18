@@ -649,8 +649,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
       }
 
       public boolean notSafe() {
-        return (180 - Math.abs(getPigeon2().getRoll().getValueAsDouble()) > 15) 
-        || (Math.abs(getPigeon2().getPitch().getValueAsDouble()) > 15);
+        return (180 - Math.abs(getPigeon2().getRoll().getValueAsDouble()) > 7) 
+        || (Math.abs(getPigeon2().getPitch().getValueAsDouble()) > 7);
       }
 
       // for logging / dashboard odom
