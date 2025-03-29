@@ -20,9 +20,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.constants.DynamicConstants;
-
+import frc.robot.subsystems.LED;
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private LED led;
 
   private final RobotContainer m_robotContainer;
   private final Alliance m_currentAlliance;
@@ -30,22 +31,22 @@ public class Robot extends TimedRobot {
   public Robot() {
     m_robotContainer = new RobotContainer();
     m_currentAlliance = DriverStation.getAlliance().get();
-
+    led = new LED(30);
   }
 
   @Override
   public void robotInit() {
    // DynamicConstants.init();
    // DynamicConstants.periodic();
-    PathfindingCommand.warmupCommand().schedule();
-    m_robotContainer.m_elevator.setServoCommand(0).schedule();
-
+   // w
+    //m_robotContainer.m_elevator.setServoCommand(0).schedule();
+    
     SmartDashboard.putData("Update Constants", m_robotContainer.configureBindingsCommand());
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
-    
-  }
+    led.setLEDColorCommand(0, 255, 0).schedule();
+    }
 
   @Override
   public void robotPeriodic() {
@@ -54,6 +55,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+   // m_robotContainer.leds.defaultCommand().schedule();
   }
 
 
