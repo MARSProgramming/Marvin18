@@ -31,7 +31,7 @@ public class Robot extends TimedRobot {
   public Robot() {
     m_robotContainer = new RobotContainer();
     m_currentAlliance = DriverStation.getAlliance().get();
-    led = new LED(30);
+    led = new LED(40);
   }
 
   @Override
@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
-    led.setLEDColorCommand(0, 255, 0).schedule();
+    led.setLEDColorCommand(255, 0, 0).schedule();
     }
 
   @Override
