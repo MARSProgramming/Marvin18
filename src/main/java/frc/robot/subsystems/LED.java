@@ -76,8 +76,9 @@ public class LED extends SubsystemBase {
 
     // Command to set a strobe animation with the given color and speed
     public Command setStrobeAnimationCommand(int r, int g, int b, double speed) {
-        return run(() -> setStrobeAnimation(r, g, b, speed));  // Runs the setStrobeAnimation method
-    }
+        return  runEnd(() -> setStrobeAnimation(r, g, b, speed), () -> candle.clearAnimation(0));
+        };  // Runs the setStrobeAnimation method
+    
 
     // Command to set a color flow animation with the given color and direction
     public Command setColorFlowAnimationCommand(int r, int g, int b, boolean reversed) {

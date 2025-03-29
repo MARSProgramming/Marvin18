@@ -14,6 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.ctre.phoenix6.hardware.traits.HasExternalMotor;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.VecBuilder;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
 import frc.robot.commands.drivetrain.planner.AligntoFeeder;
@@ -92,6 +94,7 @@ public class RobotContainer {
   private PoseSelector2 rightSideSelector = new PoseSelector2(drivetrain, m_elevator, 1);
 
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
+  private final Trigger hasCoralTrigger = new Trigger(() -> m_coral.hasCoral());
 
   public RobotContainer() {
     configureBindings();
@@ -146,6 +149,7 @@ public class RobotContainer {
     configureLEDTriggers();
     
     m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
+    hasCoralTrigger.onTrue(led.setStrobeAnimationCommand(255, 255, 255, .2).withTimeout(1).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
@@ -295,7 +299,7 @@ public class RobotContainer {
     Pilot.rightBumper().whileTrue(led.setColorFlowAnimationCommand(0, 0, 255, true));*/
 
     //default command
-    led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
+   // led.setDefaultCommand(led.setLEDColorCommand(255, 0, 0));
 
     //pilot
     Pilot.rightTrigger().whileTrue(led.setLEDColorCommand(0, 255, 0));
