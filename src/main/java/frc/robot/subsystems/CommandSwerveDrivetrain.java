@@ -275,7 +275,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     public void drive(ChassisSpeeds speeds) {
-        setControl(mChassiSpeeds.withSpeeds(speeds));
+        setControl(mChassiSpeeds.withSpeeds(ChassisSpeeds.discretize(speeds, 0.02)));
     }
 
     public void fieldDrive(DoubleSupplier fieldX, DoubleSupplier fieldY, DoubleSupplier fieldRot, boolean openLoop) {
