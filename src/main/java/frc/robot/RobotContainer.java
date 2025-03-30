@@ -327,7 +327,7 @@ public class RobotContainer {
       // Feeder align: Turn purple
       Pilot.a().whileTrue(led.setLEDColorCommand(184, 0, 185));
       // Reef align - turn yellow
-    //  Pilot.b().whileTrue(led.setLEDColorCommand(255, 165, 0)); 
+      Pilot.b().whileTrue(led.setLEDColorCommand(255, 165, 0)); 
       // Reef align - turn yellow
       Pilot.x().whileTrue(led.setLEDColorCommand(255, 165, 0));
       // Algae align - turn blue 
