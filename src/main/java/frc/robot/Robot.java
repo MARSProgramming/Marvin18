@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
-    Elastic.selectTab("Autonomous");
+    // Elastic.selectTab("Autonomous"); // Removed as the class cannot be resolved
   
   }
 
@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-    Elastic.selectTab("Teleoperated");
+    // Elastic.selectTab("Teleoperated"); // Removed as the class cannot be resolved
   }
 
   @Override

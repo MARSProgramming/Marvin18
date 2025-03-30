@@ -89,6 +89,8 @@ public final class DynamicConstants {
         public static double CentRot = 90;
 
         public static double AlgaeRot = 0;
+        public static double AlgaeX = 1;
+        public static double AlgaeY = 0;
         public static double feederX = .4;
         public static double feederY = 0.0;
         public static double feederRot = 0;

@@ -35,6 +35,7 @@ import frc.robot.commands.drivetrain.CenterAlign;
 import frc.robot.commands.drivetrain.FeederAlign;
 import frc.robot.commands.drivetrain.IntegratedAlign;
 import frc.robot.commands.drivetrain.IntegratedAlignWithTermination;
+import frc.robot.commands.drivetrain.planner.AlgaeAlign;
 import frc.robot.commands.drivetrain.planner.AligntoFeeder;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
 import frc.robot.commands.drivetrain.planner.PoseSelector;
@@ -208,7 +209,10 @@ public class RobotContainer {
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral, 2));
+    Pilot.a().whileTrue(new AlgaeAlign(m_elevator, drivetrain, 
+    () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
+    () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
+   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate));
     //Pilot.y().whileTrue(new DriveCoralScorePose(
     //    drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
      //       Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));
