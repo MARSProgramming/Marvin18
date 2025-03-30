@@ -25,14 +25,15 @@ public final class DynamicConstants {
      */
 
     public static class ElevatorSetpoints {
-        public static double elevL4 = 7.7;
-        public static double elevL3 = 4.45;
+        public static double elevMax = 7.78;
+        public static double elevL4 = 7.74;
+        public static double elevL3 = 4.5;
         public static double elevL2 = 2.02;
         public static double elevL1 = 0;
-        public static double elevAlgaeTop = 7.72;
-        public static double elevAlgaeBot = 5.25;
+        public static double elevAlgaeTop = 7.0;
+        public static double elevAlgaeBot = 4.9;
         public static double elevAlgaeTee = 2.2;
-        public static double elevAlgaeGround = 1;
+        public static double elevAlgaeGround = 0.72;
         public static double elevClimb = 0;
         public static double elevClimbVoltage = -5;
 
@@ -83,11 +84,16 @@ public final class DynamicConstants {
 
         public static double LeftRot = 90;
         
-        public static double CentX = 1;
+        public static double CentX = 1.3;
         public static double CentY = 0;
         public static double CentRot = 90;
+
+        public static double AlgaeRot = 0;
+        public static double AlgaeX = 1;
+        public static double AlgaeY = 0;
         public static double feederX = .4;
         public static double feederY = 0.0;
+        public static double feederRot = 0;
 
     }
 
@@ -108,7 +114,7 @@ public final class DynamicConstants {
     }
 
     public static class IRThresholds {
-        public static double IRthreshold = 1.75;
+        public static double IRthreshold = 1.8;
     }
 
     private static HashMap<Field, SimpleWidget> entries;

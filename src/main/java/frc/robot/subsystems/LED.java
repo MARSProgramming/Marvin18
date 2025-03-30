@@ -1,487 +1,180 @@
 package frc.robot.subsystems;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
+import com.ctre.phoenix.led.Animation;
+import com.ctre.phoenix.led.CANdle;
+import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.ColorFlowAnimation;
+import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.StrobeAnimation;
 
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class LED extends SubsystemBase {
+    private final CANdle candle;  // CANdle object to control the LED strip
+    private static final int LED_COUNT = 90;  // Total number of LEDs in the strip
+    private final int[] ledBuffer;  // Buffer to store LED color data (RGBA format)
 
-    private static LED INSTANCE;
+    // Enum to define different sections of the LED strip
+    public enum LEDSection {
+        ALL(0, 90),
+        CANdle(0, 8),
+        R45(8, 7),
+        L45(15, 6),
+        LEFTVERT(21, 9),
+        CROSSBAR(30, 14),
+        FRONTCHUTE(44, 13),
+        BACKCHUTE(57, 13),
+        CHUTEFULL(44, 26);
+        
 
-    public static synchronized LED getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new LED();
+        private final int start;  // Start index of the section
+        private final int length; // Length of the section
+
+        // Constructor for the enum to initialize start and length
+        LEDSection(int start, int length) {
+            this.start = start;
+            this.length = length;
         }
 
-        return INSTANCE;
-    }
+        public int getStart() {
+            return start;  // Getter for start index
+        }
 
-    private LED() {
-        // Initialize the AddressableLED
-        led = new AddressableLED(1);
-
-        // Create a buffer to hold the LED color data
-        ledBuffer = new AddressableLEDBuffer(82);
-        led.setLength(ledBuffer.getLength());
-        led.setData(ledBuffer);
-
-        // initialize the section map
-        initMap();
-
-        // set initial led state
-        led.start();
-    }
-
-    // state map
-    private Map<LEDSection, State> map = new HashMap<>();
-    private AddressableLED led;
-    private AddressableLEDBuffer ledBuffer;
-    private int counter = 3;
-    private int initialCounter = 3;
-    private double m_rainbowFirstPixelHue = 0;
-
-    @Override
-    public void periodic() {
-        if (counter == 0) {
-            // loop through each led section and update the leds based on the current state
-            for (Entry<LEDSection, State> entry : map.entrySet()) {
-                updateState(entry.getValue());
-            }
-
-            // apply the changes
-            led.setData(ledBuffer);
-            counter = initialCounter;
-        } else {
-            counter--;
+        public int getLength() {
+            return length;  // Getter for length
         }
     }
 
-    /**
-     * This method will set a single led section to a single color
-     * 
-     * @param name  - The name of the led section in the map
-     * @param color - The color to set the led section
-     * @return
-     */
-    public Command setState(LEDSection name, LEDColor state) {
-        return run(
-                () -> {
-                    map.get(name).setColor(state);
-                });
+    // Constructor to initialize the CANdle LED controller and configure it
+    public LED(int candleID) {
+        candle = new CANdle(candleID);  // Create CANdle object with the provided ID
+        CANdleConfiguration config = new CANdleConfiguration();  // Configuration object for CANdle
+        candle.configAllSettings(config);  // Apply configuration to CANdle
+        ledBuffer = new int[LED_COUNT * 4];  // Initialize buffer to hold RGBA values for each LED
     }
 
-    /**
-     * This method will set the flashing of an led section.
-     * Color does NOT change
-     * 
-     * @param name     - The name of the led section in the map
-     * @param flashing - boolean for turning on/off flashing
-     * @return
-     */
-    public Command setState(LEDSection name, boolean flashing) {
-        return run(
-                () -> {
-                    map.get(name).setFlashing(flashing);
-                    map.get(name).setIterations(0);
-                });
+    // Command to set the LED color (RGB) for the entire strip
+    public Command setLEDColorCommand(int r, int g, int b) {
+        return run(() -> setLEDColor(r, g, b));  // Runs the setLEDColor method
     }
 
-    /**
-     * This method will set the rolling of an led section.
-     * Color does NOT change
-     * 
-     * @param name    - The name of the led section in the map
-     * @param rolling - Rolling enumeration to set rolling
-     * @return
-     */
-    public Command setState(LEDSection name, Rolling rolling) {
-        return run(
-                () -> {
-                    map.get(name).setRolling(rolling);
-                    map.get(name).setIterations(0);
-                });
+
+    // Command to turn off all LEDs (set them to black)
+    public Command turnOffLEDsCommand() {
+        return run(this::turnOffLEDs);  // Runs the turnOffLEDs method
     }
 
-    /**
-     * This method will set the rolling of an led section
-     * 
-     * @param name    - The name of the led section in the map
-     * @param color   - The new color of the led section
-     * @param rolling - Rolling enumeration to set rolling
-     * @return
-     */
-    public Command setState(LEDSection name, LEDColor color, boolean flashing) {
-        return run(
-                () -> {
-                    map.get(name).setColor(color);
-                    map.get(name).setFlashing(flashing);
-                    map.get(name).setIterations(0);
-                });
+    // Command to set the color of a specific section of the LED strip
+    public Command setLEDColorSectionCommand(LEDSection section, int r, int g, int b) {
+        return run(() -> setLEDColorSection(section, r, g, b));  // Runs the setLEDColorSection method
     }
 
-    /**
-     * This method will set the rolling of an led section
-     * 
-     * @param name    - The name of the led section in the map
-     * @param color   - The new color of the led section
-     * @param rolling - Rolling enumeration to set rolling
-     * @return
-     */
-    public Command setState(LEDSection name, LEDColor color, Rolling rolling) {
-        return run(
-                () -> {
-                    map.get(name).setColor(color);
-                    map.get(name).setRolling(rolling);
-                    map.get(name).setIterations(0);
-                });
+    // Command to set a rainbow animation across the LED strip
+    public Command setRainbowAnimationCommand() {
+        return run(this::setRainbowAnimation);  // Runs the setRainbowAnimation method
     }
 
-    /**
-     * This method will set multiple led section to a single color
-     * 
-     * @param name  - The names of the led sections in the map
-     * @param color - The color to set the led section
-     * @return
-     */
-    public Command setState(Set<LEDSection> names, LEDColor state) {
-        return run(
-                () -> {
-                    for (LEDSection name : names) {
-                        map.get(name).setColor(state);
-                    }
-                });
+    // Command to set a strobe animation with the given color and speed
+    public Command setStrobeAnimationCommand(int r, int g, int b, double speed) {
+        return  runEnd(() -> setStrobeAnimation(r, g, b, speed), () -> candle.clearAnimation(0));
+        };  // Runs the setStrobeAnimation method
+    
+
+    // Command to set a color flow animation with the given color and direction
+    public Command setColorFlowAnimationCommand(int r, int g, int b, boolean reversed) {
+        return run(() -> setColorFlowAnimation(r, g, b, reversed));  // Runs the setColorFlowAnimation method
     }
 
-    /**
-     * This method will set the flashing of multiple led sections.
-     * Color does NOT change
-     * 
-     * @param name     - The names of the led sections in the map
-     * @param flashing - boolean for turning on/off flashing
-     * @return
-     */
-    public Command setState(Set<LEDSection> names, boolean flashing) {
-        return run(
-                () -> {
-                    for (LEDSection name : names) {
-                        map.get(name).setFlashing(flashing);
-                        map.get(name).setIterations(0);
-                    }
-                });
+    public Command setColorFlowAnimationSectionCommand(LEDSection section, int r, int g, int b, boolean reversed) {
+        return run(() -> setColorFlowAnimationSection(section, r, g, b, reversed));
     }
 
-    /**
-     * This method will set the rolling of multiple led sections.
-     * Color does NOT change
-     * 
-     * @param name    - The names of the led sections in the map
-     * @param rolling - Rolling enumeration to set rolling
-     * @return
-     */
-    public Command setState(Set<LEDSection> names, Rolling rolling) {
-        return run(
-                () -> {
-                    for (LEDSection name : names) {
-                        map.get(name).setRolling(rolling);
-                        map.get(name).setIterations(0);
-                    }
-                });
+    public Command setColorFlowAnimationMultiSectionCommand(int r, int g, int b, boolean reversed, LEDSection... sections) {
+        return run(() -> setColorFlowAnimationMultiSection(r, g, b, reversed, sections));
     }
 
-    /**
-     * This method will set the rolling of multiple led sections
-     * 
-     * @param name    - The names of the led sections in the map
-     * @param color   - The new color of the led section
-     * @param rolling - Rolling enumeration to set rolling
-     * @return
-     */
-    public Command setState(Set<LEDSection> names, LEDColor color, boolean flashing) {
-        return run(
-                () -> {
-                    for (LEDSection name : names) {
-                        map.get(name).setColor(color);
-                        map.get(name).setFlashing(flashing);
-                        map.get(name).setIterations(0);
-                    }
-                });
+    // Method to set the color of the entire LED strip (RGB)
+    private void setLEDColor(int r, int g, int b) {
+        setLEDColorSection(0, LED_COUNT, r, g, b);  // Calls setLEDColorSection to apply color to the entire strip
     }
 
-    /**
-     * This method will set the rolling of multiple led sections
-     * 
-     * @param name    - The names of the led sections in the map
-     * @param color   - The new color of the led section
-     * @param rolling - Rolling enumeration to set rolling
-     * @return
-     */
-    public Command setState(Set<LEDSection> names, LEDColor color, Rolling rolling) {
-        return run(
-                () -> {
-                    for (LEDSection name : names) {
-                        map.get(name).setColor(color);
-                        map.get(name).setRolling(rolling);
-                        map.get(name).setIterations(0);
-                    }
-                });
+    // Method to turn off all LEDs (set them to black)
+    private void turnOffLEDs() {
+        for (int i = 0; i < LED_COUNT * 4; i++) {
+            ledBuffer[i] = 0;  // Set all buffer values to 0 (off)
+        }
+        updateLEDs();  // Update the LEDs with the new buffer (all off)
     }
 
-    /**
-     * This method will set one or more led sections to the mapped state
-     * 
-     * @param colorMap - A map of name to desired state
-     * @return
-     */
-    public Command setState(Map<LEDSection, State> stateMap) {
-        return run(
-                () -> {
-                    for (Entry<LEDSection, State> entry : stateMap.entrySet()) {
-                        map.get(entry.getKey()).setColor(entry.getValue().getColor());
-                        map.get(entry.getKey()).setFlashing(entry.getValue().isFlashing());
-                        map.get(entry.getKey()).setRolling(entry.getValue().getRolling());
-                        map.get(entry.getKey()).setIterations(0);
-                        map.get(entry.getKey()).setForwardIndex(0);
-                        map.get(entry.getKey()).setReverseIndex(map.get(entry.getKey()).getView().getLength() - 1);
-                    }
-                });
+    // Method to set the color of a specific section of the LED strip (RGB)
+    // Removed duplicate method
+
+    // Method to set the color of a specific section of the LED strip (RGB + White)
+    private void setLEDColorSection(LEDSection section, int r, int g, int b) {
+        setLEDColorSection(section.getStart(), section.getLength(), r, g, b);  // Calls the generic method with the section's start and length
     }
 
-    /**
-     * This method is used to initialize the led section map. Add more here if
-     * needed and known.
-     */
-    private void initMap() {
-        map.put(LEDSection.CORALINTAKEUP, new State(new AddressableLEDBufferView(ledBuffer, 0, 13)));
-        map.put(LEDSection.CORALINTAKEDOWN, new State(new AddressableLEDBufferView(ledBuffer, 14, 27)));
-        map.put(LEDSection.LEFT45, new State(new AddressableLEDBufferView(ledBuffer, 28, 40)));
-        map.put(LEDSection.RIGHT45, new State(new AddressableLEDBufferView(ledBuffer, 41, 53)));
-        map.put(LEDSection.LEFTVERTICAL, new State(new AddressableLEDBufferView(ledBuffer, 54, 67)));
-        map.put(LEDSection.INNERCARRIAGE, new State(new AddressableLEDBufferView(ledBuffer, 68, 81)));
+    // Method to set the color of a specific section of the LED strip (start index, length, RGB + White)
+    private void setLEDColorSection(int start, int length, int r, int g, int b) {
+        // Ensure that the length does not exceed the total LED count
+        if (start + length > LED_COUNT) {
+            length = LED_COUNT - start;  // Adjust length if it goes out of bounds
+        }
+        // Loop through the specified section and set the color for each LED
+        for (int i = 0; i < length; i++) {
+            int index = (start + i) * 4;  // Calculate the index for the LED in the buffer
+            ledBuffer[index] = r;  // Set red value
+            ledBuffer[index + 1] = g;  // Set green value
+            ledBuffer[index + 2] = b;  // Set blue value
+
+        }
+        updateLEDs();  // Update the LEDs with the new buffer
     }
 
-    private void updateState(State state) {
-        LEDColor color = state.getColor();
-
-        if (color == LEDColor.RAINBOW) {
-            // this is done by hue saturation so cannot use RGB
-            for (var i = 0; i < state.getView().getLength(); i++) {
-                // Calculate the hue - hue is easier for rainbows because the color
-                // shape is a circle so only one value needs to precess
-                final var hue = (m_rainbowFirstPixelHue + (i * 180 / state.getView().getLength())) % 180;
-                // Set the value
-                state.getView().setHSV(i, (int) hue, 255, 128);
-            }
-            // Increase by to make the rainbow "move"
-            m_rainbowFirstPixelHue += 3;
-            // Check bounds
-            m_rainbowFirstPixelHue %= 180;
-        } else {
-            var R = 0;
-            var G = 0;
-            var B = 0;
-
-            if (color == LEDColor.WHITE) {
-                R = 255;
-                G = 255;
-                B = 255;
-            } else if (color == LEDColor.RED) {
-                R = 255;
-                G = 0;
-                B = 0;
-            } else if (color == LEDColor.GREEN) {
-                R = 0;
-                G = 255;
-                B = 0;
-            } else if (color == LEDColor.BLUE) {
-                R = 0;
-                G = 0;
-                B = 255;
-            } else if (color == LEDColor.BLACK) {
-                R = 0;
-                G = 0;
-                B = 0;
-            }
-
-            // if state is flashing cannot roll or set solid
-            if (state.isFlashing()) {
-                for (var i = 0; i < state.getView().getLength(); i++) {
-                    // this will light up the lights every 10th loop
-                    if (state.getIterations() % 3 == 0) {
-                        state.getView().setRGB(i, 0, 0, 0);
-                    } else {
-                        state.getView().setRGB(i, R, G, B);
-                    }
-                }
-
-                state.setIterations(state.getIterations() + 1);
-            }
-
-            // if the rolling state is set handle it
-            else if (state.getRolling() != Rolling.OFF) {
-                // have to handle both forward (ie. 0 -> 10) and reverse (ie. 10 -> 0)
-                int indexToSet = 0;
-                if (state.getRolling() == Rolling.FORWARD) {
-                    indexToSet = state.getForwardIndex();
-                } else {
-                    indexToSet = state.getReverseIndex();
-                }
-
-                for (var i = 0; i < state.getView().getLength(); i++) {
-                    if (state.getRolling() == Rolling.FORWARD && i <= indexToSet) {
-                        state.getView().setRGB(i, R, G, B);
-                    } else if (state.getRolling() == Rolling.REVERSE && i >= indexToSet) {
-                        state.getView().setRGB(i, R, G, B);
-                    } else {
-                        state.getView().setRGB(i, 0, 0, 0);
-                    }
-                }
-
-                if (state.getRolling() == Rolling.FORWARD) {
-                    indexToSet++;
-                    if (indexToSet > state.getView().getLength() - 1) {
-                        indexToSet = 0;
-                    }
-                    state.setForwardIndex(indexToSet);
-                } else if (state.getRolling() == Rolling.REVERSE) {
-                    indexToSet--;
-                    if (indexToSet < 0) {
-                        indexToSet = state.getView().getLength() - 1;
-                    }
-                    state.setReverseIndex(indexToSet);
-                }
-
-            }
-
-            // otherwise just set the color
-            else {
-                for (var i = 0; i < state.getView().getLength(); i++) {
-                    // Sets the specified LED to the RGB values for red
-                    state.getView().setRGB(i, R, G, B);
-                }
-            }
+    // Method to update the LEDs based on the current buffer
+    private void updateLEDs() {
+        // Loop through each LED in the strip
+        for (int i = 0; i < LED_COUNT; i++) {
+            int index = i * 4;  // Calculate the index for the LED in the buffer
+            // Set the LED color based on the buffer values (RGBA)
+            candle.setLEDs(ledBuffer[index], ledBuffer[index + 1], ledBuffer[index + 2], ledBuffer[index + 3], i, 1);
         }
     }
 
-    // public definitions for led sections
-    // This section should change when adding new led sections
-    public static enum LEDSection {
-        CORALINTAKEUP,
-        CORALINTAKEDOWN,
-        LEFT45,
-        RIGHT45,
-        LEFTVERTICAL,
-        INNERCARRIAGE
+    // Method to set a rainbow animation across the LED strip
+    private void setRainbowAnimation() {
+        Animation rainbow = new RainbowAnimation(1.0, 0.8, LED_COUNT);  // Create rainbow animation
+        candle.animate(rainbow);  // Apply the rainbow animation to the LED strip
     }
 
-    // public definition for Color
-    public static enum LEDColor {
-        RED,
-        BLUE,
-        GREEN,
-        WHITE,
-        YELLOW,
-        BLACK,
-        RAINBOW,
+    // Method to set a strobe animation with the given color and speed
+    private void setStrobeAnimation(int r, int g, int b, double speed) {
+        Animation strobe = new StrobeAnimation(r, g, b, 0, speed, LED_COUNT);  // Create strobe animation
+        candle.animate(strobe);  // Apply the strobe animation to the LED strip
     }
 
-    // public definition for rolling direction
-    public static enum Rolling {
-        OFF,
-        FORWARD,
-        REVERSE
+    // Method to set a color flow animation with the given color and direction
+    private void setColorFlowAnimation(int r, int g, int b, boolean reversed) {
+        Animation flow = new ColorFlowAnimation(r, g, b, 0, 0.7, LED_COUNT, ColorFlowAnimation.Direction.Forward);  // Create color flow animation
+        candle.animate(flow);  // Apply the color flow animation to the LED strip
+    }
+    private void setColorFlowAnimationSection(LEDSection section, int r, int g, int b, boolean reversed) {
+        int start = section.getStart();
+        int length = section.getLength();
+        
+        Animation flow = new ColorFlowAnimation(r, g, b, 0, 0.7, length, reversed ? ColorFlowAnimation.Direction.Backward : ColorFlowAnimation.Direction.Forward);
+        candle.animate(flow, start); // Apply animation to a specific section
     }
 
-    // public class to hold state information for each led section
-    public static class State {
-        AddressableLEDBufferView view;
-        LEDColor color = LEDColor.RED;
-        int iterations = 0;
-        int forwardIndex = 0;
-        int reverseIndex = 0;
-        boolean flashing = false;
-        Rolling rolling = Rolling.OFF;
-
-        /**
-         * DO NOT USE THIS CONSTRUCTOR OUTSIDE OF THE LED SUBSYSTEM
-         * 
-         * @param view
-         */
-        public State(AddressableLEDBufferView view) {
-            this.view = view;
-            reverseIndex = view.getLength() - 1;
-        }
-
-        public State(LEDColor color, boolean flashing) {
-            this.color = color;
-            this.flashing = flashing;
-        }
-
-        public State(LEDColor color, Rolling rolling) {
-            this.color = color;
-            this.rolling = rolling;
-        }
-
-        public State(LEDColor color) {
-            this.color = color;
-        }
-
-        public void setColor(LEDColor color) {
-            this.color = color;
-        }
-
-        public LEDColor getColor() {
-            return color;
-        }
-
-        public AddressableLEDBufferView getView() {
-            return view;
-        }
-
-        public void setFlashing(boolean flashing) {
-            this.flashing = flashing;
-        }
-
-        public boolean isFlashing() {
-            return flashing;
-        }
-
-        public void setRolling(Rolling rolling) {
-            this.rolling = rolling;
-        }
-
-        public Rolling getRolling() {
-            return rolling;
-        }
-
-        public int getIterations() {
-            return iterations;
-        }
-
-        public void setIterations(int iterations) {
-            this.iterations = iterations;
-        }
-
-        public int getForwardIndex() {
-            return this.forwardIndex;
-        }
-
-        public void setForwardIndex(int index) {
-            this.forwardIndex = index;
-        }
-
-        public int getReverseIndex() {
-            return this.reverseIndex;
-        }
-
-        public void setReverseIndex(int index) {
-            this.reverseIndex = index;
+    private void setColorFlowAnimationMultiSection(int r, int g, int b, boolean reversed, LEDSection... sections) {
+        for (LEDSection section : sections) {
+            int start = section.getStart();
+            int length = section.getLength();
+    
+            // Create and apply a Color Flow animation to the section
+            Animation flow = new ColorFlowAnimation(r, g, b, 0, 0.7, length, reversed ? ColorFlowAnimation.Direction.Backward : ColorFlowAnimation.Direction.Forward);
+            candle.animate(flow, start);
         }
     }
 }

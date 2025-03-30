@@ -16,16 +16,26 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.RunCommand;
-
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
+import frc.robot.commands.drivetrain.CenterAlign;
+import frc.robot.commands.drivetrain.FeederAlign;
+import frc.robot.commands.drivetrain.IntegratedAlign;
+import frc.robot.commands.drivetrain.IntegratedAlignWithTermination;
+import frc.robot.commands.drivetrain.planner.AlgaeAlign;
 import frc.robot.commands.drivetrain.planner.AligntoFeeder;
 import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
 import frc.robot.commands.drivetrain.planner.PoseSelector;
@@ -39,12 +49,12 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
 import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.IntegratedVision;
 import frc.robot.subsystems.LED;
-import frc.robot.subsystems.LED.LEDColor;
 import frc.robot.subsystems.LED.LEDSection;
-import frc.robot.subsystems.LED.Rolling;
-import frc.robot.subsystems.LED.State;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -60,9 +70,14 @@ public class RobotContainer {
   private final SwerveRequest.RobotCentric robotDrive = new SwerveRequest.RobotCentric()
       .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(
           SteerRequestType.MotionMagicExpo); // Use Closed-loop control for drive motors at low speeds
+  
+  private final SwerveRequest.ApplyRobotSpeeds robot = new SwerveRequest.ApplyRobotSpeeds();
+
   private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
   private final SwerveRequest.FieldCentricFacingAngle angle = new SwerveRequest.FieldCentricFacingAngle();
+
+  private final SwerveRequest.ApplyRobotSpeeds doNothing = new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds());
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -74,20 +89,26 @@ public class RobotContainer {
 
   public final Timer m_timer = new Timer();
 
-  private final LED LEDController = LED.getInstance();
 
   public final Algae m_algae = new Algae();
   public final Elevator m_elevator = new Elevator();
   public final Coral m_coral = new Coral();
   public final Vision reef_vision = new Vision(Constants.Vision.reefCameraName, Constants.Vision.reefRobotToCam);
   public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
-  private PoseSelector2 leftSideSelector = new PoseSelector2(drivetrain, m_elevator, 0);
-  private PoseSelector2 rightSideSelector = new PoseSelector2(drivetrain, m_elevator, 1);
 
+  public final IntegratedVision integVis = new IntegratedVision(drivetrain);
+ public final LED led = new LED(40);
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
+  private final Trigger readyToPlaceCoral = new Trigger(() -> (DriverStation.isTeleop() && drivetrain.isAligned()));
+  private final Trigger algaeWarning = new Trigger(() -> drivetrain.notSafe());
+  private final Trigger hasCoralTrigger = new Trigger(() -> m_coral.hasCoral());
+
+
 
   public RobotContainer() {
+    drivetrain.setStateStdDevs(VecBuilder.fill(0.01, 0.01, Math.toRadians(5)));
     configureBindings();
+    configureLEDTriggers();
 
     NamedCommands.registerCommand("Nearest Tag Align Left",
         new DriveCoralScorePose(drivetrain,
@@ -116,6 +137,8 @@ public class RobotContainer {
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround));
     NamedCommands.registerCommand("Elevator Setpoint Algae Processor",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee));
+    NamedCommands.registerCommand("Elevator Setpoint Algae Bottom",
+        m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot));
     NamedCommands.registerCommand("Elevator Setpoint Algae Top",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop));
     NamedCommands.registerCommand("Zero Elevator", m_elevator.zeroElevatorCommand().withTimeout(2)); // ensure that the
@@ -124,14 +147,30 @@ public class RobotContainer {
                                                                                                      // down if limit
                                                                                                      // isn't read.
     NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
+    NamedCommands.registerCommand("Score Faster", m_coral.runIntake(1).withTimeout(0.3));
     NamedCommands.registerCommand("Passive Intake", m_coral.coralCheck());
+    NamedCommands.registerCommand("Alt Right Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, false).withTimeout(2));
+    NamedCommands.registerCommand("Alt Left Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, true).withTimeout(2));
 
     configureLEDTriggers();
+
+    // Set the robot state standard deviation.
+    // This sets trust in built-in robot odometry.
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("AutoChooser", autoChooser);
   }
 
   public void configureBindings() {
+
+    readyToPlaceCoral.onTrue(Commands.runOnce(
+      () -> Pilot.setRumble(RumbleType.kBothRumble, 0.4)).withTimeout(1).alongWith(led.setStrobeAnimationCommand(255, 165, 0, .2).withTimeout(.6).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2)))
+      .onFalse(Commands.runOnce(
+          () -> Pilot.setRumble(RumbleType.kBothRumble, 0)));
+
+    algaeWarning.onTrue(drivetrain.DoNothingForTime(1.5));
+
+    
+      
     m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -149,8 +188,9 @@ public class RobotContainer {
     // Bumper and Trigger Controls
     Pilot.leftBumper().whileTrue(new ElevatorAlgaeComand(m_elevator, m_algae));
     Pilot.rightBumper().whileTrue(m_algae.outtake());
-    Pilot.rightTrigger().whileTrue(m_coral.runIntake(1).alongWith(LEDController.setState(getRightTriggerColors())));
+    Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
     Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand());
+
 
     // POV Controls
     Pilot.povLeft()
@@ -169,17 +209,34 @@ public class RobotContainer {
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    Pilot.a().whileTrue(new AligntoFeeder(drivetrain, m_coral, 10));
-    Pilot.y().whileTrue(new DriveCoralScorePose(
-        drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
-            Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));
-    // Alternative bindings
+    Pilot.a().whileTrue(new AlgaeAlign(m_elevator, drivetrain, 
+    () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
+    () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
+   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate));
+    //Pilot.y().whileTrue(new DriveCoralScorePose(
+    //    drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
+     //       Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));
+
+
+     Pilot.y().whileTrue(new CenterAlign(m_elevator, drivetrain, 
+     () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
+     () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
+    () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate));
+         // Alternative bindings
     // Pilot.x().whileTrue(poseSelector);
     // Pilot.b().onTrue(m_elevator.goToSelectedPointCommand());
 
-    Pilot.x().whileTrue(leftSideSelector);
-    Pilot.b().whileTrue(rightSideSelector);
+    Pilot.b().whileTrue(new IntegratedAlign(m_elevator, drivetrain, 
+    () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
+    () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
+   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, 4, false));
+    
 
+    Pilot.x().whileTrue(new IntegratedAlign(m_elevator, drivetrain, 
+    () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
+   () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
+    () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, 4, true));
+    
     /// Copilot
     /// Elevator and drive controls
     Copilot.povUp().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop));
@@ -268,7 +325,37 @@ public class RobotContainer {
   }
 
   private void configureLEDTriggers() {
-    // Pilot.rightTrigger().whileTrue(LEDController.setState(getRightTriggerColors()));
+    //pilot
+      //coral score - green
+      Pilot.rightTrigger().onTrue(led.setLEDColorCommand(0, 255, 0).withTimeout(.6).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
+      // Feeder align: Turn purple
+      Pilot.a().whileTrue(led.setLEDColorCommand(184, 0, 185));
+      // Reef align - turn yellow
+      Pilot.b().whileTrue(led.setLEDColorCommand(255, 165, 0)); 
+      // Reef align - turn yellow
+      Pilot.x().whileTrue(led.setLEDColorCommand(255, 165, 0));
+      // Algae align - turn blue 
+      Pilot.y().whileTrue(led.setLEDColorCommand(0, 0, 255)); 
+
+    //copilot
+      // L2 - turn "yellow"
+      Copilot.x().whileTrue(led.setLEDColorCommand(128, 255, 0));
+      // L3 - turn "green"
+      Copilot.b().whileTrue(led.setLEDColorCommand(255, 127, 0));
+      // L4 - turn "orange"
+      Copilot.y().whileTrue(led.setLEDColorCommand(255, 255, 0));
+      //processor - green
+      Copilot.povLeft().whileTrue(led.setLEDColorCommand(0, 255, 0));
+      //Algae1 - strobe green
+      Copilot.povRight().onTrue(led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
+      // climbing - strobe green
+      Copilot.start().onTrue(led.setStrobeAnimationCommand(0, 0, 255, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
+      //Elevator to setpoint - turn red
+      Copilot.rightTrigger().whileTrue(led.setLEDColorCommand(255, 0, 0));
+  
+   //has coral - flash white
+   hasCoralTrigger.onTrue(led.setStrobeAnimationCommand(255, 255, 255, .2).withTimeout(1).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
+
   }
 
   private static double deadband(double value, double deadband) {
@@ -283,12 +370,4 @@ public class RobotContainer {
       return 0.0;
     }
   }
-
-  private Map<LEDSection, State> getRightTriggerColors() {
-    Map<LEDSection, State> map = new HashMap<>();
-    map.put(LEDSection.CORALINTAKEUP, new State(LEDColor.BLUE, Rolling.FORWARD));
-    map.put(LEDSection.CORALINTAKEDOWN, new State(LEDColor.BLUE, Rolling.REVERSE));
-    return map;
-  }
-
 }

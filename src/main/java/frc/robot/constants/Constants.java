@@ -1,10 +1,12 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.Centimeter;
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.Optional;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.config.PIDConstants;
@@ -15,15 +17,24 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.controller.HolonomicDriveController;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.units.measure.Time;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public final class Constants {
     public static class AltSwerveConstants {
@@ -115,40 +126,70 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final PIDConstants AUTO_DRIVE_PID = new PIDConstants(
-                3.0,
+                5.0,
                 0,
                 0);
         public static final PIDConstants AUTO_STEER_PID = new PIDConstants(
-                3.0,
+                5.0,
                 0,
                 0);
 
-        public static final PIDConstants ALIGN_DRIVE_PID = new PIDConstants(
-                    2.8,
-                    0,
-                    0);
-        public static final PIDConstants ALIGN_STEER_PID = new PIDConstants(
-                    2.8,
-                    0,
-                    0);
         public static final PPHolonomicDriveController kDriveController = new PPHolonomicDriveController(
                 AUTO_DRIVE_PID,
                 AUTO_STEER_PID);
 
-        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(1);
-        public static final Distance kPositionTolerance = Inches.of(0.3);
-        public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(0.2);
+        public static final Rotation2d kRotationTolerance = Rotation2d.fromDegrees(3);
+        public static final Distance kPositionTolerance = Centimeter.of(1.5);
+        public static final LinearVelocity kSpeedTolerance = InchesPerSecond.of(2);
 
-        public static final Time kEndTriggerDebounce = Seconds.of(0.02);
-        public static final PathConstraints kPathConstraints = new PathConstraints(2.00, 1.0, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
+        public static final Time kEndTriggerDebounce = Seconds.of(0.04);
+        public static final PathConstraints kPathConstraints = new PathConstraints(5.50, 5, 1/2 * Math.PI, 1 * Math.PI); // The constraints for this path.
         public static final PathConstraints kSlowPathConstraints = new PathConstraints(0.3, 0.1, 1/5 * Math.PI, 0.2 * Math.PI); // The constraints for this path.
         public static final Time kAlignmentAdjustmentTimeout = Seconds.of(0.075);
 
     }
 
+    public static class AlignmentConstants {
+        public static final Distance kMinimumXYAlignDistance = Units.Meters.of(2);
+        public static final Distance kPointTolerance = Units.Inches.of(0.5);
+        public static final Distance kAlignmentTolerance = Units.Inches.of(1.5);
+        public static final Angle kRotTolerance = Units.Degrees.of(2.5);
+        public static final AngularVelocity kMaximumRotSpeed = Units.DegreesPerSecond.of(360);
+        public static final LinearVelocity TeleoperatedMaximumVelocity = Units.MetersPerSecond.of(TunerConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.7);
+        public static final double kMinimumElevatorMultiplier = 0.1;
+
+        public static final PIDController kXController = new PIDController(3.7, 0, 0.1);
+        public static final PIDController kYController = new PIDController(3.7, 0, 0.1);
+        public static final ProfiledPIDController kRotController = new ProfiledPIDController(3, 0, 0.05, 
+        new TrapezoidProfile.Constraints(kMaximumRotSpeed.in(Units.DegreesPerSecond), Math.pow(kMaximumRotSpeed.in(Units.DegreesPerSecond), 2)));
+
+        static {
+            kXController.setTolerance(kPointTolerance.in(Units.Meters));
+            kYController.setTolerance(kPointTolerance.in(Units.Meters));
+            kRotController.enableContinuousInput(0, 360);
+            kRotController.setTolerance(kRotTolerance.in(Units.Degrees));
+            
+        }
+
+        public static HolonomicDriveController kTeleoperatedAlignmentController = new HolonomicDriveController(kXController, kYController, kRotController);
+        
+    }
+
 
     public static class FieldConstants {
         // tune this
+
+        public static Optional<Alliance> ALLIANCE = Optional.empty();
+
+        // Returns false if no alliance is found (Default to Blue side origin.. Caution when using)
+        public static boolean isRedAlliance() {
+        var alliance = ALLIANCE;
+        if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+        }
+        return false;
+        };
+
         public static final double FIELD_WIDTH = 16.541;
         public static final double FIELD_LENGTH = 8.211;
         public static final double REEF_APRILTAG_HEIGHT = 6.875; // feet? figure out units
@@ -211,9 +252,9 @@ public final class Constants {
         public static final String reefCameraName = "reef_cam";
         public static final String feederCameraName = "feeder_cam";
 
-        public static final Transform3d feederRobotToCam = new Transform3d(Inches.of(1.48),
-        Inches.of(-10.31), Inches.of(17.54), new Rotation3d(Degrees.of(0),
-        Degrees.of(-30), Degrees.of(-90)));
+        public static final Transform3d feederRobotToCam = new Transform3d(Inches.of(-4.75),
+        Inches.of(9), Inches.of(10.125), new Rotation3d(Degrees.of(0),
+        Degrees.of(0), Degrees.of(115)));
 
         public static final Transform3d reefRobotToCam = new Transform3d(Inches.of(.35), Inches.of(9.71), Inches.of(20.48),
         new Rotation3d(Degrees.of(0), Degrees.of(10), Degrees.of(90)));

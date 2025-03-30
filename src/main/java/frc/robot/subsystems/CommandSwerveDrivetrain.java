@@ -2,45 +2,62 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.Optional;
+import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+
+import org.photonvision.EstimatedRobotPose;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.units.measure.LinearAcceleration;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import frc.robot.constants.Constants;
+import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants.TunerSwerveDrivetrain;
+import frc.robot.util.MoreMath;
+import frc.robot.util.Records.VisionMeasurement;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -51,6 +68,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     public int selectedSide = 1;
+    Pose2d desiredPose2d = Pose2d.kZero;
+
+    private SwerveDrivePoseEstimator localizedPoseEstimator;
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -66,6 +86,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     /* Swerve requests for robot-centric pathfollowing */
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+
+    /* Swerve requests for robot-centric alignment */
+    private final SwerveRequest.ApplyRobotSpeeds m_alignApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    private final SwerveRequest.ApplyRobotSpeeds mChassiSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    private final SwerveRequest.FieldCentric mFieldDrive = new SwerveRequest.FieldCentric();
+
 
     /*
      * SysId routine for characterizing translation. This is used to find PID gains
@@ -152,6 +178,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             startSimThread();
         }
         configureAutoBuilder();
+
+
+        localizedPoseEstimator = new SwerveDrivePoseEstimator(getKinematics(), getState().Pose.getRotation(),
+                getState().ModulePositions, new Pose2d(),
+                VecBuilder.fill(1, 1, 3),
+                VecBuilder.fill(1, 1, 3));
+
     }
 
     /**
@@ -237,6 +270,28 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return run(() -> this.setControl(requestSupplier.get()));
     }
 
+    public Command DoNothingForTime(double seconds) {
+        return applyRequest(() -> mChassiSpeeds.withSpeeds(new ChassisSpeeds())).withTimeout(seconds);
+    }
+
+    public void drive(ChassisSpeeds speeds) {
+        setControl(mChassiSpeeds.withSpeeds(ChassisSpeeds.discretize(speeds, 0.02)));
+    }
+
+
+    public void fieldDrive(DoubleSupplier fieldX, DoubleSupplier fieldY, DoubleSupplier fieldRot, boolean openLoop) {
+        DriveRequestType requestType = (openLoop) ? (DriveRequestType.OpenLoopVoltage) : (DriveRequestType.Velocity);
+        setControl(mFieldDrive.
+        withVelocityX(
+            fieldX.getAsDouble()
+        ).withVelocityY(
+            fieldY.getAsDouble()
+        ).withRotationalRate(
+            fieldRot.getAsDouble()
+        ).withDriveRequestType(requestType)
+        );
+    }
+
     /**
      * Runs the SysId Quasistatic test in the given direction for the routine
      * specified by {@link #m_sysIdRoutineToApply}.
@@ -283,6 +338,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
     }
+
+
 
     private void startSimThread() {
         m_lastSimTime = Utils.getCurrentTimeSeconds();
@@ -346,7 +403,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
                     () -> getState().Pose, // Supplier of current robot pose
-                    this::resetPose, // Consumer for seeding pose against auto
+                    this::resetAllEstimatorPoses, // Consumer for seeding pose against auto
                     () -> getState().Speeds, // Supplier of current robot speeds
                     // Consumer of ChassisSpeeds and feedforwards to drive the robot
                     (speeds, feedforwards) -> setControl(
@@ -357,9 +414,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                                             com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType.Velocity)),
                     new PPHolonomicDriveController(
                             // PID constants for translation
-                            new PIDConstants(10, 0, 0),
+                            new PIDConstants(5, 0, 0.1),
                             // PID constants for rotation
-                            new PIDConstants(11, 0, 0)),
+                            new PIDConstants(4, 0, 0.05)),
                     config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the
                     // case
@@ -396,17 +453,224 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         return ChassisSpeeds.fromRobotRelativeSpeeds(getState().Speeds, getState().Pose.getRotation());
     }
 
-    public Command driveToPose() {
-        return AutoBuilder.pathfindToPose(new Pose2d(15, 2, Rotation2d.fromDegrees(0)),
-                new PathConstraints(LinearVelocity.ofBaseUnits(1.0, MetersPerSecond),
-                        LinearAcceleration.ofBaseUnits(0.5, MetersPerSecondPerSecond),
-                        AngularVelocity.ofBaseUnits(360, DegreesPerSecond),
-                        AngularAcceleration.ofBaseUnits(540, DegreesPerSecondPerSecond)));
-    }
 
     public double getSpeedAsDouble() {
         ChassisSpeeds fieldVelocity = getFieldRelativeSpeeds();
         return Math.sqrt(fieldVelocity.vxMetersPerSecond * fieldVelocity.vxMetersPerSecond
                 + fieldVelocity.vyMetersPerSecond * fieldVelocity.vyMetersPerSecond);
     }
+
+    public void updateLocalizedEstimator(Pose2d ptd, double time, Matrix<N3, N1> stdevs) {
+        Matrix<N3, N1> stdevsToUpdate = stdevs;
+        localizedPoseEstimator.setVisionMeasurementStdDevs(stdevsToUpdate);
+        localizedPoseEstimator.addVisionMeasurement(ptd, time);
+    }
+
+    public Pose2d getLocalizedPose() {
+        return localizedPoseEstimator.getEstimatedPosition();
+    }
+
+    public void resetLocalizedPose(VisionMeasurement measure) {
+        localizedPoseEstimator.resetPose(measure.pose().reportedPose());
+    }
+
+    public void resetAllEstimatorPoses(Pose2d pose) {
+        localizedPoseEstimator.resetPose(pose);
+        resetPose(pose);
+    }
+
+    public void updateGlobalEstimator(VisionMeasurement measure) {
+        Matrix<N3, N1> stdevsToUpdate = measure.stDevs();
+        setVisionMeasurementStdDevs(stdevsToUpdate);
+        addVisionMeasurement(measure.pose().reportedPose(), measure.pose().reportedTimestamp());
+    }
+
+    public ChassisSpeeds calculateRobotRelative(Pose2d pose) {
+        desiredPose2d = pose;
+        return Constants.AlignmentConstants.kTeleoperatedAlignmentController.calculate(getState().Pose, pose, 0, pose.getRotation());
+    }
+
+    public AngularVelocity calculateRobotRelativeRot(Rotation2d desiredRot) {
+        double calculatedYaw = Constants.AlignmentConstants.
+        kTeleoperatedAlignmentController.
+        getThetaController().
+        calculate(getState().Pose.getRotation().getRadians(), desiredRot.getRadians());
+
+        // clamp
+        calculatedYaw = MathUtil.clamp(calculatedYaw, -Constants.AlignmentConstants.kMaximumRotSpeed.in(Units.RadiansPerSecond), Constants.AlignmentConstants.kMaximumRotSpeed.in(Units.RadiansPerSecond));
+
+        return Units.RadiansPerSecond.of(calculatedYaw);
+    }
+
+    public void rotationalAlign(Pose2d desiredTarget, LinearVelocity xVelocity, LinearVelocity yVelocity) {
+        // Rotational-only auto-align
+        drive(
+            new ChassisSpeeds(
+                xVelocity.in(Units.MetersPerSecond),
+                yVelocity.in(Units.MetersPerSecond),
+                calculateRobotRelativeRot(desiredTarget.getRotation()).in(Units.RadiansPerSecond)
+            )       
+        );
+        
+        
+    }
+
+    
+    public void integratedAutoAlignment(Distance distFromTarg, Pose2d desiredTarg, LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti) {
+        if (distFromTarg.gte(Constants.AlignmentConstants.kMinimumXYAlignDistance)) {
+            rotationalAlign(desiredTarg, xVelocity, yVelocity);
+        } else {
+            // limit speed based on elevator height
+            ChassisSpeeds desiredSpeeds = calculateRobotRelative(desiredTarg);
+            LinearVelocity linearSpeedLimit = Constants.AlignmentConstants.TeleoperatedMaximumVelocity.times(ElevatorMulti);
+            AngularVelocity angularVelocityLimit = Constants.AlignmentConstants.kMaximumRotSpeed.times(ElevatorMulti);
+
+            // when not in autonomous, clamp speed for better driver control and unanimity with elevator height
+            if (!RobotState.isAutonomous()) {
+                // Check to see if the desired speeds conflict with teleoperated "flow"
+                if (desiredSpeeds.vxMetersPerSecond > linearSpeedLimit.in(Units.MetersPerSecond) ||
+                desiredSpeeds.vyMetersPerSecond > linearSpeedLimit.in(Units.MetersPerSecond) ||
+                desiredSpeeds.omegaRadiansPerSecond > angularVelocityLimit.in(Units.RadiansPerSecond)) {
+
+                    // clamp speeds
+                    desiredSpeeds.vxMetersPerSecond = MathUtil.clamp(desiredSpeeds.vxMetersPerSecond, 0,
+                    linearSpeedLimit.in(MetersPerSecond));
+                    desiredSpeeds.vyMetersPerSecond = MathUtil.clamp(desiredSpeeds.vyMetersPerSecond, 0,
+                    linearSpeedLimit.in(MetersPerSecond));
+                    desiredSpeeds.omegaRadiansPerSecond = MathUtil.clamp(desiredSpeeds.omegaRadiansPerSecond, 0,
+                    angularVelocityLimit.in(RadiansPerSecond));
+
+                }
+            }
+
+            drive(desiredSpeeds);
+        }
+    }
+
+
+    public Pose2d getReefRequest(boolean leftSideRequested, int level) {
+        // return (DriverStation.getAlliance().get() == Alliance.Blue) ? (id >= 17 && id <= 22) : (id >= 6 && id <= 11);
+         Pose2d poseToGet = MoreMath.getNearest(getState().Pose, (DriverStation.getAlliance().get() == Alliance.Blue) ? (Constants.VisionFiducials.BLUE_CORAL_TAGS) : (Constants.VisionFiducials.RED_CORAL_TAGS));
+        // new Transform2d(x, y, rot);
+         if (level == 4) {
+             return poseToGet.transformBy(
+                 new Transform2d(
+                     (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftXL4) : (DynamicConstants.AlignTransforms.RightXL4),
+                     (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftYL4) : (DynamicConstants.AlignTransforms.RightYL4),
+                     new Rotation2d((leftSideRequested) ? (Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)) : (Math.toRadians(DynamicConstants.AlignTransforms.RightRot)))));
+         }
+ 
+         if (level == 3) {
+             return poseToGet.transformBy(
+                 new Transform2d(
+                     (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftXL3) : (DynamicConstants.AlignTransforms.RightXL3),
+                     (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftYL3) : (DynamicConstants.AlignTransforms.RightYL3),
+                     new Rotation2d((leftSideRequested) ? (Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)) : (Math.toRadians(DynamicConstants.AlignTransforms.RightRot)))));
+         }
+ 
+         if (level == 2) {
+             return poseToGet.transformBy(
+                 new Transform2d(
+                     (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftXL2) : (DynamicConstants.AlignTransforms.RightXL2),
+                     (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftYL2) : (DynamicConstants.AlignTransforms.RightYL2),
+                     new Rotation2d((leftSideRequested) ? (Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)) : (Math.toRadians(DynamicConstants.AlignTransforms.RightRot)))));
+         }
+ 
+         if (level == 1) {
+             return poseToGet.transformBy(
+                 new Transform2d(
+                     (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftXL1) : (DynamicConstants.AlignTransforms.RightXL1),
+                     (leftSideRequested) ? (DynamicConstants.AlignTransforms.LeftYL1) : (DynamicConstants.AlignTransforms.RightYL1),
+                     new Rotation2d((leftSideRequested) ? (Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)) : (Math.toRadians(DynamicConstants.AlignTransforms.RightRot)))));
+         }
+ 
+         // if no conditions are met perform center alignment (you can just feed level = -1 lol)
+          else {
+            return poseToGet.transformBy(
+                new Transform2d(
+                    DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.CentRot)))); 
+        }
+     }
+
+     public Pose2d getCenterRequest() {
+        // return (DriverStation.getAlliance().get() == Alliance.Blue) ? (id >= 17 && id <= 22) : (id >= 6 && id <= 11);
+         Pose2d poseToGet = MoreMath.getNearest(getState().Pose, (DriverStation.getAlliance().get() == Alliance.Blue) ? (Constants.VisionFiducials.BLUE_CORAL_TAGS) : (Constants.VisionFiducials.RED_CORAL_TAGS));
+        // new Transform2d(x, y, rot);
+         return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.CentRot))));
+     }
+
+     public Pose2d getAlgaeRequest() {
+        // return (DriverStation.getAlliance().get() == Alliance.Blue) ? (id >= 17 && id <= 22) : (id >= 6 && id <= 11);
+         Pose2d poseToGet = MoreMath.getNearest(getState().Pose, (DriverStation.getAlliance().get() == Alliance.Blue) ? (Constants.VisionFiducials.BLUE_CORAL_TAGS) : (Constants.VisionFiducials.RED_CORAL_TAGS));
+        // new Transform2d(x, y, rot);
+         return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.AlgaeX, DynamicConstants.AlignTransforms.AlgaeY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.AlgaeRot))));
+     }
+
+     public Pose2d getFeederRequest() {
+        Pose2d poseToGet = MoreMath.getNearest(getState().Pose, (DriverStation.getAlliance().get() == Alliance.Blue) ? (Constants.VisionFiducials.BLUE_FEEDER_TAGS) : (Constants.VisionFiducials.RED_FEEDER_TAGS));
+        return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.feederRot))));
+     }
+
+     public void integratedFeederAlignment(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+        Pose2d desiredFeeder = getFeederRequest();
+        Distance distFromFeeder = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredFeeder.getTranslation()));
+        integratedAutoAlignment(distFromFeeder, getFeederRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
+     }
+
+
+     public void integratedCenterAlign(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+        Pose2d desiredAlgae = getCenterRequest();
+        Distance distFromAlgae = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredAlgae.getTranslation()));
+
+        integratedAutoAlignment(distFromAlgae, getCenterRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
+     }
+
+     public void integratedAlgaeAlign(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+        Pose2d desiredAlgae = getAlgaeRequest();
+        Distance distFromAlgae = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredAlgae.getTranslation()));
+
+        integratedAutoAlignment(distFromAlgae, getAlgaeRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
+     }
+
+     public void integratedReefAlignment(boolean leftBranch, int level, LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+        Pose2d desiredReef = getReefRequest(leftBranch, level);
+        Distance distFromReef = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredReef.getTranslation()));
+
+        integratedAutoAlignment(distFromReef, desiredReef, xVelocity, yVelocity, rVelocity, ElevatorMulti);
+     }
+
+     public boolean isAtRotation(Rotation2d desiredRotation) {
+        return (getState().Pose.getRotation().getMeasure()
+            .compareTo(desiredRotation.getMeasure().minus(Constants.AlignmentConstants.kRotTolerance)) > 0) &&
+            getState().Pose.getRotation().getMeasure()
+                .compareTo(desiredRotation.getMeasure().plus(Constants.AlignmentConstants.kRotTolerance)) < 0;
+      }
+    
+      public boolean isAtPosition(Pose2d desiredPose2d) {
+        return Units.Meters
+            .of(getState().Pose.getTranslation().getDistance(desiredPose2d.getTranslation()))
+            .lte(Constants.AlignmentConstants.kPointTolerance);
+      }
+    
+      public boolean isAligned() {
+        return (desiredPose2d.getTranslation().getDistance(
+            getState().Pose.getTranslation()) <= Constants.AlignmentConstants.kAlignmentTolerance.in(Units.Meters))
+            && isAtRotation(desiredPose2d.getRotation());
+      }
+    
+      public boolean atPose(Pose2d desiredPose) {
+        return isAtRotation(desiredPose.getRotation()) && isAtPosition(desiredPose);
+      }
+
+      public boolean notSafe() {
+        return (180 - Math.abs(getPigeon2().getRoll().getValueAsDouble()) > 7) 
+        || (Math.abs(getPigeon2().getPitch().getValueAsDouble()) > 7);
+      }
+
+      // for logging / dashboard odom
+
+      public Pose2d getCurrentPoseToAlign() {
+        return desiredPose2d;
+      }
+
 }

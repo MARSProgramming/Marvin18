@@ -7,19 +7,13 @@
         {
           "type": "named",
           "data": {
-            "name": "Deploy Algae"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Passive Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "S1-F"
+            "pathName": "Mid-A"
           }
         },
         {
@@ -35,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Nearest Tag Align Right"
+                  "name": "Alt Right Side Align"
                 }
               },
               {
@@ -58,23 +52,11 @@
           "data": {
             "name": "Zero Elevator"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "F-U2"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Feeder Align"
-          }
         }
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

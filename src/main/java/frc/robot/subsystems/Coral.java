@@ -26,6 +26,7 @@ public class Coral extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("IR", getIRReading());
+    SmartDashboard.putBoolean("Has Coral", hasCoral());
     // This method will be called once per scheduler run
   }
 

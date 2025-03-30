@@ -169,7 +169,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "U1-C"
+                  "pathName": "U1-D"
                 }
               },
               {
@@ -182,22 +182,9 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator Setpoint L4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Alt Left Side Align"
-                }
-              }
-            ]
+            "name": "Alt Right Side Align"
           }
         },
         {

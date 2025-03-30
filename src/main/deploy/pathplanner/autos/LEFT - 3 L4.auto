@@ -17,7 +17,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S6-B"
+                  "pathName": "S1-F"
                 }
               },
               {
@@ -33,93 +33,17 @@
           "type": "parallel",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator Setpoint L4"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Alt Left Side Align"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score Faster"
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Passive Intake"
-                }
-              },
-              {
-                "type": "parallel",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "B-U1"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Zero Elevator"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator Setpoint L2"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "U1-C"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator Setpoint L4"
-                }
-              },
               {
                 "type": "named",
                 "data": {
                   "name": "Alt Right Side Align"
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Setpoint L4"
+                }
               }
             ]
           }
@@ -147,7 +71,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "C-U1"
+                        "pathName": "F-U2"
                       }
                     },
                     {
@@ -167,15 +91,15 @@
           "data": {
             "commands": [
               {
-                "type": "path",
-                "data": {
-                  "pathName": "U1-C"
-                }
-              },
-              {
                 "type": "named",
                 "data": {
                   "name": "Elevator Setpoint L2"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "U2-E"
                 }
               }
             ]
@@ -188,13 +112,89 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Elevator Setpoint L4"
+                  "name": "Alt Left Side Align"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Alt Left Side Align"
+                  "name": "Elevator Setpoint L4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score Faster"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Passive Intake"
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "E-U2"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Zero Elevator"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Setpoint L2"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "U2-E"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Alt Right Side Align"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Elevator Setpoint L4"
                 }
               }
             ]

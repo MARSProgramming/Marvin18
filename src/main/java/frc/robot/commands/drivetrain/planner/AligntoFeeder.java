@@ -35,7 +35,7 @@ public class AligntoFeeder extends Command {
       List.of(VisionFiducials.RED_LEFT_FEEDER_TAG, VisionFiducials.BLUE_LEFT_FEEDER_TAG));
   private List<Pose2d> rightFeeders = getPoseList(
       List.of(VisionFiducials.RED_RIGHT_FEEDER_TAG, VisionFiducials.BLUE_RIGHT_FEEDER_TAG));
-  private static Transform2d offset = new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, Rotation2d.fromDegrees(-90));
+  private static Transform2d offset = new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, Rotation2d.fromDegrees(0));
   private static Transform2d slotSpacing_pos = new Transform2d(0.0, Inches.of(16).in(Meters), Rotation2d.fromDegrees(0));
   private static Transform2d slotSpacingneg = new Transform2d(0.0, Inches.of(16).in(Meters), Rotation2d.fromDegrees(0));
   private CommandSwerveDrivetrain dt;
