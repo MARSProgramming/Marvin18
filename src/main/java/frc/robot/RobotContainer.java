@@ -336,8 +336,6 @@ public class RobotContainer {
    // Pilot.leftBumper().whileTrue(led.setColorFlowAnimationCommand(0, 255, 0, false));
     //Pilot.rightBumper().whileTrue(led.setColorFlowAnimationCommand(0, 0, 255, true));
 
-    //default command
-   led.setLEDColorSectionCommand(LEDSection.CHUTEFULL, 255, 255, 255);
     //pilot
     Pilot.rightTrigger().onTrue(led.setLEDColorCommand(0, 255, 0).withTimeout(.6).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
 
