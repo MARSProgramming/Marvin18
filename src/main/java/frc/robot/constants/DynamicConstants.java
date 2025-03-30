@@ -33,7 +33,7 @@ public final class DynamicConstants {
         public static double elevAlgaeTop = 7.0;
         public static double elevAlgaeBot = 4.9;
         public static double elevAlgaeTee = 2.2;
-        public static double elevAlgaeGround = 1;
+        public static double elevAlgaeGround = 0.72;
         public static double elevClimb = 0;
         public static double elevClimbVoltage = -5;
 

@@ -167,7 +167,7 @@ public class RobotContainer {
       .onFalse(Commands.runOnce(
           () -> Pilot.setRumble(RumbleType.kBothRumble, 0)));
 
-    algaeWarning.onTrue(drivetrain.DoNothingForTime(3));
+    algaeWarning.onTrue(drivetrain.DoNothingForTime(1.5));
 
     
       
