@@ -321,6 +321,9 @@ public class RobotContainer {
   }
 
   private void configureLEDTriggers() {
+    //pilot
+      //coral score - green
+      Pilot.rightTrigger().onTrue(led.setLEDColorCommand(0, 255, 0).withTimeout(.6).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
       // Feeder align: Turn purple
       Pilot.a().whileTrue(led.setLEDColorCommand(184, 0, 185));
       // Reef align - turn yellow
@@ -329,33 +332,25 @@ public class RobotContainer {
       Pilot.x().whileTrue(led.setLEDColorCommand(255, 165, 0));
       // Algae align - turn blue 
       Pilot.y().whileTrue(led.setLEDColorCommand(0, 0, 255)); 
-      // Scoring - turn green 
-      //Pilot.rightTrigger().whileTrue(led.setLEDColorCommand(0, 255, 0));  
-      //  Pilot.start().whileTrue(led.setRainbowAnimationCommand()); //not working
-    //Pilot.back().whileTrue(led.setStrobeAnimationCommand(255, 0, 0, .8)); //not working (meh)
-   // Pilot.leftBumper().whileTrue(led.setColorFlowAnimationCommand(0, 255, 0, false));
-    //Pilot.rightBumper().whileTrue(led.setColorFlowAnimationCommand(0, 0, 255, true));
-
-    //pilot
-    Pilot.rightTrigger().onTrue(led.setLEDColorCommand(0, 255, 0).withTimeout(.6).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
 
     //copilot
-   Copilot.x().whileTrue(led.setLEDColorCommand(128, 255, 0));
-   Copilot.b().whileTrue(led.setLEDColorCommand(255, 127, 0));
-   Copilot.y().whileTrue(led.setLEDColorCommand(255, 255, 0));
-  // Copilot.povUp().whileTrue(led.setColorFlowAnimationSectionCommand(LEDSection.LEFTVERT, 0, 255, 0, false));
-   Copilot.povLeft().whileTrue(led.setLEDColorCommand(0, 255, 0));
-   Copilot.povRight().onTrue(led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
-   Copilot.start().onTrue(led.setStrobeAnimationCommand(0, 0, 255, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
-   Copilot.rightTrigger().whileTrue(led.setLEDColorCommand(255, 0, 0));
+      // L2 - turn "yellow"
+      Copilot.x().whileTrue(led.setLEDColorCommand(128, 255, 0));
+      // L3 - turn "green"
+      Copilot.b().whileTrue(led.setLEDColorCommand(255, 127, 0));
+      // L4 - turn "orange"
+      Copilot.y().whileTrue(led.setLEDColorCommand(255, 255, 0));
+      //processor - green
+      Copilot.povLeft().whileTrue(led.setLEDColorCommand(0, 255, 0));
+      //Algae1 - strobe green
+      Copilot.povRight().onTrue(led.setStrobeAnimationCommand(0, 255, 0, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
+      // climbing - strobe green
+      Copilot.start().onTrue(led.setStrobeAnimationCommand(0, 0, 255, .4).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
+      //Elevator to setpoint - turn red
+      Copilot.rightTrigger().whileTrue(led.setLEDColorCommand(255, 0, 0));
   
-   //has coral
+   //has coral - flash white
    hasCoralTrigger.onTrue(led.setStrobeAnimationCommand(255, 255, 255, .2).withTimeout(1).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
-
-   
-   /*if (m_coral.hasCoral()) { 
-    led.setStrobeAnimationCommand(255, 255, 255, .2).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0));
-  } */
 
   }
 
