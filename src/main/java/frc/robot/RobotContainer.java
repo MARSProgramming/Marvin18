@@ -162,7 +162,7 @@ public class RobotContainer {
   public void configureBindings() {
 
     readyToPlaceCoral.onTrue(Commands.runOnce(
-      () -> Pilot.setRumble(RumbleType.kBothRumble, 0.4)).withTimeout(1))
+      () -> Pilot.setRumble(RumbleType.kBothRumble, 0.4)).withTimeout(1).alongWith(led.setStrobeAnimationCommand(255, 165, 0, .2).withTimeout(.6).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2)))
       .onFalse(Commands.runOnce(
           () -> Pilot.setRumble(RumbleType.kBothRumble, 0)));
 
@@ -327,7 +327,7 @@ public class RobotContainer {
       // Feeder align: Turn purple
       Pilot.a().whileTrue(led.setLEDColorCommand(184, 0, 185));
       // Reef align - turn yellow
-      Pilot.b().whileTrue(led.setLEDColorCommand(255, 165, 0)); 
+    //  Pilot.b().whileTrue(led.setLEDColorCommand(255, 165, 0)); 
       // Reef align - turn yellow
       Pilot.x().whileTrue(led.setLEDColorCommand(255, 165, 0));
       // Algae align - turn blue 
