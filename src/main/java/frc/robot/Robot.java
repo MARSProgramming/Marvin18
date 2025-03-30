@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.DynamicConstants.Drive;
+import frc.robot.util.Elastic;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -48,7 +49,8 @@ public class Robot extends TimedRobot {
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
     NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
-    
+    Elastic.selectTab("Autonomous");
+  
   }
 
   @Override
@@ -95,6 +97,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    Elastic.selectTab("Teleoperated");
   }
 
   @Override
