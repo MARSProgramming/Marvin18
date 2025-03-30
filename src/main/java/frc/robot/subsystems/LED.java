@@ -24,7 +24,8 @@ public class LED extends SubsystemBase {
         LEFTVERT(21, 9),
         CROSSBAR(30, 14),
         FRONTCHUTE(44, 13),
-        BACKCHUTE(57, 13);
+        BACKCHUTE(57, 13),
+        CHUTEFULL(44, 26);
         
 
         private final int start;  // Start index of the section
