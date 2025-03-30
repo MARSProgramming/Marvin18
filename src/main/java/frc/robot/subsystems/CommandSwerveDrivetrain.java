@@ -599,6 +599,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
          return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.CentRot))));
      }
 
+     public Pose2d getAlgaeRequest() {
+        // return (DriverStation.getAlliance().get() == Alliance.Blue) ? (id >= 17 && id <= 22) : (id >= 6 && id <= 11);
+         Pose2d poseToGet = MoreMath.getNearest(getState().Pose, (DriverStation.getAlliance().get() == Alliance.Blue) ? (Constants.VisionFiducials.BLUE_CORAL_TAGS) : (Constants.VisionFiducials.RED_CORAL_TAGS));
+        // new Transform2d(x, y, rot);
+         return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.AlgaeX, DynamicConstants.AlignTransforms.AlgaeY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.AlgaeRot))));
+     }
+
      public Pose2d getFeederRequest() {
         Pose2d poseToGet = MoreMath.getNearest(getState().Pose, (DriverStation.getAlliance().get() == Alliance.Blue) ? (Constants.VisionFiducials.BLUE_FEEDER_TAGS) : (Constants.VisionFiducials.RED_FEEDER_TAGS));
         return poseToGet.transformBy(new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.feederRot))));
@@ -616,6 +623,13 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Distance distFromAlgae = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredAlgae.getTranslation()));
 
         integratedAutoAlignment(distFromAlgae, getCenterRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
+     }
+
+     public void integratedAlgaeAlign(LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+        Pose2d desiredAlgae = getAlgaeRequest();
+        Distance distFromAlgae = Units.Meters.of(getState().Pose.getTranslation().getDistance(desiredAlgae.getTranslation()));
+
+        integratedAutoAlignment(distFromAlgae, getAlgaeRequest(), xVelocity, yVelocity, rVelocity, ElevatorMulti);
      }
 
      public void integratedReefAlignment(boolean leftBranch, int level, LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
