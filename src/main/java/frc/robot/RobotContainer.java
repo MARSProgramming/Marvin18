@@ -352,9 +352,12 @@ public class RobotContainer {
    Copilot.rightTrigger().whileTrue(led.setLEDColorCommand(255, 0, 0));
   
    //has coral
-   if (m_coral.hasCoral()) {
-    led.setDefaultCommand(led.setLEDColorCommand(0, 255, 0).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0)));
-  }
+   hasCoralTrigger.onTrue(led.setStrobeAnimationCommand(255, 255, 255, .2).withTimeout(1).andThen(led.setLEDColorCommand(255, 0, 0)).withTimeout(2));
+
+   
+   /*if (m_coral.hasCoral()) { 
+    led.setStrobeAnimationCommand(255, 255, 255, .2).andThen(new WaitCommand(1)).andThen(led.setLEDColorCommand(255, 0, 0));
+  } */
 
   }
 
