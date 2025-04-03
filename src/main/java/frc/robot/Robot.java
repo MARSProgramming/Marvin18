@@ -43,6 +43,7 @@ public class Robot extends TimedRobot {
    // DynamicConstants.init();
    // DynamicConstants.periodic();
    // w
+   m_robotContainer.led.setRainbowAnimationCommand().withTimeout(5);
     //m_robotContainer.m_elevator.setServoCommand(0).schedule();
     
     SmartDashboard.putData("Update Constants", m_robotContainer.configureBindingsCommand());

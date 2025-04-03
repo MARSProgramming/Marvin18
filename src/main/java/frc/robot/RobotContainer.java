@@ -132,7 +132,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Elevator Setpoint L3",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL3));
     NamedCommands.registerCommand("Elevator Setpoint L4",
-        m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4).withTimeout(2));
+        m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL4).withTimeout(1.5));
     NamedCommands.registerCommand("Elevator Setpoint Algae Ground",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeGround));
     NamedCommands.registerCommand("Elevator Setpoint Algae Processor",
@@ -171,7 +171,7 @@ public class RobotContainer {
 
     
       
-    m_coral.setDefaultCommand(m_coral.runIntake(-0.2));
+    m_coral.setDefaultCommand(m_coral.runIntake(-0.3));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(

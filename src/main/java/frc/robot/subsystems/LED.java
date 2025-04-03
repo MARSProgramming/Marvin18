@@ -56,7 +56,7 @@ public class LED extends SubsystemBase {
 
     // Command to set the LED color (RGB) for the entire strip
     public Command setLEDColorCommand(int r, int g, int b) {
-        return run(() -> setLEDColor(r, g, b));  // Runs the setLEDColor method
+        return runOnce(() -> setLEDColor(r, g, b));  // Runs the setLEDColor method
     }
 
 
@@ -72,7 +72,7 @@ public class LED extends SubsystemBase {
 
     // Command to set a rainbow animation across the LED strip
     public Command setRainbowAnimationCommand() {
-        return run(this::setRainbowAnimation);  // Runs the setRainbowAnimation method
+        return runEnd(this::setRainbowAnimation, () -> candle.clearAnimation(0));  // Runs the setRainbowAnimation method
     }
 
     // Command to set a strobe animation with the given color and speed
