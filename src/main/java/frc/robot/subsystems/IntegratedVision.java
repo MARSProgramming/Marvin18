@@ -35,7 +35,6 @@ public class IntegratedVision extends SubsystemBase {
     private PhotonPoseEstimator feeder_global;
     private PhotonPoseEstimator reef_local;
 
-    private final Optional<ConstrainedSolvepnpParams> constrainedPnpParams;
 
     private CommandSwerveDrivetrain dt;
 
@@ -49,7 +48,6 @@ public class IntegratedVision extends SubsystemBase {
         reef_global = new PhotonPoseEstimator(aprilTags, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, Constants.Vision.reefRobotToCam);
         feeder_global = new PhotonPoseEstimator(aprilTags, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, Constants.Vision.feederRobotToCam);
         
-        constrainedPnpParams = Optional.of(new ConstrainedSolvepnpParams(true, 0.0));
 
         dt = driver;
         // photonvision turbo unlocker
@@ -127,7 +125,7 @@ public class IntegratedVision extends SubsystemBase {
 
                 // If disabled, run multitag processing to get an initial pose (UNTESTED)
                 
-                estimateInReefGlobalPipeline = reef_global.update(result, Optional.empty(), Optional.empty(), constrainedPnpParams);
+                estimateInReefGlobalPipeline = reef_global.update(result);
 
                 if (!(estimateInReefGlobalPipeline.isEmpty() || estimateInReefGlobalPipeline.get().targetsUsed.isEmpty())) {
                     var target = estimateInReefGlobalPipeline.get().targetsUsed.get(0);
@@ -160,7 +158,7 @@ public class IntegratedVision extends SubsystemBase {
         if (feederReady) {
             for (PhotonPipelineResult result : feeder.getAllUnreadResults()) {
                 if (Math.abs(dt.getState().Speeds.omegaRadiansPerSecond) > Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
-                estimateInFeederPipeline = feeder_global.update(result, Optional.empty(), Optional.empty(), constrainedPnpParams);
+                estimateInFeederPipeline = feeder_global.update(result);
 
                 if (!(estimateInFeederPipeline.isEmpty() || estimateInFeederPipeline.get().targetsUsed.isEmpty())) {
                     var target = estimateInFeederPipeline.get().targetsUsed.get(0);

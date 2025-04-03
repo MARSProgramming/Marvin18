@@ -6,7 +6,6 @@ import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.InchesPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
-import java.util.Optional;
 
 import com.ctre.phoenix6.CANBus;
 import com.pathplanner.lib.config.PIDConstants;
@@ -179,16 +178,16 @@ public final class Constants {
     public static class FieldConstants {
         // tune this
 
-        public static Optional<Alliance> ALLIANCE = Optional.empty();
+       // public static Optional<Alliance> ALLIANCE = Optional.empty();
 
         // Returns false if no alliance is found (Default to Blue side origin.. Caution when using)
-        public static boolean isRedAlliance() {
-        var alliance = ALLIANCE;
-        if (alliance.isPresent()) {
-            return alliance.get() == DriverStation.Alliance.Red;
-        }
-        return false;
-        };
+      //  public static boolean isRedAlliance() {
+        //var alliance = ALLIANCE;
+      //  if (alliance.isPresent()) {
+       //     return alliance.get() == DriverStation.Alliance.Red;
+      //  }
+      //  return false;
+      //  };
 
         public static final double FIELD_WIDTH = 16.541;
         public static final double FIELD_LENGTH = 8.211;
