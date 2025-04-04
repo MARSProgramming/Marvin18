@@ -116,6 +116,14 @@ public class IntegratedVision extends SubsystemBase {
         reef_global.setPrimaryStrategy(
             PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR
         ); 
+
+        reef_global.setMultiTagFallbackStrategy(
+            PoseStrategy.LOWEST_AMBIGUITY
+        ); 
+
+        feeder_global.setMultiTagFallbackStrategy(
+            PoseStrategy.LOWEST_AMBIGUITY
+        ); 
         // PhotonVision Turbo Button
 
 

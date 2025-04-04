@@ -65,7 +65,7 @@ public final class DynamicConstants {
         public static double RightYL3 = .44;
 
         public static double RightXL4 = .45;
-        public static double RightYL4 = .485;
+        public static double RightYL4 = .48;
         
         public static double RightRot = 90;
         
