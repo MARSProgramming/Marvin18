@@ -51,7 +51,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Faster"
+            "name": "Score"
           }
         },
         {
@@ -71,7 +71,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "F-U2"
+                        "pathName": "F-U2 LookAtReef"
                       }
                     },
                     {
@@ -103,12 +103,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
           }
         },
         {
@@ -133,7 +127,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Faster"
+            "name": "Score"
           }
         },
         {
@@ -153,7 +147,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "E-U2"
+                        "pathName": "E-U2 LookAtReef"
                       }
                     },
                     {
@@ -181,29 +175,16 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "U2-E"
+                  "pathName": "U2-D"
                 }
               }
             ]
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Alt Left Side Align"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator Setpoint L4"
-                }
-              }
-            ]
+            "name": "Alt Left Side Align"
           }
         },
         {

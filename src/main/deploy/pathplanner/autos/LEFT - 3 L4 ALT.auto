@@ -51,7 +51,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Faster"
+            "name": "Score"
           }
         },
         {
@@ -71,7 +71,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "F-U2"
+                        "pathName": "F-U2 LookAtReef"
                       }
                     },
                     {
@@ -106,12 +106,6 @@
           }
         },
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -133,7 +127,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Faster"
+            "name": "Score"
           }
         },
         {
@@ -153,7 +147,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "E-U2"
+                        "pathName": "E-U2 LookAtReef"
                       }
                     },
                     {
