@@ -17,7 +17,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "S1-F"
+                  "pathName": "S6-B"
                 }
               },
               {
@@ -36,13 +36,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Alt Right Side Align"
+                  "name": "Elevator Setpoint L4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Elevator Setpoint L4"
+                  "name": "Alt Left Side Align"
                 }
               }
             ]
@@ -71,7 +71,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "F-U2 LookAtReef"
+                        "pathName": "B-U1 LookAtReef"
                       }
                     },
                     {
@@ -99,7 +99,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "U2-E"
+                  "pathName": "U1-C"
                 }
               }
             ]
@@ -112,13 +112,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Alt Right Side Align"
+                  "name": "Elevator Setpoint L4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "Elevator Setpoint L4"
+                  "name": "Alt Right Side Align"
                 }
               }
             ]
@@ -147,7 +147,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "E-U2 LookAtReef"
+                        "pathName": "C-U1 LookAtReef"
                       }
                     },
                     {
@@ -167,15 +167,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "Elevator Setpoint L2"
+                  "pathName": "U1-D"
                 }
               },
               {
-                "type": "path",
+                "type": "named",
                 "data": {
-                  "pathName": "U2-D"
+                  "name": "Elevator Setpoint L2"
                 }
               }
             ]

@@ -146,11 +146,14 @@ public class RobotContainer {
                                                                                                      // running elevator
                                                                                                      // down if limit
                                                                                                      // isn't read.
-    NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.5));
+    NamedCommands.registerCommand("Score", m_coral.runIntake(1).withTimeout(0.4));
     NamedCommands.registerCommand("Score Faster", m_coral.runIntake(1).withTimeout(0.3));
     NamedCommands.registerCommand("Passive Intake", m_coral.coralCheck());
     NamedCommands.registerCommand("Alt Right Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, false).withTimeout(2));
     NamedCommands.registerCommand("Alt Left Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, true).withTimeout(2));
+
+    NamedCommands.registerCommand("Left Side L2 Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 2, true).withTimeout(1));
+
 
     configureLEDTriggers();
 
@@ -171,7 +174,7 @@ public class RobotContainer {
 
     
       
-    m_coral.setDefaultCommand(m_coral.runIntake(-0.3));
+    m_coral.setDefaultCommand(m_coral.runIntake(-0.25));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
