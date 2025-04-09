@@ -91,7 +91,7 @@ public class PoseManager extends SubsystemBase {
         if (alliance == Alliance.Red) {
             SmartDashboard.putString("Pose Manager Alliance", "Red");
         } else {
-            SmartDashboard.putString("Pose Manager Alliance", "NOT FOUND! Defaulted to Blue.");
+            SmartDashboard.putString("Pose Manager Alliance", "NOT FOUND!");
         }
     }
 

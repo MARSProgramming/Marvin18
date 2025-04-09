@@ -28,10 +28,11 @@ public class ReadyScore extends Command {
     Pose2d pos;
     int lev;
     boolean left;
+    boolean runMagic;
 
 
 
-    public ReadyScore(MagicManager magic, Elevator elev, CommandSwerveDrivetrain dt, boolean side, PoseManager pm, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, boolean leftside) {
+    public ReadyScore(MagicManager magic, Elevator elev, CommandSwerveDrivetrain dt, PoseManager pm, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, boolean leftside) {
         mPoseManager = pm;
         mMagic = magic;
         mElevator = elev;
@@ -39,16 +40,14 @@ public class ReadyScore extends Command {
         mX = x;
         mY = y;
         mRot = r;
-
         left = leftside;
-
-
     }
 
     @Override
     public void initialize() {
         lev = mMagic.getLevel();
         pos = mPoseManager.returnOptimalPose(mDt.getState().Pose, "reef", lev, left);
+        runMagic = mMagic.getMagic();
     }
 
     @Override
@@ -68,18 +67,20 @@ public class ReadyScore extends Command {
         Distance distFromReef = Units.Meters.of(mDt.getState().Pose.getTranslation().getDistance(pos.getTranslation()));
         mDt.ReefAlign2(distFromReef, pos, left, lev, xVelocity, yVelocity, rVelocity, elevatorHeightMultiplier, distFromReef);
 
-        if (lev == 4) {
-            mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL4);
-        }
-        if (lev == 3) {
-            mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL3);
-        }
-        if (lev == 2) {
-            mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL2);
-        }
-        if (lev == 1) {
-        
-            mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL1);
+        if (runMagic) {
+            if (lev == 4) {
+                mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL4);
+            }
+            if (lev == 3) {
+                mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL3);
+            }
+            if (lev == 2) {
+                mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL2);
+            }
+            if (lev == 1) {
+            // add "slow zero" before testing
+                mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL1);
+            }
         }
     }
 
@@ -88,8 +89,10 @@ public class ReadyScore extends Command {
     public void end(boolean interrupted) {
         // "Do nothing"
         mDt.drive(new ChassisSpeeds());
-        if (mElevator.getPositionNormal() != 0 || (!mElevator.getLimit())) {
-            mElevator.stopMotorHold();
+        if (runMagic) {
+            if (mElevator.getPositionNormal() != 0 || (!mElevator.getLimit())) {
+                mElevator.stopMotorHold();
+            }
         }
     }
 

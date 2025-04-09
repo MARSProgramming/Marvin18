@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -36,6 +37,7 @@ import frc.robot.commands.drivetrain.CenterAlign;
 import frc.robot.commands.drivetrain.FeederAlign;
 import frc.robot.commands.drivetrain.IntegratedAlign;
 import frc.robot.commands.drivetrain.IntegratedAlignWithTermination;
+import frc.robot.commands.magic.ReadyScore;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
@@ -46,6 +48,7 @@ import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntegratedVision;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.MagicManager;
 import frc.robot.subsystems.PoseManager;
 import frc.robot.subsystems.LED.LEDSection;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -100,6 +103,7 @@ public class RobotContainer {
   private final Trigger hasCoralTrigger = new Trigger(() -> m_coral.hasCoral());
 
   private final PoseManager m_PoseManager = new PoseManager(DriverStation.getAlliance().orElse(null));
+  private final MagicManager m_MagicManager = new MagicManager();
 
 
 
@@ -176,13 +180,24 @@ public class RobotContainer {
                                                                                     // negative X (left)
         ));
     // Bumper and Trigger Controls
-    Pilot.leftBumper().whileTrue(new ElevatorAlgaeComand(m_elevator, m_algae));
-    Pilot.rightBumper().whileTrue(m_algae.outtake());
-    Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
-    Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand());
 
-  
-    // POV Controls
+    Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
+    Pilot.leftTrigger().onTrue(m_MagicManager.setMagicCommand());
+
+    // commands to map: Algae
+    Pilot.leftBumper().whileTrue(new ReadyScore(
+      m_MagicManager, m_elevator, drivetrain, m_PoseManager, 
+      () -> deadband(-Pilot.getLeftY(), 0.1) * MaxSpeed, 
+      () -> deadband(-Pilot.getLeftX(), 0.1) * MaxSpeed, 
+     () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, true));
+
+     Pilot.rightBumper().whileTrue(new ReadyScore(
+      m_MagicManager, m_elevator, drivetrain, m_PoseManager, 
+      () -> deadband(-Pilot.getLeftY(), 0.1) * MaxSpeed, 
+      () -> deadband(-Pilot.getLeftX(), 0.1) * MaxSpeed, 
+     () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, false));
+
+    // POV Controls - put algae on these probably.
     Pilot.povLeft()
         .whileTrue(drivetrain.applyRequest(
             () -> robotDrive.withVelocityX(-DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
@@ -199,34 +214,12 @@ public class RobotContainer {
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    Pilot.a().whileTrue(new AlgaeAlign(m_elevator, drivetrain, 
-    () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
-    () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
-   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate));
-    //Pilot.y().whileTrue(new DriveCoralScorePose(
-    //    drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX, DynamicConstants.AlignTransforms.CentY,
-     //       Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 10));
+    Pilot.y().onTrue(m_MagicManager.setLevelCommand(4));
+    Pilot.b().onTrue(m_MagicManager.setLevelCommand(3));
+    Pilot.x().onTrue(m_MagicManager.setLevelCommand(2));
+    Pilot.a().onTrue(m_MagicManager.setLevelCommand(1));
 
 
-     Pilot.y().whileTrue(new CenterAlign(m_elevator, drivetrain, 
-     () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
-     () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
-    () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate));
-         // Alternative bindings
-    // Pilot.x().whileTrue(poseSelector);
-    // Pilot.b().onTrue(m_elevator.goToSelectedPointCommand());
-
-    Pilot.b().whileTrue(new IntegratedAlign(m_elevator, drivetrain, 
-    () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
-    () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
-   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, false));
-    
-
-    Pilot.x().whileTrue(new IntegratedAlign(m_elevator, drivetrain, 
-    () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
-   () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
-    () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, true));
-    
     /// Copilot
     /// Elevator and drive controls
     Copilot.povUp().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTop));
