@@ -638,6 +638,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         integratedAutoAlignment(distFromReef, desiredReef, xVelocity, yVelocity, rVelocity, ElevatorMulti);
      }
 
+     // this alignment allows for integration into one command
+
+     public void ReefAlign2(Distance distFromReef, Pose2d desiredReef, boolean leftBranch, int level, LinearVelocity xVelocity, LinearVelocity yVelocity, AngularVelocity rVelocity, double ElevatorMulti, Distance maxDistance) {
+        integratedAutoAlignment(distFromReef, desiredReef, xVelocity, yVelocity, rVelocity, ElevatorMulti);
+     }
+
      public boolean isAtRotation(Rotation2d desiredRotation) {
         return (getState().Pose.getRotation().getMeasure()
             .compareTo(desiredRotation.getMeasure().minus(Constants.AlignmentConstants.kRotTolerance)) > 0) &&
