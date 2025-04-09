@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Watchdog;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -49,7 +50,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Update Constants", m_robotContainer.configureBindingsCommand());
     DataLogManager.start();
     DriverStation.startDataLog(DataLogManager.getLog());
-    NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(true);
+    NetworkTableInstance.getDefault().getBooleanTopic("/photonvision/use_new_cscore_frametime").publish().set(false);
+    
     // Elastic.selectTab("Autonomous"); // Removed as the class cannot be resolved
   
   }
