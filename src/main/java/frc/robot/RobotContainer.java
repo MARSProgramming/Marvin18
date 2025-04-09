@@ -46,9 +46,11 @@ import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntegratedVision;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.PoseManager;
 import frc.robot.subsystems.LED.LEDSection;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -96,6 +98,8 @@ public class RobotContainer {
   private final Trigger readyToPlaceCoral = new Trigger(() -> (DriverStation.isTeleop() && drivetrain.isAligned()));
   private final Trigger algaeWarning = new Trigger(() -> drivetrain.notSafe());
   private final Trigger hasCoralTrigger = new Trigger(() -> m_coral.hasCoral());
+
+  private final PoseManager m_PoseManager = new PoseManager(DriverStation.getAlliance().orElse(null));
 
 
 
@@ -177,7 +181,7 @@ public class RobotContainer {
     Pilot.rightTrigger().whileTrue(m_coral.runIntake(1));
     Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand());
 
-
+  
     // POV Controls
     Pilot.povLeft()
         .whileTrue(drivetrain.applyRequest(

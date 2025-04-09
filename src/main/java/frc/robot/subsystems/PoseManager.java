@@ -6,6 +6,7 @@ import java.util.List;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.MoreMath;
 import frc.robot.constants.Constants;
@@ -19,7 +20,9 @@ public class PoseManager extends SubsystemBase {
     private Alliance alliance;
 
     public PoseManager(Alliance dsAlliance) {
-        alliance = dsAlliance;
+        if (dsAlliance != null) {
+            alliance = dsAlliance;
+        }
         reefPoses = generateList("reef");
         feederPoses = generateList("feeder");
     }
@@ -73,6 +76,23 @@ public class PoseManager extends SubsystemBase {
          else {
             return currentPose;
          }
+    }
+
+    // fallback that we can put on copilot in case initializiation fails.
+    public void setAlliance(Alliance all) {
+        alliance = all;
+    }
+
+    @Override
+    public void periodic() {
+        if (alliance == Alliance.Blue) {
+            SmartDashboard.putString("Pose Manager Alliance", "Blue");
+        }
+        if (alliance == Alliance.Red) {
+            SmartDashboard.putString("Pose Manager Alliance", "Red");
+        } else {
+            SmartDashboard.putString("Pose Manager Alliance", "NOT FOUND! Defaulted to Blue.");
+        }
     }
 
 
