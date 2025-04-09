@@ -31,16 +31,11 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
+import frc.robot.commands.drivetrain.AlgaeAlign;
 import frc.robot.commands.drivetrain.CenterAlign;
 import frc.robot.commands.drivetrain.FeederAlign;
 import frc.robot.commands.drivetrain.IntegratedAlign;
 import frc.robot.commands.drivetrain.IntegratedAlignWithTermination;
-import frc.robot.commands.drivetrain.planner.AlgaeAlign;
-import frc.robot.commands.drivetrain.planner.AligntoFeeder;
-import frc.robot.commands.drivetrain.planner.DriveCoralScorePose;
-import frc.robot.commands.drivetrain.planner.PoseSelector;
-import frc.robot.commands.drivetrain.planner.PoseSelector2;
-import frc.robot.commands.elevator.ElevatorSetpoint;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
@@ -93,11 +88,8 @@ public class RobotContainer {
   public final Algae m_algae = new Algae();
   public final Elevator m_elevator = new Elevator();
   public final Coral m_coral = new Coral();
-  public final Vision reef_vision = new Vision(Constants.Vision.reefCameraName, Constants.Vision.reefRobotToCam);
-  public final Vision feeder_vision = new Vision(Constants.Vision.feederCameraName, Constants.Vision.feederRobotToCam);
-
   public final IntegratedVision integVis = new IntegratedVision(drivetrain);
- public final LED led = new LED(40);
+  public final LED led = new LED(40);
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
   private final Trigger readyToPlaceCoral = new Trigger(() -> (DriverStation.isTeleop() && drivetrain.isAligned()));
   private final Trigger algaeWarning = new Trigger(() -> drivetrain.notSafe());
@@ -110,21 +102,10 @@ public class RobotContainer {
     configureBindings();
     configureLEDTriggers();
 
-    NamedCommands.registerCommand("Nearest Tag Align Left",
-        new DriveCoralScorePose(drivetrain,
-            new Transform2d(DynamicConstants.AlignTransforms.LeftXL4, DynamicConstants.AlignTransforms.LeftYL4,
-                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.LeftRot)), 3));
-    NamedCommands.registerCommand("Nearest Tag Align Center",
-        new DriveCoralScorePose(drivetrain, new Transform2d(DynamicConstants.AlignTransforms.CentX,
-            DynamicConstants.AlignTransforms.CentY, Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.CentRot)), 1));
-    NamedCommands.registerCommand("Nearest Tag Align Right",
-        new DriveCoralScorePose(drivetrain,
-            new Transform2d(DynamicConstants.AlignTransforms.RightXL4, DynamicConstants.AlignTransforms.RightYL4,
-                Rotation2d.fromDegrees(DynamicConstants.AlignTransforms.RightRot)), 2));
+
     NamedCommands.registerCommand("Deploy Algae",
                 m_algae.intakeWithStop().withTimeout(0.6));
 
-    NamedCommands.registerCommand("Feeder Align", new AligntoFeeder(drivetrain, m_coral, 5));
     NamedCommands.registerCommand("Elevator Setpoint L1",
         m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevL1));
     NamedCommands.registerCommand("Elevator Setpoint L2",
@@ -171,9 +152,6 @@ public class RobotContainer {
           () -> Pilot.setRumble(RumbleType.kBothRumble, 0)));
 
     algaeWarning.onTrue(drivetrain.DoNothingForTime(1.5));
-
-    
-      
     m_coral.setDefaultCommand(m_coral.runIntake(-0.25));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
@@ -232,13 +210,13 @@ public class RobotContainer {
     Pilot.b().whileTrue(new IntegratedAlign(m_elevator, drivetrain, 
     () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
     () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
-   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, 4, false));
+   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, false));
     
 
     Pilot.x().whileTrue(new IntegratedAlign(m_elevator, drivetrain, 
     () -> deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed, 
    () -> deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed, 
-    () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, 4, true));
+    () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, true));
     
     /// Copilot
     /// Elevator and drive controls

@@ -25,13 +25,12 @@ public class IntegratedAlign extends Command {
     int level;
     boolean left;
 
-    public IntegratedAlign(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, int lev, boolean leftside) {
+    public IntegratedAlign(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, boolean leftside) {
         mElevator = elev;
         mDt = dt;
         mX = x;
         mY = y;
         mRot = r;
-        level = lev;
         left = leftside;
 
         addRequirements(dt); // Don't require elevator, we only want to look at its position.
