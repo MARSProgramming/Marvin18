@@ -26,6 +26,10 @@ public class MoreMath {
         return pose.nearest(getPoseList(tagIntegers));
     }
 
+    public static Pose2d getNearestWithoutCreation(Pose2d pose, List<Pose2d> tagList) {
+        return pose.nearest(tagList);
+    }
+
     public static List<Pose2d> getPoseList(int[] tagIntegers) {
     List<Pose2d> tags = new ArrayList<>();
     for (int i = 0; i < tagIntegers.length; i++) {

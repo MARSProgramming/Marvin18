@@ -88,8 +88,10 @@ public class RobotContainer {
   public final Algae m_algae = new Algae();
   public final Elevator m_elevator = new Elevator();
   public final Coral m_coral = new Coral();
+
+
   public final IntegratedVision integVis = new IntegratedVision(drivetrain);
-  public final LED led = new LED(40);
+ public final LED led = new LED(40);
   public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
   private final Trigger readyToPlaceCoral = new Trigger(() -> (DriverStation.isTeleop() && drivetrain.isAligned()));
   private final Trigger algaeWarning = new Trigger(() -> drivetrain.notSafe());
@@ -152,6 +154,9 @@ public class RobotContainer {
           () -> Pilot.setRumble(RumbleType.kBothRumble, 0)));
 
     algaeWarning.onTrue(drivetrain.DoNothingForTime(1.5));
+
+    
+      
     m_coral.setDefaultCommand(m_coral.runIntake(-0.25));
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.

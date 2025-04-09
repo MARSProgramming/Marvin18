@@ -4,6 +4,10 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Dynamic;
+
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
@@ -115,6 +119,24 @@ public final class DynamicConstants {
 
     public static class IRThresholds {
         public static double IRthreshold = 1.8;
+    }
+
+    // LEAVE THIS NOT TOUCHED BY FIELD ACCESS METHODS
+    public static class Transforms {
+        Transform2d RIGHT_L4_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL4, DynamicConstants.AlignTransforms.RightYL4, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
+        Transform2d RIGHT_L3_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL3, DynamicConstants.AlignTransforms.RightYL3, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
+        Transform2d RIGHT_L2_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL2, DynamicConstants.AlignTransforms.RightYL2, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
+        Transform2d RIGHT_L1_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL1, DynamicConstants.AlignTransforms.RightYL1, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
+
+        Transform2d LEFT_L4_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL4, DynamicConstants.AlignTransforms.LeftYL4, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
+        Transform2d LEFT_L3_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL3, DynamicConstants.AlignTransforms.LeftYL3, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
+        Transform2d LEFT_L2_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL2, DynamicConstants.AlignTransforms.LeftYL2, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
+        Transform2d LEFT_L1_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL1, DynamicConstants.AlignTransforms.LeftYL1, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
+
+        Transform2d FEEDER_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.feederRot)));
+        Transform2d ALGAE_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.AlgaeX, DynamicConstants.AlignTransforms.AlgaeY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.AlgaeRot)));
+
+
     }
 
     private static HashMap<Field, SimpleWidget> entries;
