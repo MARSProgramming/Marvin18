@@ -37,6 +37,7 @@ import frc.robot.commands.drivetrain.CenterAlign;
 import frc.robot.commands.drivetrain.FeederAlign;
 import frc.robot.commands.drivetrain.IntegratedAlign;
 import frc.robot.commands.drivetrain.IntegratedAlignWithTermination;
+import frc.robot.commands.drivetrain.OptimizedIntegratedAlign;
 import frc.robot.commands.magic.ReadyScore;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
@@ -198,9 +199,9 @@ public class RobotContainer {
      () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, false));
 
     // POV Controls - put algae on these probably.
-    Pilot.povLeft()
-        .whileTrue(drivetrain.applyRequest(
-            () -> robotDrive.withVelocityX(-DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
+   // Pilot.povLeft()
+   //     .whileTrue(drivetrain.applyRequest(
+    //        () -> robotDrive.withVelocityX(-DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
     Pilot.povRight()
         .whileTrue(drivetrain.applyRequest(
             () -> robotDrive.withVelocityX(DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
@@ -211,6 +212,7 @@ public class RobotContainer {
         .whileTrue(drivetrain.applyRequest(
             () -> robotDrive.withVelocityY(-DynamicConstants.Drive.forwardBackward * MaxSpeed).withVelocityX(0)));
 
+    Pilot.povLeft().onTrue(m_elevator.zeroElevatorCommand());
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
@@ -238,9 +240,9 @@ public class RobotContainer {
     // Face Button Controls Height selection
 
     Copilot.a().onTrue(m_elevator.zeroElevatorCommand()); // Save for height selection
-    Copilot.b().onTrue(m_elevator.setLevel(3));
-    Copilot.x().onTrue(m_elevator.setLevel(2));
-    Copilot.y().onTrue(m_elevator.setLevel(4));
+    Copilot.b().onTrue(m_elevator.setLevel(3).andThen(m_MagicManager.setLevelCommand(3)));
+    Copilot.x().onTrue(m_elevator.setLevel(2).andThen(m_MagicManager.setLevelCommand(2)));
+    Copilot.y().onTrue(m_elevator.setLevel(4).andThen(m_MagicManager.setLevelCommand(4)));
 
 
     Copilot.leftStick().onTrue(m_elevator.advanceRotationsCommand(-0.1));

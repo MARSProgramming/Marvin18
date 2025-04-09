@@ -68,7 +68,7 @@ public final class DynamicConstants {
         public static double RightXL3 = .41;
         public static double RightYL3 = .44;
 
-        public static double RightXL4 = .45;
+        public static double RightXL4 = .37; // .45 but wasn't working
         public static double RightYL4 = .48;
         
         public static double RightRot = 90;
@@ -123,18 +123,18 @@ public final class DynamicConstants {
 
     // LEAVE THIS NOT TOUCHED BY FIELD ACCESS METHODS
     public static class Transforms {
-        Transform2d RIGHT_L4_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL4, DynamicConstants.AlignTransforms.RightYL4, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
-        Transform2d RIGHT_L3_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL3, DynamicConstants.AlignTransforms.RightYL3, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
-        Transform2d RIGHT_L2_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL2, DynamicConstants.AlignTransforms.RightYL2, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
-        Transform2d RIGHT_L1_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL1, DynamicConstants.AlignTransforms.RightYL1, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
+        public static Transform2d RIGHT_L4_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL4, DynamicConstants.AlignTransforms.RightYL4, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
+        public static Transform2d RIGHT_L3_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL3, DynamicConstants.AlignTransforms.RightYL3, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
+        public static Transform2d RIGHT_L2_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL2, DynamicConstants.AlignTransforms.RightYL2, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
+        public static Transform2d RIGHT_L1_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.RightXL1, DynamicConstants.AlignTransforms.RightYL1, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.RightRot)));
 
-        Transform2d LEFT_L4_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL4, DynamicConstants.AlignTransforms.LeftYL4, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
-        Transform2d LEFT_L3_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL3, DynamicConstants.AlignTransforms.LeftYL3, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
-        Transform2d LEFT_L2_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL2, DynamicConstants.AlignTransforms.LeftYL2, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
-        Transform2d LEFT_L1_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL1, DynamicConstants.AlignTransforms.LeftYL1, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
+        public static Transform2d LEFT_L4_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL4, DynamicConstants.AlignTransforms.LeftYL4, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
+        public static Transform2d LEFT_L3_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL3, DynamicConstants.AlignTransforms.LeftYL3, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
+        public static Transform2d LEFT_L2_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL2, DynamicConstants.AlignTransforms.LeftYL2, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
+        public static Transform2d LEFT_L1_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.LeftXL1, DynamicConstants.AlignTransforms.LeftYL1, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.LeftRot)));
 
-        Transform2d FEEDER_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.feederRot)));
-        Transform2d ALGAE_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.AlgaeX, DynamicConstants.AlignTransforms.AlgaeY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.AlgaeRot)));
+        public static Transform2d FEEDER_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.feederX, DynamicConstants.AlignTransforms.feederY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.feederRot)));
+        public static Transform2d ALGAE_TRANSFORM = new Transform2d(DynamicConstants.AlignTransforms.AlgaeX, DynamicConstants.AlignTransforms.AlgaeY, new Rotation2d(Math.toRadians(DynamicConstants.AlignTransforms.AlgaeRot)));
 
 
     }

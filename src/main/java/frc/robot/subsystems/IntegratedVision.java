@@ -146,7 +146,7 @@ public class IntegratedVision extends SubsystemBase {
                 
                 estimateInReefGlobalPipeline = reef_global.update(result);
                 // new, experimental logic: Don't allow us to process poses where there are more than 2 tags fed into the estimate. We can change this number but it may be ideal.
-                if (!(estimateInReefGlobalPipeline.isEmpty() || estimateInReefGlobalPipeline.get().targetsUsed.isEmpty() || estimateInReefGlobalPipeline.get().targetsUsed.size() > 2)) {
+                if (!(estimateInReefGlobalPipeline.isEmpty() || estimateInReefGlobalPipeline.get().targetsUsed.isEmpty())) {
                     var target = estimateInReefGlobalPipeline.get().targetsUsed.get(0);
                     int id = target.fiducialId;
                     if (!useTag(id)) continue;
@@ -177,7 +177,7 @@ public class IntegratedVision extends SubsystemBase {
                 if (Math.abs(dt.getState().Speeds.omegaRadiansPerSecond) > Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
                 estimateInFeederPipeline = feeder_global.update(result);
 
-                if (!(estimateInFeederPipeline.isEmpty() || estimateInFeederPipeline.get().targetsUsed.isEmpty() || estimateInReefGlobalPipeline.get().targetsUsed.size() > 2)) {
+                if (!(estimateInFeederPipeline.isEmpty() || estimateInFeederPipeline.get().targetsUsed.isEmpty())) {
                     var target = estimateInFeederPipeline.get().targetsUsed.get(0);
                     int id = target.fiducialId;
                     if (!useTag(id)) continue;
@@ -208,7 +208,8 @@ public class IntegratedVision extends SubsystemBase {
         }
 
         if (pushFeederGlobal == true) {
-            dt.updateLocalizedEstimator(reportedFeederGlobalEstimate, reportedFeederGlobalTimestamp, VecBuilder.fill(feederGlobalDistStdDevs, feederGlobalDistStdDevs, feederGlobalAngleStdDevs));
+           dt.setVisionMeasurementStdDevs(VecBuilder.fill(feederGlobalDistStdDevs, feederGlobalDistStdDevs, feederGlobalAngleStdDevs));
+           dt.addVisionMeasurement(reportedFeederGlobalEstimate, reportedFeederGlobalTimestamp);    
         }
 
         // reset variables each loop
@@ -231,8 +232,8 @@ public class IntegratedVision extends SubsystemBase {
         // Logging
         globalPublisher.set(dt.getState().Pose);
         globalArrayPublisher.set(new Pose2d[] {dt.getState().Pose});
-      //  localPublisher.set(dt.getLocalizedPose());
-     //   localArrayPublisher.set(new Pose2d[] {dt.getLocalizedPose()});
+       localPublisher.set(dt.getLocalizedPose());
+       localArrayPublisher.set(new Pose2d[] {dt.getLocalizedPose()});
 
     }
 }

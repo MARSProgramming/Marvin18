@@ -101,7 +101,7 @@ public class Elevator extends SubsystemBase {
     masterConfig.CurrentLimits.SupplyCurrentLowerLimit = 30;
     masterConfig.CurrentLimits.SupplyCurrentLowerTime = 1;
 
-    masterConfig.CurrentLimits.StatorCurrentLimit = 80;
+    masterConfig.CurrentLimits.StatorCurrentLimit = 120;
     masterConfig.Feedback.SensorToMechanismRatio = 12;
     masterConfig.Voltage.PeakForwardVoltage = 16;
     masterConfig.Voltage.PeakReverseVoltage = -16;
@@ -111,8 +111,8 @@ public class Elevator extends SubsystemBase {
     masterConfig.Slot0.kD = 2;
     masterConfig.Slot0.kG = 0.3;
     masterConfig.Slot0.kS = 0.1;
-    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 35;
-    masterConfig.MotionMagic.MotionMagicAcceleration = 70;
+    masterConfig.MotionMagic.MotionMagicCruiseVelocity = 45;
+    masterConfig.MotionMagic.MotionMagicAcceleration = 110;
 
     masterConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
     master.getConfigurator().apply(masterConfig);
