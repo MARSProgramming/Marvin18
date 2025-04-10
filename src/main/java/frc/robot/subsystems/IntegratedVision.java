@@ -7,6 +7,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -145,9 +146,22 @@ public class IntegratedVision extends SubsystemBase {
                 // If disabled, run multitag processing to get an initial pose (UNTESTED)
                 
                 estimateInReefGlobalPipeline = reef_global.update(result);
+                boolean ignore = false;
+
+                if (!(estimateInReefGlobalPipeline.isEmpty())) {
+                    for (PhotonTrackedTarget targ : estimateInReefGlobalPipeline.get().targetsUsed) {
+                        if (targ.getPoseAmbiguity() > .2) {
+                            ignore = true;
+                        }
+                    }
+                }
+
+                if (ignore) continue;
+
                 // new, experimental logic: Don't allow us to process poses where there are more than 2 tags fed into the estimate. We can change this number but it may be ideal.
                 if (!(estimateInReefGlobalPipeline.isEmpty() || estimateInReefGlobalPipeline.get().targetsUsed.isEmpty())) {
                     var target = estimateInReefGlobalPipeline.get().targetsUsed.get(0);
+                    if (target.getPoseAmbiguity() > 0.2) continue;
                     int id = target.fiducialId;
                     if (!useTag(id)) continue;
 
@@ -176,6 +190,17 @@ public class IntegratedVision extends SubsystemBase {
             for (PhotonPipelineResult result : feeder.getAllUnreadResults()) {
                 if (Math.abs(dt.getState().Speeds.omegaRadiansPerSecond) > Math.PI * 2) continue; // Don't continue loop if the speed of the robot was too great.
                 estimateInFeederPipeline = feeder_global.update(result);
+
+                boolean ignore = false;
+                if (!(estimateInFeederPipeline.isEmpty())) {
+                    for (PhotonTrackedTarget targ : estimateInFeederPipeline.get().targetsUsed) {
+                        if (targ.getPoseAmbiguity() > .2) {
+                            ignore = true;
+                        }
+                    }
+                }
+
+                if (ignore) continue;
 
                 if (!(estimateInFeederPipeline.isEmpty() || estimateInFeederPipeline.get().targetsUsed.isEmpty())) {
                     var target = estimateInFeederPipeline.get().targetsUsed.get(0);

@@ -39,12 +39,15 @@ public class MagicManager extends SubsystemBase {
     public Command setMagicCommand() {
         return runOnce(
             () -> {
-                if (enableMagic == true) {
-                    enableMagic = false;
-                } 
-                if (enableMagic == false) {
-                    enableMagic = true;
-                }
+                enableMagic = true;
+            }
+        );
+    }
+
+    public Command turnOffMagicCommand() {
+        return runOnce(
+            () -> {
+                enableMagic = false;
             }
         );
     }

@@ -157,9 +157,9 @@ public final class Constants {
         public static final LinearVelocity TeleoperatedMaximumVelocity = Units.MetersPerSecond.of(TunerConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.7);
         public static final double kMinimumElevatorMultiplier = 0.1;
 
-        public static final PIDController kXController = new PIDController(3.0, 0, 0.1);
-        public static final PIDController kYController = new PIDController(3.0, 0, 0.1);
-        public static final ProfiledPIDController kRotController = new ProfiledPIDController(2.0, 0, 0.05, 
+        public static final PIDController kXController = new PIDController(2.5, 0, 0.0);
+        public static final PIDController kYController = new PIDController(2.5, 0, 0.0);
+        public static final ProfiledPIDController kRotController = new ProfiledPIDController(2.0, 0, 0.0, 
         new TrapezoidProfile.Constraints(kMaximumRotSpeed.in(Units.DegreesPerSecond), Math.pow(kMaximumRotSpeed.in(Units.DegreesPerSecond), 2)));
 
         static {
@@ -252,11 +252,11 @@ public final class Constants {
         public static final String feederCameraName = "feeder_cam";
 
         public static final Transform3d feederRobotToCam = new Transform3d(Inches.of(-6),
-        Inches.of(9.06), Inches.of(11.55), new Rotation3d(Degrees.of(-10),
+        Inches.of(9.06), Inches.of(11.55), new Rotation3d(Degrees.of(0),
         Degrees.of(0), Degrees.of(125)));
 
         public static final Transform3d reefRobotToCam = new Transform3d(Inches.of(-6.3), Inches.of(9.49), Inches.of(13.44),
-        new Rotation3d(Degrees.of(0), Degrees.of(0), Degrees.of(90)));
+        new Rotation3d(Degrees.of(-10), Degrees.of(0), Degrees.of(90)));
 
 
 

@@ -61,7 +61,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class RobotContainer {
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-  private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max
+  private double MaxAngularRate = RotationsPerSecond.of(1.5).in(RadiansPerSecond); // 3/4 of a rotation per second max
                                                                                     // angular velocity
 
   /* Setting up bindings for necessary control of the swerve drive platform */
@@ -171,12 +171,12 @@ public class RobotContainer {
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive.withVelocityX(deadband(-Pilot.getLeftY(), 0.1) * 0.7 * MaxSpeed) // Drive
+        drivetrain.applyRequest(() -> drive.withVelocityX(deadband(-Pilot.getLeftY(), 0.1)  * MaxSpeed) // Drive
                                                                                                              // forward
                                                                                                              // with
                                                                                                              // negative
                                                                                                              // Y (up)
-            .withVelocityY(deadband(-Pilot.getLeftX(), 0.1) * 0.7 * MaxSpeed) // Drive left with negative X (left)
+            .withVelocityY(deadband(-Pilot.getLeftX(), 0.1) * MaxSpeed) // Drive left with negative X (left)
             .withRotationalRate(deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate) // Drive counterclockwise with
                                                                                     // negative X (left)
         ));
@@ -202,9 +202,7 @@ public class RobotContainer {
    // Pilot.povLeft()
    //     .whileTrue(drivetrain.applyRequest(
     //        () -> robotDrive.withVelocityX(-DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
-    Pilot.povRight()
-        .whileTrue(drivetrain.applyRequest(
-            () -> robotDrive.withVelocityX(DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
+   
     Pilot.povUp()
         .whileTrue(drivetrain.applyRequest(
             () -> robotDrive.withVelocityY(DynamicConstants.Drive.forwardBackward * MaxSpeed).withVelocityX(0)));
@@ -212,7 +210,9 @@ public class RobotContainer {
         .whileTrue(drivetrain.applyRequest(
             () -> robotDrive.withVelocityY(-DynamicConstants.Drive.forwardBackward * MaxSpeed).withVelocityX(0)));
 
-    Pilot.povLeft().onTrue(m_elevator.zeroElevatorCommand());
+    Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand());
+    Pilot.povLeft().onTrue(m_MagicManager.setMagicCommand());
+    Pilot.povRight().onTrue(m_MagicManager.turnOffMagicCommand());
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
