@@ -230,8 +230,11 @@ public class RobotContainer {
     Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee));
     Copilot.povRight()
         .onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot));
-    Copilot.leftBumper().onTrue(drivetrain.setSide(0));
-    Copilot.rightBumper().onTrue(drivetrain.setSide(1));
+    //Copilot.leftBumper().onTrue(drivetrain.setSide(0));
+    //Copilot.rightBumper().onTrue(drivetrain.setSide(1));
+    Copilot.leftBumper().whileTrue(new ElevatorAlgaeComand(m_elevator, m_algae));
+    Copilot.rightBumper().whileTrue(m_algae.outtake());
+
     Copilot.rightTrigger().onTrue(m_elevator.goToSelectedPointCommand());
 
     Copilot.start().whileTrue(m_elevator.climbingCommand());
