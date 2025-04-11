@@ -145,7 +145,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Alt Right Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, false).withTimeout(2));
     NamedCommands.registerCommand("Alt Left Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, true).withTimeout(2));
 
-    NamedCommands.registerCommand("Left Side L2 Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 2, true).withTimeout(1));
+    NamedCommands.registerCommand("Left Side L2 Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 2, true).withTimeout(0.75));
+    NamedCommands.registerCommand("Right Side L2 Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 2, false).withTimeout(0.7));
 
 
     configureLEDTriggers();
@@ -194,10 +195,13 @@ public class RobotContainer {
     () -> deadband(-Pilot.getLeftX(), 0.1) * MaxSpeed, 
    () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, false));
     // POV Controls - put algae on these probably.
-   // Pilot.povLeft()
-   //     .whileTrue(drivetrain.applyRequest(
-    //        () -> robotDrive.withVelocityX(-DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
-   
+   Pilot.povLeft()
+       .whileTrue(drivetrain.applyRequest(
+           () -> robotDrive.withVelocityX(-DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
+    Pilot.povRight()
+           .whileTrue(drivetrain.applyRequest(
+               () -> robotDrive.withVelocityX(DynamicConstants.Drive.leftRight * MaxSpeed).withVelocityY(0)));
+    
     Pilot.povUp()
         .whileTrue(drivetrain.applyRequest(
             () -> robotDrive.withVelocityY(DynamicConstants.Drive.forwardBackward * MaxSpeed).withVelocityX(0)));
@@ -206,8 +210,8 @@ public class RobotContainer {
             () -> robotDrive.withVelocityY(-DynamicConstants.Drive.forwardBackward * MaxSpeed).withVelocityX(0)));
 
     Pilot.leftTrigger().onTrue(m_elevator.zeroElevatorCommand());
-    Pilot.povLeft().onTrue(m_MagicManager.setMagicCommand());
-    Pilot.povRight().onTrue(m_MagicManager.turnOffMagicCommand());
+    //Pilot.povLeft().onTrue(m_MagicManager.setMagicCommand());
+    //Pilot.povRight().onTrue(m_MagicManager.turnOffMagicCommand());
     // Face Button Controls
     Pilot.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
@@ -238,9 +242,9 @@ public class RobotContainer {
     // Face Button Controls Height selection
 
     Copilot.a().onTrue(m_elevator.zeroElevatorCommand()); // Save for height selection
-    Copilot.b().onTrue(m_elevator.setLevel(3).andThen(m_MagicManager.setLevelCommand(3)));
-    Copilot.x().onTrue(m_elevator.setLevel(2).andThen(m_MagicManager.setLevelCommand(2)));
-    Copilot.y().onTrue(m_elevator.setLevel(4).andThen(m_MagicManager.setLevelCommand(4)));
+    Copilot.b().onTrue(m_elevator.setLevel(3));
+    Copilot.x().onTrue(m_elevator.setLevel(2));
+    Copilot.y().onTrue(m_elevator.setLevel(4));
 
 
     Copilot.leftStick().onTrue(m_elevator.advanceRotationsCommand(-0.1));

@@ -184,7 +184,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Left Side L2 Align"
+            "name": "Right Side L2 Align"
           }
         },
         {
@@ -196,7 +196,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }

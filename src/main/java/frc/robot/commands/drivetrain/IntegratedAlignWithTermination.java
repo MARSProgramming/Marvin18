@@ -24,17 +24,17 @@ public class IntegratedAlignWithTermination extends Command {
     CommandSwerveDrivetrain mDt;
     DoubleSupplier mX, mY, mRot;
     int level;
-    boolean right;
+    boolean left;
     Debouncer finishDebounce;
 
-    public IntegratedAlignWithTermination(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, int lev, boolean rightside) {
+    public IntegratedAlignWithTermination(Elevator elev, CommandSwerveDrivetrain dt, DoubleSupplier x, DoubleSupplier y, DoubleSupplier r, int lev, boolean leftside) {
         mElevator = elev;
         mDt = dt;
         mX = x;
         mY = y;
         mRot = r;
         level = lev;
-        right = rightside;
+        left = leftside;
 
         finishDebounce = new Debouncer(0.06); // 3 Loop Cycles
 
@@ -65,7 +65,7 @@ public class IntegratedAlignWithTermination extends Command {
             * elevatorHeightMultiplier);
 
         mDt.integratedReefAlignment(
-            right, 
+            left, 
             mElevator.selectedLevel, 
             xVelocity, 
             yVelocity, 

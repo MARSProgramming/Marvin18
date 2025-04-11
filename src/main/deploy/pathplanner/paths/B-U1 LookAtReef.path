@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.0549180327868852,
-        "y": 0.6744364754098353
+        "x": 1.1867827868852459,
+        "y": 0.9981045081967216
       },
       "prevControl": {
-        "x": 3.708346889777048,
-        "y": 1.3874801864492086
+        "x": 2.984938524590164,
+        "y": 1.7653176229508196
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,7 +38,7 @@
       },
       "rotationOffset": -90.0,
       "minWaypointRelativePos": 0.34333881578947134,
-      "maxWaypointRelativePos": 0.5971968312004908,
+      "maxWaypointRelativePos": 0.621572212065818,
       "name": "Point Towards Zone"
     }
   ],
@@ -53,7 +53,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 55.0
+    "rotation": 53.67317404787981
   },
   "reversed": false,
   "folder": null,

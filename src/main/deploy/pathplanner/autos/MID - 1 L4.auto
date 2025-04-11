@@ -29,7 +29,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Alt Right Side Align"
+                  "name": "Alt Left Side Align"
                 }
               },
               {
@@ -56,7 +56,7 @@
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
   "choreoAuto": false
 }
