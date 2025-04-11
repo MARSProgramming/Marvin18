@@ -39,6 +39,7 @@ import frc.robot.commands.drivetrain.IntegratedAlign;
 import frc.robot.commands.drivetrain.IntegratedAlignWithTermination;
 import frc.robot.commands.drivetrain.OptimizedIntegratedAlign;
 import frc.robot.commands.magic.ReadyScore;
+import frc.robot.commands.magic.ReadyScoreWithElevator;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
 import frc.robot.constants.TunerConstants;
@@ -186,18 +187,12 @@ public class RobotContainer {
     Pilot.leftTrigger().onTrue(m_MagicManager.setMagicCommand());
 
     // commands to map: Algae
-    Pilot.leftBumper().whileTrue(new ReadyScore(
-      m_MagicManager, m_elevator, drivetrain, m_PoseManager, 
-      () -> deadband(-Pilot.getLeftY(), 0.1) * MaxSpeed, 
-      () -> deadband(-Pilot.getLeftX(), 0.1) * MaxSpeed, 
-     () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, true));
-
-     Pilot.rightBumper().whileTrue(new ReadyScore(
-      m_MagicManager, m_elevator, drivetrain, m_PoseManager, 
-      () -> deadband(-Pilot.getLeftY(), 0.1) * MaxSpeed, 
-      () -> deadband(-Pilot.getLeftX(), 0.1) * MaxSpeed, 
-     () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, false));
-
+     Pilot.leftBumper().onTrue(new ReadyScoreWithElevator(m_elevator, drivetrain, m_PoseManager, m_MagicManager, () -> deadband(-Pilot.getLeftY(), 0.1) * MaxSpeed, 
+     () -> deadband(-Pilot.getLeftX(), 0.1) * MaxSpeed, 
+    () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, true));
+    Pilot.rightBumper().onTrue(new ReadyScoreWithElevator(m_elevator, drivetrain, m_PoseManager, m_MagicManager, () -> deadband(-Pilot.getLeftY(), 0.1) * MaxSpeed, 
+    () -> deadband(-Pilot.getLeftX(), 0.1) * MaxSpeed, 
+   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate, false));
     // POV Controls - put algae on these probably.
    // Pilot.povLeft()
    //     .whileTrue(drivetrain.applyRequest(
@@ -230,8 +225,11 @@ public class RobotContainer {
     Copilot.povLeft().onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeTee));
     Copilot.povRight()
         .onTrue(m_elevator.setMotionMagicPositionCommand(DynamicConstants.ElevatorSetpoints.elevAlgaeBot));
-    Copilot.leftBumper().onTrue(drivetrain.setSide(0));
-    Copilot.rightBumper().onTrue(drivetrain.setSide(1));
+    //Copilot.leftBumper().onTrue(drivetrain.setSide(0));
+    //Copilot.rightBumper().onTrue(drivetrain.setSide(1));
+    Copilot.leftBumper().whileTrue(new ElevatorAlgaeComand(m_elevator, m_algae));
+    Copilot.rightBumper().whileTrue(m_algae.outtake());
+
     Copilot.rightTrigger().onTrue(m_elevator.goToSelectedPointCommand());
 
     Copilot.start().whileTrue(m_elevator.climbingCommand());

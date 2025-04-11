@@ -2,6 +2,7 @@ package frc.robot.commands.magic;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.Units;
@@ -29,6 +30,8 @@ public class ReadyScore extends Command {
     int lev;
     boolean left;
     boolean runMagic;
+    Debouncer finishDebounce;
+
 
 
 
@@ -41,6 +44,9 @@ public class ReadyScore extends Command {
         mY = y;
         mRot = r;
         left = leftside;
+
+        finishDebounce = new Debouncer(0.06); // 3 Loop Cycles
+
     }
 
     @Override
@@ -66,22 +72,6 @@ public class ReadyScore extends Command {
             * elevatorHeightMultiplier);
         Distance distFromReef = Units.Meters.of(mDt.getState().Pose.getTranslation().getDistance(pos.getTranslation()));
         mDt.ReefAlign2(distFromReef, pos, left, lev, xVelocity, yVelocity, rVelocity, elevatorHeightMultiplier, distFromReef);
-
-        if (runMagic) {
-            if (lev == 4) {
-                mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL4);
-            }
-            if (lev == 3) {
-                mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL3);
-            }
-            if (lev == 2) {
-                mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL2);
-            }
-            if (lev == 1) {
-            // add "slow zero" before testing
-                mElevator.setRotations(DynamicConstants.ElevatorSetpoints.elevL1);
-            }
-        }
     }
 
 
@@ -89,15 +79,10 @@ public class ReadyScore extends Command {
     public void end(boolean interrupted) {
         // "Do nothing"
         mDt.drive(new ChassisSpeeds());
-        if (runMagic) {
-            if (mElevator.getPositionNormal() != 0 || (!mElevator.getLimit())) {
-                mElevator.stopMotorHold();
-            }
-        }
     }
 
     @Override
     public boolean isFinished() {
-        return false;
+        return (finishDebounce.calculate(mDt.isAligned()));
     }
 }

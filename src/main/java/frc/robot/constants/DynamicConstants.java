@@ -29,10 +29,10 @@ public final class DynamicConstants {
      */
 
     public static class ElevatorSetpoints {
-        public static double elevMax = 7.78;
-        public static double elevL4 = 7.75;
+        public static double elevMax = 8.3;
+        public static double elevL4 = 8.2;
         public static double elevL3 = 4.5;
-        public static double elevL2 = 2.02;
+        public static double elevL2 = 2.13;
         public static double elevL1 = 0;
         public static double elevAlgaeTop = 7.0;
         public static double elevAlgaeBot = 4.9;
@@ -60,29 +60,29 @@ public final class DynamicConstants {
     public static class AlignTransforms {
 
         public static double RightXL1 = .47;
-        public static double RightYL1 = .44;
+        public static double RightYL1 = .42;
         
         public static double RightXL2 = .47;
-        public static double RightYL2 = .445;
+        public static double RightYL2 = .42;
         
         public static double RightXL3 = .47;
-        public static double RightYL3 = .44;
+        public static double RightYL3 = .42;
 
-        public static double RightXL4 = .45; // .45 but wasn't working
-        public static double RightYL4 = .44;
+        public static double RightXL4 = .47; // .45 but wasn't working
+        public static double RightYL4 = .46;
         
         public static double RightRot = 90;
         
         public static double LeftXL1 = .47;
-        public static double LeftYL1 = .05;
+        public static double LeftYL1 = .03;
         
         public static double LeftXL2 = .47;
-        public static double LeftYL2 = .05;
+        public static double LeftYL2 = .03;
         
         public static double LeftXL3 = .47;
-        public static double LeftYL3 = .05;
+        public static double LeftYL3 = .03;
         
-        public static double LeftXL4 = .45;
+        public static double LeftXL4 = .42;
         public static double LeftYL4 = .05;
 
 

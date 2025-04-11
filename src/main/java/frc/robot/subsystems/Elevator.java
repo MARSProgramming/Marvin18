@@ -259,6 +259,26 @@ public class Elevator extends SubsystemBase {
                  selectedLevel == 4 ? ElevatorSetpoints.elevL4 : 0));
   }
 
+
+  public Command goToSelectedMagicCommand(MagicManager mm) {
+    return runEnd(() -> {
+    if (mm.getLevel() == 2) {
+      setRotations(ElevatorSetpoints.elevL2);
+    }
+    if (mm.getLevel() == 3) {
+      setRotations(ElevatorSetpoints.elevL3);
+    }
+    if (mm.getLevel() == 4) {
+      setRotations(ElevatorSetpoints.elevL4);
+    }
+    else zeroElevatorCommand();
+  }, () -> {
+    stopMotorHold();
+  }).until(
+    () -> isNear(selectedLevel == 2 ? ElevatorSetpoints.elevL2 : 
+                 selectedLevel == 3 ? ElevatorSetpoints.elevL3 : 
+                 selectedLevel == 4 ? ElevatorSetpoints.elevL4 : 0));
+  }
   
   public Command setLevel(int level) {
     return runOnce(() -> {
