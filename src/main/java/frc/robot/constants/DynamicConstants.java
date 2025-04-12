@@ -32,7 +32,7 @@ public final class DynamicConstants {
         public static double elevMax = 8.3;
         public static double elevL4 = 8.2;
         public static double elevL3 = 4.5;
-        public static double elevL2 = 2.13;
+        public static double elevL2 = 2.08;
         public static double elevL1 = 0;
         public static double elevAlgaeTop = 7.7;
         public static double elevAlgaeBot = 4.9;
