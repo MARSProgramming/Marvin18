@@ -68,8 +68,8 @@ public final class DynamicConstants {
         public static double RightXL3 = .47;
         public static double RightYL3 = .42;
 
-        public static double RightXL4 = .47; // .45 but wasn't working
-        public static double RightYL4 = .46;
+        public static double RightXL4 = .47; // was .47 before change
+        public static double RightYL4 = .44;
         
         public static double RightRot = 90;
         
@@ -82,7 +82,7 @@ public final class DynamicConstants {
         public static double LeftXL3 = .47;
         public static double LeftYL3 = .03;
         
-        public static double LeftXL4 = .42;
+        public static double LeftXL4 = .47;
         public static double LeftYL4 = .05;
 
 
@@ -93,7 +93,7 @@ public final class DynamicConstants {
         public static double CentRot = 90;
 
         public static double AlgaeRot = 0;
-        public static double AlgaeX = 1;
+        public static double AlgaeX = .8;
         public static double AlgaeY = 0;
         public static double feederX = .4;
         public static double feederY = 0.0;
@@ -150,8 +150,7 @@ public final class DynamicConstants {
         entries = new HashMap<>();
 
         // add all .class values of the static classes above
-        Class<?>[] subsystems = { ElevatorSetpoints.class, TestVoltages.class, Algae.class, AutoTagSetpoints.class,
-                AlignTransforms.class };
+        Class<?>[] subsystems = { ElevatorSetpoints.class};
 
         for (Class<?> subsystem : subsystems) {
             Field[] fields = subsystem.getDeclaredFields();

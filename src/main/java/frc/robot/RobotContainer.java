@@ -145,8 +145,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Alt Right Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, false).withTimeout(2));
     NamedCommands.registerCommand("Alt Left Side Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 4, true).withTimeout(2));
 
-    NamedCommands.registerCommand("Left Side L2 Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 2, true).withTimeout(0.75));
-    NamedCommands.registerCommand("Right Side L2 Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 2, false).withTimeout(0.7));
+    NamedCommands.registerCommand("Left Side L2 Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 2, true).withTimeout(0.9));
+    NamedCommands.registerCommand("Right Side L2 Align", new IntegratedAlignWithTermination(m_elevator, drivetrain, () -> 5, () -> 5,  () -> Constants.AlignmentConstants.kMaximumRotSpeed.baseUnitMagnitude(), 2, false).withTimeout(0.9));
 
 
     configureLEDTriggers();
@@ -218,7 +218,9 @@ public class RobotContainer {
     Pilot.y().onTrue(m_MagicManager.setLevelCommand(4));
     Pilot.b().onTrue(m_MagicManager.setLevelCommand(3));
     Pilot.x().onTrue(m_MagicManager.setLevelCommand(2));
-    Pilot.a().onTrue(m_MagicManager.setLevelCommand(1));
+    Pilot.a().whileTrue(new OptimizedIntegratedAlign("algae", m_PoseManager, m_elevator, drivetrain, () -> deadband(-Pilot.getLeftY(), 0.1) * MaxSpeed, 
+    () -> deadband(-Pilot.getLeftX(), 0.1) * MaxSpeed, 
+   () -> deadband(-Pilot.getRightX(), 0.1) * MaxAngularRate,  false));
 
 
     /// Copilot
@@ -233,7 +235,7 @@ public class RobotContainer {
     //Copilot.rightBumper().onTrue(drivetrain.setSide(1));
     Copilot.leftBumper().whileTrue(new ElevatorAlgaeComand(m_elevator, m_algae));
     Copilot.rightBumper().whileTrue(m_algae.outtake());
-
+    Copilot.leftTrigger().onTrue(m_MagicManager.setLevelCommand(1));
     Copilot.rightTrigger().onTrue(m_elevator.goToSelectedPointCommand());
 
     Copilot.start().whileTrue(m_elevator.climbingCommand());

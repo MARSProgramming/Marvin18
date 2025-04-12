@@ -41,7 +41,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-   // DynamicConstants.init();
    // DynamicConstants.periodic();
    // w
    m_robotContainer.led.setRainbowAnimationCommand().withTimeout(5);

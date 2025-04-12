@@ -157,9 +157,9 @@ public final class Constants {
         public static final LinearVelocity TeleoperatedMaximumVelocity = Units.MetersPerSecond.of(TunerConstants.kSpeedAt12Volts.baseUnitMagnitude() * 0.7);
         public static final double kMinimumElevatorMultiplier = 0.1;
 
-        public static final PIDController kXController = new PIDController(2.5, 0, 0.0);
-        public static final PIDController kYController = new PIDController(2.5, 0, 0.0);
-        public static final ProfiledPIDController kRotController = new ProfiledPIDController(2.0, 0, 0.1, 
+        public static final PIDController kXController = new PIDController(3.5, 0, 0.0);
+        public static final PIDController kYController = new PIDController(3.5, 0, 0.0);
+        public static final ProfiledPIDController kRotController = new ProfiledPIDController(3.0, 0, 0.1, 
         new TrapezoidProfile.Constraints(kMaximumRotSpeed.in(Units.DegreesPerSecond), Math.pow(kMaximumRotSpeed.in(Units.DegreesPerSecond), 2)));
 
         static {
