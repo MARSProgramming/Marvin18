@@ -52,6 +52,7 @@ public class LED extends SubsystemBase {
         CANdleConfiguration config = new CANdleConfiguration();  // Configuration object for CANdle
         candle.configAllSettings(config);  // Apply configuration to CANdle
         ledBuffer = new int[LED_COUNT * 4];  // Initialize buffer to hold RGBA values for each LED
+        setRainbowAnimation();
     }
 
     // Command to set the LED color (RGB) for the entire strip
