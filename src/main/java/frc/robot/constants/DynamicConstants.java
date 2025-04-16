@@ -30,7 +30,7 @@ public final class DynamicConstants {
 
     public static class ElevatorSetpoints {
         public static double elevMax = 8.3;
-        public static double elevL4 = 8.2;
+        public static  double elevL4 = 8.25;
         public static double elevL3 = 4.5;
         public static double elevL2 = 2.08;
         public static double elevL1 = 0;
@@ -68,8 +68,8 @@ public final class DynamicConstants {
         public static double RightXL3 = .47;
         public static double RightYL3 = .42;
 
-        public static double RightXL4 = .47; // was .47 before change
-        public static double RightYL4 = .44;
+        public static double RightXL4 = .455; // was .47 before change
+        public static double RightYL4 = .43;
         
         public static double RightRot = 90;
         
@@ -82,7 +82,7 @@ public final class DynamicConstants {
         public static double LeftXL3 = .47;
         public static double LeftYL3 = .03;
         
-        public static double LeftXL4 = .47;
+        public static double LeftXL4 = .44;
         public static double LeftYL4 = .05;
 
 
