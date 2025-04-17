@@ -27,6 +27,8 @@ public class Coral extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("IR", getIRReading());
     SmartDashboard.putBoolean("Has Coral", hasCoral());
+    SmartDashboard.putNumber("Coral Output %", coral.getMotorOutputPercent());
+    SmartDashboard.putNumber("Coral Stator Current", coral.getStatorCurrent());
     // This method will be called once per scheduler run
   }
 

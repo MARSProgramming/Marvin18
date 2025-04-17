@@ -102,8 +102,8 @@ public final class DynamicConstants {
     }
 
     public static class Drive {
-        public static final double forwardBackward = 0.04;
-        public static final double leftRight = 0.04;
+        public static final double forwardBackward = 0.069;
+        public static final double leftRight = 0.069;
     }
 
     public static class Algae {
