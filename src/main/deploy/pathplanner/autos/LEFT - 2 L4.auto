@@ -51,7 +51,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Faster"
+            "name": "Score"
           }
         },
         {
@@ -127,7 +127,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Faster"
+            "name": "Score"
           }
         },
         {
@@ -145,12 +145,6 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "path",
-                      "data": {
-                        "pathName": "E-U2 LookAtReef"
-                      }
-                    },
-                    {
                       "type": "named",
                       "data": {
                         "name": "Zero Elevator"
@@ -160,37 +154,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Elevator Setpoint L2"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "U2-D"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Left Side L2 Align"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Score Faster"
           }
         }
       ]

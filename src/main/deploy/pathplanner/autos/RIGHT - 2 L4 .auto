@@ -51,7 +51,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Faster"
+            "name": "Score"
           }
         },
         {
@@ -127,7 +127,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Score Faster"
+            "name": "Score"
           }
         },
         {
