@@ -7,8 +7,7 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
@@ -17,28 +16,16 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.ElevatorAlgaeComand;
-import frc.robot.commands.drivetrain.AlgaeAlign;
-import frc.robot.commands.drivetrain.CenterAlign;
-import frc.robot.commands.drivetrain.FeederAlign;
-import frc.robot.commands.drivetrain.IntegratedAlign;
 import frc.robot.commands.drivetrain.IntegratedAlignWithTermination;
 import frc.robot.commands.drivetrain.OptimizedIntegratedAlign;
-import frc.robot.commands.magic.ReadyScore;
 import frc.robot.commands.magic.ReadyScoreWithElevator;
 import frc.robot.constants.Constants;
 import frc.robot.constants.DynamicConstants;
@@ -46,16 +33,13 @@ import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.Algae;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Coral;
-import frc.robot.subsystems.DrivetrainTelemetry;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.IntegratedVision;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.MagicManager;
 import frc.robot.subsystems.PoseManager;
-import frc.robot.subsystems.LED.LEDSection;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -73,16 +57,8 @@ public class RobotContainer {
       .withDriveRequestType(DriveRequestType.Velocity).withSteerRequestType(
           SteerRequestType.MotionMagicExpo); // Use Closed-loop control for drive motors at low speeds
   
-  private final SwerveRequest.ApplyRobotSpeeds robot = new SwerveRequest.ApplyRobotSpeeds();
-
-  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
-  private final SwerveRequest.FieldCentricFacingAngle angle = new SwerveRequest.FieldCentricFacingAngle();
-
-  private final SwerveRequest.ApplyRobotSpeeds doNothing = new SwerveRequest.ApplyRobotSpeeds().withSpeeds(new ChassisSpeeds());
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
-
   private final CommandXboxController Pilot = new CommandXboxController(0);
   private final CommandXboxController Copilot = new CommandXboxController(1);
   private final CommandXboxController test = new CommandXboxController(2);
@@ -99,7 +75,6 @@ public class RobotContainer {
 
   public final IntegratedVision integVis = new IntegratedVision(drivetrain);
  public final LED led = new LED(40);
-  public final DrivetrainTelemetry m_Telemetry = new DrivetrainTelemetry(drivetrain);
   private final Trigger readyToPlaceCoral = new Trigger(() -> (DriverStation.isTeleop() && drivetrain.isAligned()));
   private final Trigger algaeWarning = new Trigger(() -> drivetrain.notSafe());
   private final Trigger hasCoralTrigger = new Trigger(() -> m_coral.hasCoral());

@@ -3,7 +3,6 @@ package frc.robot.commands.magic;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.commands.drivetrain.IntegratedAlignWithTermination;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.MagicManager;
